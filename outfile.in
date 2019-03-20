@@ -1,0 +1,153 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "buffer.h"
+//#include "set.h"
+int sclex(FILE* infile);
+int get_id_for_symbol(char c);
+int is_in_final_states(int state);
+
+#0#													// lexfile.decs
+	const static int asize =#0#; 						//dfa->alphabet->used
+	const static int tsize = #0#;						//dfa->num_states
+	const static int accept_size = #0#;					//dfa->Fstates->used
+	const static int num_regex = #0#;					//dfa->num_re
+	const static char al[asize] = { #0#	};
+	 const static int table[asize][tsize] = {  #0# };
+	 
+	 const static int accepted[accept_size] = {  #0# };
+	 const static int each_re_accepted[num_regex][accept_size] = { #0# };
+	 static buffer * dbuf; 
+	 char sctext[100];
+	static int scleng;
+int sclex(FILE* infile){
+	
+//	 char x[10];
+	 char *endmatch;
+	 int s, last, failed, accepted, count,done,id;
+	 char c;
+	 done = 1;
+dstart:
+	 s = failed = count = 0;
+	 accepted = 1;
+	 last = s;
+	 if(dbuf == NULL)
+		 dbuf = buffer_from_file(infile);
+	 endmatch = dbuf->back;
+	 c = getchar(dbuf);
+	 while(done != 0){
+//		 printf("waiting for user to ok\n");
+//		 scanf("%s",x);
+	 //printf("table at [16][1] is : %d\n", table[16][1]);
+		 if(accepted ==1 && failed ==1 && s == 0){
+//			 printf("value of done, %d\n",done);
+			 if(done !=0){
+//				 printf("total failure\n");
+				 return -1;
+			 }
+			 return c;
+		}
+		if(accepted == 0 && failed == 1){
+//			printf("may be final match already\n");
+//			printf("the state i'm in: %d\n", s);
+			for(char *j=dbuf->back;j<=endmatch;j++){
+				sctext[count] = *j;
+				count++;
+			}
+			sctext[count] = '\0';
+		    	scleng = count;
+			dbuf->back = endmatch+1;
+			endmatch = dbuf->back;
+			c = ungetchar(dbuf);
+			c = ungetchar(dbuf);
+			c = getchar(dbuf);
+//			printf("matched lexeme %s\n",sctext);
+			for(int n=0;n<num_regex;n++){
+//				printf("checking this regex %d\n",n);
+				for(int m=0;m<accept_size;m++){
+//					printf("checking this set item %d\n",m);
+//					printf("checking to see if state %d is equal to %d\n",s,each_re_accepted[n][m]-1);
+					if(each_re_accepted[n][m]-1 == s){
+//						printf("Regular expression %d matched\n", n+1);
+//						printf("running the action from regular expression %d\n",n+1);
+
+						#0#
+						if(*dbuf->forward == EOF || *dbuf->forward == '\0')
+							done = 0;
+						
+//						printf("did we change done? %d with this dbuf->forward %c\n",done, *dbuf->forward);
+						goto dstart;
+						//return 0;
+						
+					}
+				}
+			}
+			printf("couldn't find this finish state in any regular expression? wierd?\n");
+			return 0;
+			
+		}
+	 	last = s;
+//	 	printf("found this character %c\n",c);
+//		printf("currently in state %d ",s);
+		id = get_id_for_symbol(c);
+		if( id != -1)
+		    s = table[id][s]-1;
+		else
+		    s = -1;
+		if(is_in_final_states(s) == 0){
+			if(accepted == 0 && failed == 1){
+//				printf("may be final match already\n");
+//				printf("the state i'm in: %d\n", s);
+				return 0;
+			}
+//			printf("found an accept state %d but may continue searching for longest match\n",s);
+			accepted = 0;
+			endmatch = dbuf->forward -1;
+		}
+		if(s >= 0 && s < tsize){
+//			printf("and going to state %d\n",s);
+			c = getchar(dbuf);
+		    endmatch++;
+		}
+		else{
+//			printf("failed at this input char %c, the last state was %d\n",c,last);
+		    if(failed == 1){
+			   printf("%c",c);
+			   c = getchar(dbuf);
+			   s=0;
+			   last = 0;
+			   dbuf->back++;
+			   endmatch++;
+			   failed = 0;
+		    }
+		    else{
+			   s = last;
+			   failed = 1;
+			   endmatch--;
+		    }
+//			c = ungetchar(dbuf);
+//			c = getchar(dbuf);
+		}
+	 }
+    	if(c == '\0' || c == EOF)
+	    return -1;
+//	 if s is in  F return yes otherwise return NO
+	 return c;
+ }
+
+int get_id_for_symbol(char c){
+	for(int a=0;a< asize;a++){
+		if(al[a] == c)
+			return a;
+	}
+	return -1;
+}
+
+int is_in_final_states(int state){
+	for(int r=0;r<accept_size;r++){
+//		printf("checking to see if in final states this state %d against this one %d\n",state,r);
+//		printf("accpeted array with r value == %d\n",accepted[r]);
+		if(accepted[r]-1 == state)
+			return 0;
+	}
+	return 1;
+}
