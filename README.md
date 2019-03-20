@@ -1,4 +1,6 @@
-     This is a lexical analyzer generator, written in C, to mimic the functionality LEX/FLEX. I wrote this all in the month of October '18 as a project to get back into programming after 15 years.  My skills were never that strong to begin with, and they still lack quite a bit as you will notice from the source code.  I have yet add any commenting as I was in a rush to complete the project previously and I just picked it back up March '19 to continue finishing it up.  I am motivated currently to work on this program again. I hope to turn this experiment and learning-to-code-again experience into something understandable and useful.
+	**Clag** is a lexical analyzer generator, written in **C**.   Clag follows the same specifications and rules that lex and flexx follow, *except* for what hasn't been implemented *yet*
+	I wrote Clag as my first project to get back into programming after **15** *years*.  I have yet to add any documentation as I was in a rush to complete the project.
+	 Now I am currently motivated  to work on this program again. I hope to turn this experiment and learning-to-code-again experience into something understandable and useful.
 	 
      The lexical analyzer generator is currently an executable called "scandriver" as I've been in development mode.
 	 
