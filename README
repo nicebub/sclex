@@ -42,7 +42,7 @@
 
 							(where input_min_c_file meets the requirements of the lex.l definitions)
 
-
+	Use the included "ex.r" file with the "lex_driver" demo binary. The "ex.r" example follows the language definition described in the example "lex.l"
 
 	 
 	 
