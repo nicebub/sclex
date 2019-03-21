@@ -7,10 +7,10 @@ int get_id_for_symbol(char c);
 int is_in_final_states(int state);
 
 #0#													// lexfile.decs
-	const static int asize =#0#; 						//dfa->alphabet->used
-	const static int tsize = #0#;						//dfa->num_states
-	const static int accept_size = #0#;					//dfa->Fstates->used
-	const static int num_regex = #0#;					//dfa->num_re
+#define asize #0# 						//dfa->alphabet->used
+#define tsize #0#						//dfa->num_states
+#define accept_size #0#					//dfa->Fstates->used
+#define num_regex #0#					//dfa->num_re
 	const static char al[asize] = { #0#	};
 	 const static int table[asize][tsize] = {  #0# };
 	 
