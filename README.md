@@ -121,19 +121,20 @@ Subsequent calls to ***sclex(filename)*** will run on the lexer again on any lef
 # Compiling
 To COMPILE:
 ```
-{Prompt}: make (in the source directory)
+Computer1:clag nicebub$ make (in the source directory)
 ```
 # Running
 To Run the generator on the specification file and generate the source file "sclex.yy.c"
 ```
-{Prompt}: scandriver lex.l (lex.l is a properly written specification file)
+(lex.l is a properly written specification file)
+Computer1:clag nicebub$ ./scandriver lex.l 
 ```
 
 To Run the demo lexer driver
 ```
 Use the included "ex.r" file with the "lex_driver" demo binary. The "ex.r" example follows the language definition described in the example "lex.l"
 
-{Prompt}: ./lex_driver ex.r
+Computer1:clag nicebub$ ./lex_driver ex.r
 ```
 # Further Goals
 A few GOALS for this projects progress:
