@@ -1,5 +1,5 @@
-#ifndef SCANRE_H
-#define SCANRE_H
+#ifndef SCLEXDRIVER_H
+#define SCLEXDRIVER_H
 
 #include "buffer.h"
 #include "tree.h"

@@ -1,6 +1,13 @@
+/**
+	lex_error() is the universal error printing function
+		that makes the rest of the source code look more clean
+		and simple.
+*/
 #include "lex_error.h"
 
 void lex_error(int en){
+
+/* An array of error strings to print in case of error */
     const static char * err_strings[] = {
 	   "can't open file for writing: sclex.yy.c",
 	   "Declarations sections must be declared",
@@ -31,7 +38,8 @@ void lex_error(int en){
 	   "please supply one argument: the lex file.",
 	   "could not created ESCAPE CHAR node"
     };
-    if(en <0 || en >26)
+	/* check to see if in array bounds */
+    if(en <0 || en >27)
 	   return;
     printf("%s\n",err_strings[en]);
 }

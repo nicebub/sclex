@@ -1,7 +1,7 @@
 CC = /usr/bin/gcc
 
 
-all: hashdriver scandriver bufferdriver lex_driver
+all: hashdriver sclex bufferdriver lex_driver
 	
 tree.o: tree.c tree.h
 	$(CC) -g -c tree.c	
@@ -21,8 +21,8 @@ funcs.o: funcs.c funcs.h
 retodfa.o: retodfa.c retodfa.h
 	$(CC) -g -c retodfa.c
 
-scan_re.o: scan_re.c scan_re.h
-	$(CC) -g -c scan_re.c
+sclex_driver.o: sclex_driver.c sclex_driver.h
+	$(CC) -g -c sclex_driver.c
 
 set.o: set.c set.h
 	$(CC) -g -c set.c
@@ -63,7 +63,7 @@ charset.o: charset.c charset.h
 escape.o: escape.c escape.h
 	$(CC) -g -c escape.c
 sclex.yy.c: outfile.in lex.l
-	./scandriver lex.l
+	./sclex lex.l
 
 
 bufferdriver: driver.c buffer.o type.o hash.o tree.o funcs.o set.o
@@ -72,11 +72,11 @@ bufferdriver: driver.c buffer.o type.o hash.o tree.o funcs.o set.o
 hashdriver: hashdriver.c hash.o funcs.o
 	$(CC) -g -o hashdriver hashdriver.c hash.o funcs.o
 	
-scandriver: scan_re.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
-	$(CC) -g -o scandriver scan_re.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
+sclex: sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
+	$(CC) -g -o sclex sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
 
 lex_driver: lex_test.c sclex.yy.c buffer.o
 	$(CC) -g -o lex_driver lex_test.c sclex.yy.c buffer.o
 	
 clean:
-	rm bufferdriver hashdriver scandriver lex_driver sclex.yy.c *.o; rm -r *.dSYM
+	rm bufferdriver hashdriver sclex lex_driver sclex.yy.c *.o; rm -r *.dSYM

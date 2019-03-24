@@ -1,11 +1,11 @@
-# Clag
+# Sclex
 > A Lexical Analyzer Generator written in **C**.
 ## General
-Clag follows the same specifications that ***lex*** and **GNU *flex*** follow, *except* for what hasn't
+Sclex follows the same specifications that ***lex*** and **GNU *flex*** follow, *except* for what hasn't
      been implemented *yet*.
 
 ## Background
-I wrote Clag as my first project to get back into programming after **15** *years*.  I have yet to
+I wrote Sclex as my first project to get back into programming after **15** *years*.  I have yet to
      add any documentation as I was in a rush to complete the project.
      Now I am currently motivated to work on this program again. I hope to turn this experiment and
      learning-to-code-again experience into something understandable and useful.
@@ -119,22 +119,24 @@ Subsequent calls to ***sclex(filename)*** will run on the lexer again on any lef
 (See lex_test.c for a demo use case of the lexer)
 
 # Compiling
-To COMPILE:
+To COMPILE: (in the source directory)
 ```
-Computer1:clag nicebub$ make (in the source directory)
+computer:src/sclex nicebub$ make
 ```
 # Running
 To Run the generator on the specification file and generate the source file "sclex.yy.c"
-```
 (lex.l is a properly written specification file)
-Computer1:clag nicebub$ ./scandriver lex.l 
+```
+computer:src/sclex nicebub$ ./scandriver lex.l 
 ```
 
 To Run the demo lexer driver
-```
-Use the included "ex.r" file with the "lex_driver" demo binary. The "ex.r" example follows the language definition described in the example "lex.l"
+Use the included "ex.r" file with the "lex_driver" demo binary.
 
-Computer1:clag nicebub$ ./lex_driver ex.r
+The "ex.r" example follows the language definition described in the example "lex.l"
+```
+
+computer:src/sclex nicebub$ ./lex_driver ex.r
 ```
 # Further Goals
 A few GOALS for this projects progress:
@@ -147,11 +149,11 @@ A few GOALS for this projects progress:
 	* feature requests
 	* feature implementation
 	* etc...
-* I intend on creating a few other tools to complement Clag:
+* I intend on creating a few other tools to complement sclex:
 	* a suite, or toolchain, for a complete compiler.
 	* a YACC/BISON minimal type of clone to create the next stage to my own compiler I am constructing.
 			
-* Clag Features
+* Sclex Features
 	* To make this program a threaded app where the lexer will buffer at most a certain amount of tokens
 	* clean up character sets so that can have multiple shorthand classes in the set.
 	* clean up further character class so isn't dependent on '-' being second and '-' can be last symbol in class.
