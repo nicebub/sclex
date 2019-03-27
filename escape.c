@@ -1,3 +1,13 @@
+/**
+ This files has code for the parser to recognize and deal with escape
+	character sequences by constructing nodes of a parse tree and 
+	returning them as a representation for the input.
+	\t
+	\n
+	\r
+	\0
+
+*/
 #include "escape.h"
 
 struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c){
