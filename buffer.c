@@ -189,20 +189,20 @@ buffer * buffer_from_string(char* instring){
 	input string create a buffer in memory the same size
 	plus a few extra bytes for control characters. 
 */
+	size_t in_len = strnlen(instring,128);
     buffer *mbuf = malloc(sizeof(*mbuf));
-    mbuf->len = (int)strlen(instring);
+    mbuf->len = (int)in_len;
     mbuf->buf = malloc(sizeof(char)*(mbuf->len+2));
 /* copy the input string into the buffer, setup the control
 	characters, and return the buffer
 */	
-    strcpy(mbuf->buf,instring);
+    strncpy(mbuf->buf,instring,in_len);
     mbuf->buf[mbuf->len] = '\0';
     mbuf->buf[mbuf->len+1] = EOF;
     mbuf->forward = mbuf->buf;
     mbuf->back = mbuf->buf;
     mbuf->type = 1;
     return mbuf;
-
 }
 
 /* 
