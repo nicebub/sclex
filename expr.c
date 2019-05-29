@@ -39,6 +39,7 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 			   	}
 			   	else{
 				    lex_error(13);
+					printf("to finish a character class\n");
 				    exit(-1);
 	   			}
 			   break;
@@ -66,6 +67,7 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 			   }
 			   else{
 				  lex_error(13);
+				  printf("curly, to finish off a range\n");
 				  exit(-1);
 			   }
 			   break;
@@ -161,8 +163,20 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 					}
 			 }
 			 else{
-				lex_error(13);
-				exit(-1);
+ 				 /* found another expression definition?? */
+ 				printf("shouldn't be here in scyak.l perhaps\n");
+ 				ungetchar(mbuf);
+ 				ungetchar(mbuf);
+ 				ungetchar(mbuf);
+ 				*c = getchar(mbuf);
+ 				printf("back to char %c\n", *c);
+    			 pos(&temp,1);
+    			 pos(&temp,0);
+    			 return temp;
+    			 break;
+				
+ //				lex_error(13);
+ //				exit(-1);
 			 }
 	   }
     pos(&temp,1);

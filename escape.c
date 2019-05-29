@@ -65,11 +65,14 @@ struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c){
 	   case ')':
 	   case '/':
 	   case '.':
+	   case ':':
+	   case '|':
 		  temp = create_node(*c);
 		  return temp;
 		  /* If all else fails, then report an error and return NULL */
 	   default:
 		  printf("doesn't support that kind of escape character\n");
+		  printf("%c\n",*c);
 		  return NULL;
     }
     
