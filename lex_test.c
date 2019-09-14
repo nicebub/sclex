@@ -14,7 +14,7 @@ represents.
 #include <stdlib.h>
 /* A declaration to the lexer generated in an earlier example */
 extern int sclex(FILE* infile);
-
+extern FILE* scin;
 /* Tokens name Array for printin later on as they are found g*/
 const char *token_strings[] ={
     "IDENT",
@@ -50,16 +50,22 @@ const char *token_strings[] ={
 
 int main(int argc, const char ** argv){
 	/* FILE pointer used to open the file name of argument number 1 */
-	FILE * infile;
+	FILE * infile=NULL;
 	/* or error if not given, print an error and exit with -1 */
-	if( argc < 2){
-		printf("Please provide a filename to scan\n");
-		exit(-1);
-	}
+//	if( argc < 2){
+//		printf("Please provide a filename to scan\n");
+//		exit(-1);
+//	}
 	/* we opened the file for reading and we want to process it and tokenized it
 		we print what we find
 	*/
-	if((infile = fopen(argv[1],"r"))){
+	if(argc >= 2){
+		if((infile = fopen(argv[1],"r"))== NULL){
+			printf("couldn't open file %s\n", argv[1]);
+			exit(-1);			
+		}
+		scin = infile;
+	}
 		printf("Calling sclex from main app\n");
 		while(1){
 			/* result will hold the token found and returned each iteration
@@ -79,15 +85,13 @@ int main(int argc, const char ** argv){
 				break;
 	}
 	/* cleanup and finish program */
-		fclose(infile);
+		if(infile){
+			fclose(infile);
+			infile = NULL;
+		}
 		return 0;
 		
-	}
 	/* the file couldn't be opened for reading for some reason so print an error
 		and exit with -1
 	*/
-	else{
-		printf("couldn't open file %s\n", argv[1]);
-		exit(-1);
-	}
 }

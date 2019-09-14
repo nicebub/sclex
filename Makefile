@@ -1,82 +1,84 @@
 CC = /usr/bin/gcc
+#DEBUG="-g"
 
-
-all: hashdriver sclex bufferdriver lex_driver
+all: sclex
 	
 tree.o: tree.c tree.h
-	$(CC) -g -c tree.c	
+	$(CC) $(DEBUG) -c tree.c	
 	
 hash.o: hash.c hash.h
-	$(CC) -g -c hash.c	
+	$(CC) $(DEBUG) -c hash.c	
 	
 type.o: type.c type.h
-	$(CC) -g -c type.c	
+	$(CC) $(DEBUG) -c type.c	
 
 buffer.o: buffer.c buffer.h
-	$(CC) -g -c buffer.c	
+	$(CC) $(DEBUG) -c buffer.c	
 
 funcs.o: funcs.c funcs.h
-	$(CC) -g -c funcs.c
+	$(CC) $(DEBUG) -c funcs.c
 	
 retodfa.o: retodfa.c retodfa.h
-	$(CC) -g -c retodfa.c
+	$(CC) $(DEBUG) -c retodfa.c
 
 sclex_driver.o: sclex_driver.c sclex_driver.h
-	$(CC) -g -c sclex_driver.c
+	$(CC) $(DEBUG) -c sclex_driver.c
 
 set.o: set.c set.h
-	$(CC) -g -c set.c
+	$(CC) $(DEBUG) -c set.c
 	
 dfa.o: dfa.c dfa.h
-	$(CC) -g -c dfa.c
+	$(CC) $(DEBUG) -c dfa.c
 	
 gen.o: gen.c gen.h
-	$(CC) -g -c gen.c
+	$(CC) $(DEBUG) -c gen.c
 
 decs.o: decs.c decs.h
-	$(CC) -g -c decs.c
+	$(CC) $(DEBUG) -c decs.c
 
 translation.o: translation.c translation.h
-	$(CC) -g -c translation.c
+	$(CC) $(DEBUG) -c translation.c
 	
 allregex.o: allregex.c allregex.h
-	$(CC) -g -c allregex.c
+	$(CC) $(DEBUG) -c allregex.c
 
 lex_error.o: lex_error.c lex_error.h
-	$(CC) -g -c lex_error.c
+	$(CC) $(DEBUG) -c lex_error.c
 
 regex.o: regex.c regex.h
-	$(CC) -g -c regex.c
+	$(CC) $(DEBU) -c regex.c
 
 expror.o: expror.c expror.h
-	$(CC) -g -c expror.c
+	$(CC) $(DEBUG) -c expror.c
 
 exprcat.o: exprcat.c exprcat.h
-	$(CC) -g -c exprcat.c
+	$(CC) $(DEBUG) -c exprcat.c
 
 expr.o: expr.c expr.h
-	$(CC) -g -c expr.c
+	$(CC) $(DEBUG) -c expr.c
 
 charset.o: charset.c charset.h
-	$(CC) -g -c charset.c
+	$(CC) $(DEBUG) -c charset.c
 	
 escape.o: escape.c escape.h
-	$(CC) -g -c escape.c
+	$(CC) $(DEBUG) -c escape.c
 sclex.yy.c: outfile.in lex.l
 	./sclex lex.l
 
 
 bufferdriver: driver.c buffer.o type.o hash.o tree.o funcs.o set.o
-	$(CC) -g -o bufferdriver driver.c buffer.o tree.o hash.o type.o funcs.o set.o
+	$(CC) $(DEBUG) -o $@ driver.c buffer.o tree.o hash.o type.o funcs.o set.o
 	
 hashdriver: hashdriver.c hash.o funcs.o
-	$(CC) -g -o hashdriver hashdriver.c hash.o funcs.o
+	$(CC) $(DEBUG) -o $@ hashdriver.c hash.o funcs.o
 	
 sclex: sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
-	$(CC) -g -o sclex sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
+	$(CC) $(DEBUG) -o $@ sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
 
 lex_driver: lex_test.c sclex.yy.c buffer.o
-	$(CC) -g -o lex_driver lex_test.c sclex.yy.c buffer.o
+	$(CC) $(DEBUG) -o $@ lex_test.c sclex.yy.c buffer.o
+test: bufferdriver hashdriver lex_driver
+	
 	
 clean:
 	rm bufferdriver hashdriver sclex lex_driver sclex.yy.c *.o; rm -r *.dSYM

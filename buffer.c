@@ -400,7 +400,13 @@ Results: The buffer is refreshed with new data if any exists otherwise
 inline void refresh_buffer(buffer* inbuf, const int start){
     static size_t amount;
 	/* read more data into the buffer and store the amount read into 'amount' */
-    if((amount=fread(&inbuf->buf[start],1,HALF_BUFFER-2,inbuf->work)) != HALF_BUFFER-2){
+	if(inbuf->work == stdin){
+		fgets(&inbuf->buf[start],(size_t)(HALF_BUFFER-2),inbuf->work);
+		amount = strlen(&inbuf->buf[start]);
+	}
+	else
+		amount=fread(&inbuf->buf[start],1,HALF_BUFFER-2,inbuf->work);	
+    if( amount != HALF_BUFFER-2){
 	   if(ferror(inbuf->work)!=0){
 		  perror("\033[0;31merror\033[0m");
 		  exit(-1);
@@ -410,11 +416,11 @@ inline void refresh_buffer(buffer* inbuf, const int start){
 		  if(amount >0){
 			 	inbuf->buf[start+amount]='\0';
 			 	inbuf->buf[start+amount+1]=EOF;
-			 
+		 
 		  }
 		  else
 			 ;
 	   }
     }
-    
+  
 }
