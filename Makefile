@@ -1,24 +1,25 @@
-#CC= /usr/bin/gcc
-#CFLAGS=
+CC= /usr/bin/gcc
 YACC= bison
-#FILES= sclex_driver.c
 BUILDDIR= build
 LIBDIR= lib
 INCLUDEDIR= include
 SRCDIR= src
 TESTDIR= test
 vpath %.c src
+vpath %.s src
 vpath %.h include
+vpath %.so lib
+vpath %.la lib
 VPATH= src:include
 CFLAGS= -I $(INCLUDEDIR)
-FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
-HFILES=  $(INCLUDEDIR)/*.h
-#DEBUG="-g"
-SOURCES := $(patsubst %,$(SRCDIR)/%,$(FILES))
-	
-#HEADERS := $(patsubst %,$(INCLUDEDIR)/%,$)
 
+FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
+AFILES := $(subst $(SRCDIR)/,,$(wildcard src/*.s))
+OUTFILE := $(INCLUDEDIR)/outfile.in
+HFILES:= $(subst $(INCLUDEDIR)/,,$(wildcard $(INCLUDEDIR)/*.h))
+SOURCES := $(patsubst %,$(SRCDIR)/%,$(FILES))
 OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o,$(FILES))
+ASSEMBLYS := $(patsubst %.s,$(BUILDDIR)/%.o,$(AFILES))
 DEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(FILES))
 	
 .PHONY: all clean $(BUILDDIR)
@@ -27,27 +28,20 @@ all: $(BUILDDIR)/sclex
 	
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
-	
-	
 sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TEST)/lex.l
 	$(BUILDDIR)/sclex $(TESTDIR)/lex.l
+$(OUT): $(OUTFILE)
+
+$(OUTFILE):
 	
-#%.o: $(FILES) $(INCLUDEDIR)/*.h
-#	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
+$(BUILDDIR)/%.o: %.s | $(BUILDDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.o: %.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
-	
 $(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h 
 	$(CC) $(CFLAGS) $(DEBUG) -MM $< -o $@
-	
 -include $(DEPS)
-	
-#$(OBJECTS):  | $(BUILDDIR)
-	
-	
-$(BUILDDIR)/sclex: $(OBJECTS)
-	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
-	
-	
+$(BUILDDIR)/sclex: $(ASSEMBLYS) $(OBJECTS) $(OUTFILE)
+	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
 clean:
 	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)

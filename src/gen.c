@@ -31,6 +31,13 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	acnt = 0;
 	num_tabs = 7;
 	if((outfile = fopen("sclex.yy.c","w"))!=NULL){
+		extern uint8_t blob[];
+		extern int blob_size;
+		FILE* temp_file = NULL;
+		if((temp_file = fopen("outfile.in","w"))!=NULL){
+			fwrite(blob,1,blob_size,temp_file);
+			fclose(temp_file);
+		}
 	    if((infile = fopen("outfile.in","r")) != NULL){
 		   fseek(infile, 0, SEEK_END);
 		   long len = ftell(infile);
@@ -259,6 +266,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	    fclose(outfile);
 	    outfile = NULL;
 	    }
+		remove("outfile.in");
 	}
 	else{
 	    lex_error(0);

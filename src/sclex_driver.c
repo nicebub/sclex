@@ -148,14 +148,16 @@ int main(int argc, const char ** argv){
 /* looks for 1 filename on the command line
    for the .l spec file if it isn't given then produce an 
 	error and exit */
-    if(argc != 2){
-		lex_error(26);
-		exit(-1);
+#define ARGUMENTS_NEEDED 2
+    if(argc != ARGUMENTS_NEEDED){
+		lex_error(SCERR_NEED_ARGUMENT);
+		exit(EXIT_FAILURE);
 	}
     
     
 /* initialize buffer from filename given */
-    mbuf = buffer_from_filename(argv[1]);
+#define ARGUMENT_IS_FILENAME 1
+    mbuf = buffer_from_filename(argv[ARGUMENT_IS_FILENAME]);
 
 /* If the file is a .l file, this will start to parse the
  file with a recursive predictive parser */
@@ -180,7 +182,7 @@ int main(int argc, const char ** argv){
 /* Cleanup and release memory and file buffers, and exit */
     cleanup_lex(&mbuf,&lexfile,&dfa);
 //    display_memstats();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 
@@ -200,12 +202,12 @@ struct _ta *parse_file(buffer * mbuf,char *c, struct _lfile * file){
 */
     if(*c != EOF  && (*c = getchar(mbuf))!= EOF){
 	   if(*c != '%'){
-		  lex_error(1);
+		  lex_error(SCERR_DECL_UNDECLARED);
 		  return NULL;
 	   }
 	   *c = getchar(mbuf);
 	   if(*c != '{'){
-		  lex_error(1);
+		  lex_error(SCERR_DECL_UNDECLARED);
 		  return NULL;
 	   }
 /* Parse the declarations section of the spec file and store
@@ -216,12 +218,12 @@ struct _ta *parse_file(buffer * mbuf,char *c, struct _lfile * file){
 	   while((is_ws(*c) ==0) || *c == '\n')
 		  *c = getchar(mbuf);
 	   if(*c != '%'){
-		  lex_error(2);
+		  lex_error(SCERR_MUST_USE_SEPR);
 		  return NULL;
 	   }
 	   *c = getchar(mbuf);
 	   if(*c != '%'){
-		  lex_error(2);
+		  lex_error(SCERR_MUST_USE_SEPR);
 		  return NULL;
 	   }
 	   *c = getchar(mbuf);
@@ -238,12 +240,12 @@ struct _ta *parse_file(buffer * mbuf,char *c, struct _lfile * file){
 	   while((is_ws(*c) ==0) && *c != '\n')
 		  *c = getchar(mbuf);
 	   if(*c != '%'){
-		  lex_error(3);
+		  lex_error(SCERR_SEPR_AFTER_TRANS);
 		  return NULL;
 	   }
 	   *c = getchar(mbuf);
 	   if(*c != '%'){
-		  lex_error(3);
+		  lex_error(SCERR_SEPR_AFTER_TRANS);
 		  return NULL;
 	   }
     }
