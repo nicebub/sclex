@@ -3,7 +3,7 @@
 characters are of a particular set or not. Sets include, whitespace, escape
 character sequences, alapha-numerics, and screen printables.
 */
-#include "funcs.h"
+#include "../include/funcs.h"
 
 
 /**

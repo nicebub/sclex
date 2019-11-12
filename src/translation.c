@@ -4,7 +4,7 @@
 	stream through the buffer and creates a parse tree of all the regular 
 	expressions it finds until the end of the definitions section.
 */
-#include "translation.h"
+#include "../include/translation.h"
 
 /**  
 

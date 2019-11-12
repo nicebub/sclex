@@ -3,7 +3,7 @@
 		that makes the rest of the source code look more clean
 		and simple.
 */
-#include "lex_error.h"
+#include "../include/lex_error.h"
 
 void lex_error(int en){
 

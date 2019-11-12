@@ -1,4 +1,4 @@
-#include "expr.h"
+#include "../include/expr.h"
 struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfile){
     struct _node *temp;
     struct _node *temp2;

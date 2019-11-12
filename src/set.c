@@ -1,4 +1,4 @@
-#include "set.h"
+#include "../include/set.h"
 
 #define NEWSETERROR(in) printf("couldn't create new " #in "set\n");
 

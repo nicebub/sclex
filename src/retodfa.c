@@ -1,4 +1,4 @@
-#include "retodfa.h"
+#include "../include/retodfa.h"
 
 int nullable(struct _node ** n){
     if(*n){

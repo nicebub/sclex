@@ -1,4 +1,4 @@
-#include "hash.h"
+#include "../include/hash.h"
 
 
 struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt);

@@ -1,84 +1,53 @@
-CC = /usr/bin/gcc
+#CC= /usr/bin/gcc
+#CFLAGS=
+YACC= bison
+#FILES= sclex_driver.c
+BUILDDIR= build
+LIBDIR= lib
+INCLUDEDIR= include
+SRCDIR= src
+TESTDIR= test
+vpath %.c src
+vpath %.h include
+VPATH= src:include
+CFLAGS= -I $(INCLUDEDIR)
+FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
+HFILES=  $(INCLUDEDIR)/*.h
 #DEBUG="-g"
-
-all: sclex
+SOURCES := $(patsubst %,$(SRCDIR)/%,$(FILES))
 	
-tree.o: tree.c tree.h
-	$(CC) $(DEBUG) -c tree.c	
+#HEADERS := $(patsubst %,$(INCLUDEDIR)/%,$)
+
+OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o,$(FILES))
+DEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(FILES))
 	
-hash.o: hash.c hash.h
-	$(CC) $(DEBUG) -c hash.c	
+.PHONY: all clean $(BUILDDIR)
 	
-type.o: type.c type.h
-	$(CC) $(DEBUG) -c type.c	
-
-buffer.o: buffer.c buffer.h
-	$(CC) $(DEBUG) -c buffer.c	
-
-funcs.o: funcs.c funcs.h
-	$(CC) $(DEBUG) -c funcs.c
+all: $(BUILDDIR)/sclex
 	
-retodfa.o: retodfa.c retodfa.h
-	$(CC) $(DEBUG) -c retodfa.c
-
-sclex_driver.o: sclex_driver.c sclex_driver.h
-	$(CC) $(DEBUG) -c sclex_driver.c
-
-set.o: set.c set.h
-	$(CC) $(DEBUG) -c set.c
+$(BUILDDIR):
+	mkdir -p $(BUILDDIR)
 	
-dfa.o: dfa.c dfa.h
-	$(CC) $(DEBUG) -c dfa.c
 	
-gen.o: gen.c gen.h
-	$(CC) $(DEBUG) -c gen.c
-
-decs.o: decs.c decs.h
-	$(CC) $(DEBUG) -c decs.c
-
-translation.o: translation.c translation.h
-	$(CC) $(DEBUG) -c translation.c
+sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TEST)/lex.l
+	$(BUILDDIR)/sclex $(TESTDIR)/lex.l
 	
-allregex.o: allregex.c allregex.h
-	$(CC) $(DEBUG) -c allregex.c
-
-lex_error.o: lex_error.c lex_error.h
-	$(CC) $(DEBUG) -c lex_error.c
-
-regex.o: regex.c regex.h
-	$(CC) $(DEBU) -c regex.c
-
-expror.o: expror.c expror.h
-	$(CC) $(DEBUG) -c expror.c
-
-exprcat.o: exprcat.c exprcat.h
-	$(CC) $(DEBUG) -c exprcat.c
-
-expr.o: expr.c expr.h
-	$(CC) $(DEBUG) -c expr.c
-
-charset.o: charset.c charset.h
-	$(CC) $(DEBUG) -c charset.c
+#%.o: $(FILES) $(INCLUDEDIR)/*.h
+#	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
+$(BUILDDIR)/%.o: %.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 	
-escape.o: escape.c escape.h
-	$(CC) $(DEBUG) -c escape.c
-sclex.yy.c: outfile.in lex.l
-	./sclex lex.l
-
-
-bufferdriver: driver.c buffer.o type.o hash.o tree.o funcs.o set.o
-	$(CC) $(DEBUG) -o $@ driver.c buffer.o tree.o hash.o type.o funcs.o set.o
+$(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h 
+	$(CC) $(CFLAGS) $(DEBUG) -MM $< -o $@
 	
-hashdriver: hashdriver.c hash.o funcs.o
-	$(CC) $(DEBUG) -o $@ hashdriver.c hash.o funcs.o
+-include $(DEPS)
 	
-sclex: sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
-	$(CC) $(DEBUG) -o $@ sclex_driver.o buffer.o funcs.o tree.o retodfa.o hash.o set.o dfa.o gen.o decs.o translation.o allregex.o lex_error.o regex.o expror.o exprcat.o expr.o charset.o escape.o
-
-lex_driver: lex_test.c sclex.yy.c buffer.o
-	$(CC) $(DEBUG) -o $@ lex_test.c sclex.yy.c buffer.o
-test: bufferdriver hashdriver lex_driver
+#$(OBJECTS):  | $(BUILDDIR)
+	
+	
+$(BUILDDIR)/sclex: $(OBJECTS)
+	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
 	
 	
 clean:
-	rm bufferdriver hashdriver sclex lex_driver sclex.yy.c *.o; rm -r *.dSYM
+	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)

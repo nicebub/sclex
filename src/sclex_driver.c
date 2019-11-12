@@ -7,7 +7,7 @@ they are enough to provide an efficent way to tokenize an
 input stream.
 */
 
-#include "sclex_driver.h"
+#include "../include/sclex_driver.h"
 
 
 /** Function Prototype

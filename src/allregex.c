@@ -7,7 +7,7 @@ by pointer.
 regexp()mfunction, which continues to parse individual regular expressions.
 
 */
-#include "allregex.h"
+#include "../include/allregex.h"
 
 
 /**  

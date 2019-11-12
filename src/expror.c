@@ -9,7 +9,7 @@ input stream during lexing.
 of the input stream.
 
 */
-#include "expror.h"
+#include "../include/expror.h"
 
 struct _node* expror(struct _cset ** ta,buffer *mbuf, char* c, struct _lfile* lfile){
     /*

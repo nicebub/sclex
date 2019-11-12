@@ -8,7 +8,7 @@ children, they are 'leaves' of the tree. Some _nodes 'internal'
 may have only 1 child. 1 _node is the root of the tree.
 */
 
-#include "tree.h"
+#include "../include/tree.h"
 /** Function Prototype 
 
 	void delete_node(struct _node*);

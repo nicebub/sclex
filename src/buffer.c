@@ -8,7 +8,7 @@ characters.
 
 */
 
-#include "buffer.h"
+#include "../include/buffer.h"
 
 /* Function Prototype
 

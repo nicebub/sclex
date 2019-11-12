@@ -1,4 +1,4 @@
-#include "decs.h"
+#include "../include/decs.h"
 char* declarations(buffer* mbuf, char*c,struct _lfile* file){
     char sbuf[8000];
     char *decs;
