@@ -1,0 +1,69 @@
+\hypertarget{struct__node}{}\doxysection{\+\_\+node Struct Reference}
+\label{struct__node}\index{\_node@{\_node}}
+
+
+{\ttfamily \#include $<$tree.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct__node_ac655c71579c94517b53fbb59d99829bf}\label{struct__node_ac655c71579c94517b53fbb59d99829bf}} 
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} $\ast$ {\bfseries left}
+\item 
+\mbox{\Hypertarget{struct__node_a0958469df50896d9eb5dbaac2e7db7bb}\label{struct__node_a0958469df50896d9eb5dbaac2e7db7bb}} 
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} $\ast$ {\bfseries right}
+\item 
+\mbox{\Hypertarget{struct__node_ad80b62bfe55cc4cbb00614b840de452e}\label{struct__node_ad80b62bfe55cc4cbb00614b840de452e}} 
+struct \mbox{\hyperlink{struct__iset}{\+\_\+iset}} $\ast$ {\bfseries ifirst}
+\item 
+\mbox{\Hypertarget{struct__node_a578aa33f1e4dec38d56ad5e052372ab5}\label{struct__node_a578aa33f1e4dec38d56ad5e052372ab5}} 
+struct \mbox{\hyperlink{struct__iset}{\+\_\+iset}} $\ast$ {\bfseries ilast}
+\item 
+\mbox{\Hypertarget{struct__node_aed46a8d241664e490be324945b6bf3b4}\label{struct__node_aed46a8d241664e490be324945b6bf3b4}} 
+struct \mbox{\hyperlink{struct__iset}{\+\_\+iset}} $\ast$ {\bfseries ifollow}
+\item 
+\mbox{\Hypertarget{struct__node_af40a18312982113468c3d919f0ffe81b}\label{struct__node_af40a18312982113468c3d919f0ffe81b}} 
+int {\bfseries uniq}
+\item 
+\mbox{\Hypertarget{struct__node_ab39ddc82d829722815b9bbd71ce4bd8d}\label{struct__node_ab39ddc82d829722815b9bbd71ce4bd8d}} 
+int {\bfseries id}
+\item 
+\mbox{\Hypertarget{struct__node_a5acf19d8de1a6f43cf17f750492eeeaa}\label{struct__node_a5acf19d8de1a6f43cf17f750492eeeaa}} 
+int {\bfseries nullable}
+\item 
+\mbox{\Hypertarget{struct__node_a4043a5551c90f785e6615b4539b0cb15}\label{struct__node_a4043a5551c90f785e6615b4539b0cb15}} 
+char {\bfseries value}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure Definition A \mbox{\hyperlink{struct__node}{\+\_\+node}} is a structure that we use to create a tree of nodes that all link up with each other. We use a Binary Tree, but it can be configured to be more than a binary tree.
+
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} \begin{DoxyVerb}struct _node *left: A pointer to the left Child of the current node
+
+struct _node *right: A pointer to the right Child of the current node
+
+struct _iset *ifirst: The firstpos set of the tree starting at the
+                current node
+
+struct _iset *ilast: The lastpos set of the tree starting at the
+                current node
+
+struct _iset *ifollow: The followpos set of the tree starting at the
+                current node
+int uniq: A unique ID given to each _node instantiated by the _node
+                constructor. No two nodes can have the same 'uniq'.
+
+int id: An id given to a node, but can be changed. Two nodes can have the
+            same 'id'.
+
+int nullable: An answer as to whether the tree starting at the current node
+                is 'nullable' or not, as per the nullable function.
+
+char value: The value the _node holds, for semantic, numerical, or other use.
+\end{DoxyVerb}
+ 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tree.\+h\end{DoxyCompactItemize}

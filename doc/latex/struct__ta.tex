@@ -1,0 +1,81 @@
+\hypertarget{struct__ta}{}\doxysection{\+\_\+ta Struct Reference}
+\label{struct__ta}\index{\_ta@{\_ta}}
+
+
+{\ttfamily \#include $<$tree.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct__ta_ac80627c5223cf162eec6a1020ba9fed0}\label{struct__ta_ac80627c5223cf162eec6a1020ba9fed0}} 
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} $\ast$$\ast$ {\bfseries t}
+\item 
+\mbox{\Hypertarget{struct__ta_ab4979f175cdfe67f23d4e86b18bcd223}\label{struct__ta_ab4979f175cdfe67f23d4e86b18bcd223}} 
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} $\ast$ {\bfseries atop}
+\item 
+\mbox{\Hypertarget{struct__ta_adee415e55a625cff2346f1197668bd46}\label{struct__ta_adee415e55a625cff2346f1197668bd46}} 
+struct \mbox{\hyperlink{struct__cset}{\+\_\+cset}} $\ast$ {\bfseries alphabet}
+\item 
+\mbox{\Hypertarget{struct__ta_a2d235648d6e5a9312d9afb1857fc9923}\label{struct__ta_a2d235648d6e5a9312d9afb1857fc9923}} 
+char $\ast$$\ast$ {\bfseries action\+\_\+array}
+\item 
+\mbox{\Hypertarget{struct__ta_aa9f33a671d3b43b6f85faffb781b6e5c}\label{struct__ta_aa9f33a671d3b43b6f85faffb781b6e5c}} 
+struct \mbox{\hyperlink{struct__iset}{\+\_\+iset}} $\ast$$\ast$ {\bfseries Fstates}
+\item 
+\mbox{\Hypertarget{struct__ta_a295aa746daff5b9aa9967436ca0ffbf1}\label{struct__ta_a295aa746daff5b9aa9967436ca0ffbf1}} 
+int $\ast$ {\bfseries finalpos}
+\item 
+\mbox{\Hypertarget{struct__ta_a82d99a7212ec62578dadce0fbf4b837c}\label{struct__ta_a82d99a7212ec62578dadce0fbf4b837c}} 
+int {\bfseries size}
+\item 
+\mbox{\Hypertarget{struct__ta_ae33149a85f60b5eac383ffabe5111bb8}\label{struct__ta_ae33149a85f60b5eac383ffabe5111bb8}} 
+int {\bfseries used}
+\item 
+\mbox{\Hypertarget{struct__ta_a92bc9db648fe5f385de6d948b8fd572d}\label{struct__ta_a92bc9db648fe5f385de6d948b8fd572d}} 
+int {\bfseries num\+\_\+re}
+\item 
+\mbox{\Hypertarget{struct__ta_adfb14a779182b684bc4289f7e9c5c328}\label{struct__ta_adfb14a779182b684bc4289f7e9c5c328}} 
+int {\bfseries id}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure Definition
+
+The \mbox{\hyperlink{struct__ta}{\+\_\+ta}} structure is an Array of Tree\textquotesingle{}s. This struct has additional memmbers that could be broken out, as they may not have much meaning in the context of a Tree Array. But in the use of the existing program, I didn\textquotesingle{}t want to make certain functions take too many parameters, and instead, stuffed certain shared data structures into others. Otherwise, the Tree Array, has a certain size, id, and root.
+
+struct \mbox{\hyperlink{struct__ta}{\+\_\+ta}} \begin{DoxyVerb}struct _node **t: An array of _node pointers, which would represent
+                    individual binary trees
+
+struct _node *atop: The top of the whole entire Binary tree, as each
+                        individual tree in the array will all be
+                        attached to one another.
+
+struct _cset *alphabet: The alphabet of the regular expressions read
+                            in the existing program
+
+char**  action_array: The specific user-defined source code that is 
+                        attached to each regular expression, in the
+                        existing programs, spec file.
+
+struct _iset **Fstates: The Array of Final states, each Tree/Regular
+                            Expression uses as an accept state in the constructed
+                            DFA representation.
+
+int *finalpos: The array of finalpos set for the entire Tree Array
+
+int size: The max size of the Tree Array
+
+int used: The actual number of Tree's that we are using in the Array
+
+int num_re: The number of regular expression in the application we 
+                have read in and recoginzed thus far
+
+int id: The identification 'ID' for the _ta struct. Each _ta instantiated
+            will have an 'id' from its constructor.
+\end{DoxyVerb}
+ 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tree.\+h\end{DoxyCompactItemize}

@@ -27,7 +27,7 @@ DEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(FILES))
 all: $(BUILDDIR)/sclex
 	
 $(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+	[ -d $(BUILDDIR) ] || mkdir -p $(BUILDDIR)
 sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TEST)/lex.l
 	$(BUILDDIR)/sclex $(TESTDIR)/lex.l
 $(OUT): $(OUTFILE)

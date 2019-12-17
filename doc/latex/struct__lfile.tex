@@ -1,0 +1,52 @@
+\hypertarget{struct__lfile}{}\doxysection{\+\_\+lfile Struct Reference}
+\label{struct__lfile}\index{\_lfile@{\_lfile}}
+
+
+{\ttfamily \#include $<$lfile.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct__lfile_a6b357f0ed9f70c160ba0bb1786da0dca}\label{struct__lfile_a6b357f0ed9f70c160ba0bb1786da0dca}} 
+\mbox{\hyperlink{struct__buffer}{buffer}} $\ast$$\ast$ {\bfseries defbuf}
+\item 
+\mbox{\Hypertarget{struct__lfile_a5ca1621f1280103634c3574b4be96e5e}\label{struct__lfile_a5ca1621f1280103634c3574b4be96e5e}} 
+char $\ast$$\ast$ {\bfseries defs}
+\item 
+\mbox{\Hypertarget{struct__lfile_a93d2a3f86cb6175d9d1bdb1c5741c317}\label{struct__lfile_a93d2a3f86cb6175d9d1bdb1c5741c317}} 
+struct \mbox{\hyperlink{struct__ta}{\+\_\+ta}} $\ast$ {\bfseries tree}
+\item 
+\mbox{\Hypertarget{struct__lfile_a86388675b096e36f98afc35d60b1c3e1}\label{struct__lfile_a86388675b096e36f98afc35d60b1c3e1}} 
+struct \mbox{\hyperlink{struct__iseta}{\+\_\+iseta}} $\ast$ {\bfseries fpos}
+\item 
+\mbox{\Hypertarget{struct__lfile_ab5d060eafa760f4c63613f8a29095379}\label{struct__lfile_ab5d060eafa760f4c63613f8a29095379}} 
+char $\ast$ {\bfseries decs}
+\item 
+\mbox{\Hypertarget{struct__lfile_a5763ab93163ce55b17dc0963b45b38ef}\label{struct__lfile_a5763ab93163ce55b17dc0963b45b38ef}} 
+char $\ast$ {\bfseries aux}
+\item 
+\mbox{\Hypertarget{struct__lfile_a1d9f2861dc2bbf10d6579a4fe4f4d8be}\label{struct__lfile_a1d9f2861dc2bbf10d6579a4fe4f4d8be}} 
+int {\bfseries num\+\_\+defs}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \mbox{\hyperlink{struct__lfile}{\+\_\+lfile}} struct is symbolic for the lexer file that will ultimately be the finished product from the generator. As we parse the input stream and create a parse tree to represent the regular expressions read, then we also create other data structures and accumulate other data to make a final output source file. Structure Definition
+
+buffer $\ast$$\ast$defbuf\+: Store a memory address to a pointer to a buffer used in buffering the input stream of a source file
+
+char $\ast$$\ast$ defs\+: A character string array for storing all the definitions code for each regular expression definition found
+
+struct \mbox{\hyperlink{struct__ta}{\+\_\+ta}} $\ast$tree\+: The full parse tree after reading all the regular expression definitions through the input stream buffer
+
+struct \mbox{\hyperlink{struct__iseta}{\+\_\+iseta}} $\ast$fpos\+: A pointer to an array of sets of integers representing the finalpos sets of each regular expression definition.
+
+char $\ast$ decs\+: A character string that represents the actual regular expression read in
+
+char $\ast$ aux\+: This will eventually be implemented as a character string array to be copied into the source code file output at the end.
+
+int num\+\_\+defs\+: The number of regular expression definitions we have found throughout the specification file 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/lfile.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,45 @@
+\begin{quote}
+A Lexical Analyzer Generator written in {\bfseries{C}}. \end{quote}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md8}{}\doxysection{General}\label{md__r_e_a_d_m_e_autotoc_md8}
+Sclex follows the same specifications that {\itshape {\bfseries{lex}}} and $\ast$$\ast$\+G\+NU {\itshape flex$\ast$$\ast$$\ast$ follow, $\ast$except} for what hasn\textquotesingle{}t been implemented {\itshape yet}.\hypertarget{md__r_e_a_d_m_e_autotoc_md9}{}\doxysection{Background}\label{md__r_e_a_d_m_e_autotoc_md9}
+I wrote Sclex as my first project to get back into programming after {\bfseries{15}} {\itshape years}. I am currently adding documentation after having rushed to complete it before my other job started. Now I am currently motivated to work on this program again. I hope to turn this experiment and learning-\/to-\/code-\/again experience into something understandable and useful.\hypertarget{md__r_e_a_d_m_e_autotoc_md10}{}\doxysection{Internal Features}\label{md__r_e_a_d_m_e_autotoc_md10}
+
+\begin{DoxyItemize}
+\item {\itshape Recursive Descent} Predictive {\bfseries{Parser}} (to parse the {\itshape Regular Expressions}(RE\textquotesingle{}s) in the specificiation file
+\item Internal {\itshape Syntax-\/\+Tree} Construction
+\item Tabularized {\itshape Determinitistic Finite Automata}({\bfseries{D\+FA}}) construction
+\item Implements Dragon Book Algorithms firstpos,lastpos,followpos,nullable, etc.
+\item Double-\/\+Sided Buffer implementation
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md11}{}\doxysection{User Features}\label{md__r_e_a_d_m_e_autotoc_md11}
+
+\begin{DoxyItemize}
+\item regular expressions used to define token strings to recognize
+\item regular expression short-\/hand definitions
+\item character class set and ranges
+\item a subset of escape characters
+\item lex/flex specification file -- ending in $\ast$$\ast$.l$\ast$$\ast$
+\item {\bfseries{and more...}}
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md12}{}\doxysection{Regular Expression Usages and Definitions}\label{md__r_e_a_d_m_e_autotoc_md12}
+In the right column are examples or symbols that represent what can be written as a regular expression. The regular expressions are used to to tell the lexer how to match patterns of the input.
+
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Usage  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Definition   }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Usage  }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Definition   }\\\cline{1-2}
+\endhead
+{\itshape a}  &{\itshape a} stands for any alpha-\/numeric or printable character, will be matched   \\\cline{1-2}
+{\itshape ab}  &{\itshape ab} two regular expressions concatenated with each other, a followed by b will be matched   \\\cline{1-2}
+\+\_\+(\+E)\+\_\+  &\+\_\+(\+E)\+\_\+ is a regular expression, ie, a string surrounded by parenthesis will be matched   \\\cline{1-2}
+{\itshape E$|$C}  &Both {\itshape E} and {\itshape C} are regular expressions and either one can be matched   \\\cline{1-2}
+{\itshape E$\ast$}  &stands for 0 or more {\itshape E} regular expressions concatenated with each other can match the input   \\\cline{1-2}
+{\itshape E\textbackslash{}?}  &stands for 0 or 1 {\itshape E} regular expression will match the input   \\\cline{1-2}
+{\itshape E+}  &stands for 1 or more {\itshape E} regular expression concatenated will match the input stream   \\\cline{1-2}
+\+\_\+\mbox{[}abc\mbox{]}\+\_\+  &stands for a character set that matches any of the characters in the brackets to one in the input   \\\cline{1-2}
+\+\_\+\mbox{[}a-\/z\mbox{]}\+\_\+  &stands for a character set that can match the input to any character in the range of lowercase letters a through z   \\\cline{1-2}
+\+\_\+\textbackslash{}x\+\_\+  &is an escape character, x can be any of\+: n,t,0,\textbackslash{},$|$,.,\mbox{[},\mbox{]},, \\\cline{1-2}
+\end{longtabu}

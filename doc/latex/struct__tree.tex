@@ -1,0 +1,37 @@
+\hypertarget{struct__tree}{}\doxysection{\+\_\+tree Struct Reference}
+\label{struct__tree}\index{\_tree@{\_tree}}
+
+
+{\ttfamily \#include $<$tree.\+h$>$}
+
+\doxysubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{struct__tree_a457bc7b2372e8940d89a573dc620ffab}\label{struct__tree_a457bc7b2372e8940d89a573dc620ffab}} 
+struct \mbox{\hyperlink{struct__node}{\+\_\+node}} $\ast$ {\bfseries root}
+\item 
+\mbox{\Hypertarget{struct__tree_ab061b1734bc379f7913aa660ffbdadb5}\label{struct__tree_ab061b1734bc379f7913aa660ffbdadb5}} 
+int {\bfseries depth}
+\item 
+\mbox{\Hypertarget{struct__tree_aea124646cfcdcf393e477490fd2ab19b}\label{struct__tree_aea124646cfcdcf393e477490fd2ab19b}} 
+int {\bfseries size}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure Definition
+
+The tree \mbox{\hyperlink{struct__tree}{\+\_\+tree}} structure is used to wrap the tree of \mbox{\hyperlink{struct__node}{\+\_\+node}}\textquotesingle{}s with a pointer to the root of the tree \+\_\+node$\ast$ root, and a size and depth to the tree. This struct is used very little at this time, and is saved for future use.
+
+struct \mbox{\hyperlink{struct__tree}{\+\_\+tree}} \begin{DoxyVerb}struct _node *root: A pointer to the root _node of the tree
+
+int depth: The depth of the tree, ie, the maximum edges from the,
+            lowest child to the root.
+
+int size: The total amount of _nodes in the tree.
+\end{DoxyVerb}
+ 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/tree.\+h\end{DoxyCompactItemize}
