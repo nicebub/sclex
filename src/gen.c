@@ -1,5 +1,6 @@
 #include "../include/gen.h"
 #include <string.h>
+#include <stdint.h>
 void use_later(void){
 	/*
 */
