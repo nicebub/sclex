@@ -10,7 +10,7 @@ I wrote Sclex as my first project to get back into programming after **15** *yea
      Now I am currently motivated to work on this program again. I hope to turn this experiment and
      learning-to-code-again experience into something understandable and useful.
 
-###Other Goals
+##Other Goals
  You may notice a lack of the use of the C Standard Library and my own weaker versions of certain existing code written out.  This is on purpose.  As I DON'T REALLY WANT to REINVENT THE WHEEL, there is a reason.
    I intend on trying to recompile Sclex with my own C compiler when that is finished and I don't expect to be able to have support for the C Standard Library off of the bat.  Therefore with that in mind, I am trying to limit and or remove Library usage (FOR NOW) until I can compile sclex with my compiler.
    Eventually, once I do add support for the C Standard Library to the compiler, I can rework Sclex to include existing Library code, thus making it more efficent, clean, portable, and reusable.
