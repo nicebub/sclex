@@ -35,7 +35,7 @@ $(OUT): $(OUTFILE)
 $(OUTFILE):
 	
 $(BUILDDIR)/%.o: %.s | $(BUILDDIR)
-	$(CC) $(CFLAGS) -c $< -o $@ --static
+	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.o: %.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h 
