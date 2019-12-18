@@ -1,11 +1,11 @@
-# Sclex
-> A Lexical Analyzer Generator written in **C**.
+# sclex
+> A Lexical Analyzer Generator written in **C** -- currently only works on OS X.
 ## General
-Sclex follows the same specifications that ***lex*** and **GNU *flex*** follow, *except* for what hasn't
+sclex follows the same specifications that ***lex*** and **GNU *flex*** follow, *except* for what hasn't
      been implemented *yet*.
 
 ## Background
-I wrote Sclex as my first project to get back into programming after **15** *years*.  I am currently
+I wrote sclex as my first project to get back into programming after **15** *years*.  I am currently
      adding documentation after having rushed to complete it before my other job started. 
      Now I am currently motivated to work on this program again. I hope to turn this experiment and
      learning-to-code-again experience into something understandable and useful.
