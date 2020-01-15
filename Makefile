@@ -11,7 +11,8 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -no-pie
+CFLAGS= -I $(INCLUDEDIR)
+#CFLAGS= -I $(INCLUDEDIR) -no-pie
 
 FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
 AFILES := $(subst $(SRCDIR)/,,$(wildcard src/*.s))
