@@ -32,11 +32,20 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	acnt = 0;
 	num_tabs = 7;
 	if((outfile = fopen("sclex.yy.c","w"))!=NULL){
+#if defined(__linux__)
+		extern uint8_t _blob[];
+		extern int _blob_size;
+#else
 		extern uint8_t blob[];
 		extern int blob_size;
+#endif
 		FILE* temp_file = NULL;
 		if((temp_file = fopen("outfile.in","w"))!=NULL){
+#if defined(__linux__)
+			fwrite(_blob,1,_blob_size,temp_file);
+#else
 			fwrite(blob,1,blob_size,temp_file);
+#endif
 			fclose(temp_file);
 		}
 	    if((infile = fopen("outfile.in","r")) != NULL){
