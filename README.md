@@ -1,5 +1,5 @@
 # sclex
-> A Lexical Analyzer Generator written in **C** -- currently only works on OS X.
+> A Lexical Analyzer Generator written in **C** -- currently works on Linux and OS X.
 ## General
 sclex follows the same specifications that ***lex*** and **GNU *flex*** follow, *except* for what hasn't
      been implemented *yet*.
