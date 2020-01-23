@@ -2,8 +2,9 @@
 #define inline
 #endif
 
+#define _POSIX_C_SOURCE 200809L
+#include <strings.h>
 #include "../include/type.h"
-
 struct _type * create_type(const char* name, const int value,  struct _type *components);
 void delete_type(struct _type * t);
 
