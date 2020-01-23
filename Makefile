@@ -1,4 +1,4 @@
-CC= /usr/bin/gcc
+CC= gcc
 YACC= bison
 BUILDDIR= build
 LIBDIR= lib
@@ -11,7 +11,10 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR)
+CFLAGS= -I $(INCLUDEDIR) -ansi -Wpedantic
+#CFLAGS= -I $(INCLUDEDIR) -ansi
+#CFLAGS= -I $(INCLUDEDIR) -std=c90
+#CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
 #CFLAGS= -I $(INCLUDEDIR) -no-pie
 
 FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))

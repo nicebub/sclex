@@ -8,6 +8,9 @@ children, they are 'leaves' of the tree. Some _nodes 'internal'
 may have only 1 child. 1 _node is the root of the tree.
 */
 
+#ifdef __STRICT_ANSI__
+#define inline
+#endif
 #include "../include/tree.h"
 /** Function Prototype 
 
@@ -259,6 +262,7 @@ Results: The tree is dsiplayed on standard output
 */
 void display_tree(struct _node* n){
     if(n){
+	   char rq;
 	   if(n->value >= (char)CHARSET && n->value <= (char)COMMA)
 		  switch(n->value){
 			 case (char) COMMA:
@@ -289,7 +293,6 @@ void display_tree(struct _node* n){
 				break;
 
 		  }
-	   char rq;
 	   switch(n->value){
 		  case (char)EMPTY:
 			 rq = '\0';
@@ -352,7 +355,7 @@ struct _ta * create_ta(int size){
     struct _ta *temp;
     temp = NULL;
 	
-//    int asize =100;
+/*    int asize =100;*/
 	/* TODO add statements to check to see if either of these mallocs were successful
 		or not */
     temp = malloc(sizeof(*temp));
@@ -369,11 +372,14 @@ struct _ta * create_ta(int size){
     temp->action_array = malloc(sizeof(char*)*size);
     temp->Fstates = malloc(sizeof(*temp->Fstates)*size);
 	/* we have size _tree's in our array of size 'size'. */
-    for(int r=0;r<size;r++){
+	{
+		int r;
+    for(r=0;r<size;r++){
 	   temp->t[r] = NULL;
 	   temp->action_array[r] = NULL;
 	   temp->Fstates[r] = NULL;
     }
+}
     temp->atop = NULL;
     temp->size = 0;
     temp->used = 0;
@@ -407,12 +413,15 @@ void delete_ta(struct _ta * ta){
 	   delete_root(ta->atop);
 	   ta->atop = NULL;
 	   /* free other data structures we've created over our use */
-	   for(int f=0;f<ta->used;f++){
-		  ta->t[f] = NULL;
-		  free(ta->action_array[f]);
-		  ta->action_array[f] = NULL;
-		  delete_iset(ta->Fstates[f]);
-		  ta->Fstates[f] = NULL;
+	   {
+		   int f;
+		   for(f=0;f<ta->used;f++){
+		 	 ta->t[f] = NULL;
+		 	 free(ta->action_array[f]);
+		  	ta->action_array[f] = NULL;
+			  delete_iset(ta->Fstates[f]);
+			  ta->Fstates[f] = NULL;
+	  	 }
 	   }
 	   free(ta->action_array);
 	   ta->action_array = NULL;

@@ -4,6 +4,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
     char *decs;
     int scount =0;
     char d;
+  char **t;
     decs = NULL;
     while((*c = getchar(mbuf))!= EOF && *c !='\0'){
 	   if(*c == '%'){
@@ -16,7 +17,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 			 *c = getchar(mbuf);
 			 while(is_ws(*c) == 0)
 				*c = getchar(mbuf);
-			// return decs;
+			 /* return decs; */
 			 break;
 		  }
 		  else{
@@ -35,15 +36,16 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 	   read_definitions(mbuf,c,file);
 	   if(*file->defs != NULL){
 		  printf("found definitions, they are as follows\n");
-		  char **t;
 		  t = file->defs;
 		  while(*t != NULL){
 			 printf("Definition Name: %s Definition Value %s\n",t[0],t[1]);
 			 t += 2;
 		  }
 		  file->defbuf = malloc(sizeof(buffer*)*file->num_defs);
-		  for(int y=0;y<file->num_defs;y++){
-			 file->defbuf[y] = buffer_from_string(file->defs[(2*y)+1]);
+		  {
+			  int y;
+			  for(y=0;y<file->num_defs;y++)
+			 	 file->defbuf[y] = buffer_from_string(file->defs[(2*y)+1]);
 		  }
 	   }
 	   return decs;
@@ -54,15 +56,23 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 
 void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     char *** defbuf = &file->defs;
-    file->num_defs = 0;
     int count,num_def;
+	int curlen;
+   int olast;
+	    file->num_defs = 0;
     *defbuf = malloc(sizeof(char*)*50);
-    for(int a=0;a<50;a++)
-	   (*defbuf)[a] = NULL;
+	{
+		int a;
+    	for(a=0;a<50;a++)
+	   	 (*defbuf)[a] = NULL;
+	}
     num_def = 0;
-    for(int a=0;a<50;a+=2){
+	{
+	int a;
+    for(a=0;a<50;a+=2){
 	   if(a == 12)
 		  ;
+   }
 defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 		  *c = getchar(mbuf);
 	   if(*c == '%'){
@@ -73,16 +83,22 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 			 *c = getchar(mbuf);
 			 file->num_defs = num_def;
 			 return;
-//			 break;
+			 /*			 break; */
 		  }
 	   }
 	   (*defbuf)[a] = malloc(sizeof(char)*25);
 	   (*defbuf)[a+1] = malloc(sizeof(char)*60);
-	   for(int b=0;b<24;b++)
-		  (*defbuf)[a][b] = ' ';
+	   {
+		   int b;
+	   	for(b=0;b<24;b++)
+			  (*defbuf)[a][b] = ' ';
+	   }
 	   (*defbuf)[a][24] = '\0';
-	   for(int b=0;b<59;b++)
-		  (*defbuf)[a+1][b] = ' ';
+	   {
+		   int b;
+			for(b=0;b<59;b++)
+			  (*defbuf)[a+1][b] = ' ';
+	   }
 	   (*defbuf)[a+1][59] = '\0';
 	   count =0;
 	   while(is_ws(*c) !=0){
@@ -92,7 +108,9 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 	   }
 	   (*defbuf)[a][count] = '\0';
 	   num_def++;
-	   for(int g=0;g<(num_def*2)-2;g+=2){
+	   {
+	   int g;
+	   for(g=0;g<(num_def*2)-2;g+=2){
 		  if(strcmp((*defbuf)[g],(*defbuf)[a])==0){
 			 free((*defbuf)[a]);
 			 free((*defbuf)[a+1]);
@@ -106,11 +124,12 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 			 goto defbegin;
 		  }
 	   }
+   }
 	   count = 0;
-	   int curlen = 25;
+	   curlen = 25;
 	   while(is_ws(*c) == 0)
 		  *c = getchar(mbuf);
-	   int olast = -1;
+		   olast = -1;
 	   while(*c != '\n'){
 		  switch(*c){
 			 case '{':
@@ -119,15 +138,15 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 					   	*c = getchar(mbuf);
 					   	*c = getchar(mbuf);
 					   	if(*c == ','){
-						    // found a range so put characters back and keep reading
+						    /* found a range so put characters back and keep reading*/
 						    ungetchar(mbuf);
 						    ungetchar(mbuf);
 						    ungetchar(mbuf);
 						    *c = getchar(mbuf);
-						    // continue to default section of switch statement
+						    /* continue to default section of switch statement*/
 				    		}
 				    		else{
-						    // found a definition use
+						    /* found a definition use*/
 						    char defname[25];
 						    int dnlen = 0;
 						    ungetchar(mbuf);
@@ -139,11 +158,13 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 							   dnlen++;
 						    }
 						    defname[dnlen] = '\0';
-						    for(int g=0;g<(num_def*2)-2;g+=2){
+							{
+							int g;
+						    for(g=0;g<(num_def*2)-2;g+=2){
 							   if(strcmp((*defbuf)[g],defname)==0){
-//								  printf("definition already exists and is earlier\n");
+/*								  printf("definition already exists and is earlier\n");*/
 								  char *ty;
-//								  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));
+/*								  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));*/
 								  curlen += strlen((*defbuf)[g+1]);
 								  (*defbuf)[a+1] = realloc((*defbuf)[a+1],sizeof(char)*(curlen+3));
 								  ty = (*defbuf)[g+1];
@@ -157,23 +178,24 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 								  (*defbuf)[a+1][count] = ')';
 								  count++;
 								  break;
-								//  olast = *c;
-								 // *c = getchar(mbuf);
+								/*  olast = *c;*/
+								 /* *c = getchar(mbuf);*/
 							   }
 						    }
+						}
 						    olast = *c;
 						    *c = getchar(mbuf);
 						    continue;
 				    		}
 				    	}
 				    	else{
-					    // found previous escape so keep reading
-					    // continue to default section of switch statement
+					    /* found previous escape so keep reading*/
+					    /* continue to default section of switch statement*/
 
 				    	}
 				}
 				else{
-				    // found a definition use
+				    /* found a definition use*/
 				    char defname[25];
 				    int dnlen = 0;
 				    *c = getchar(mbuf);
@@ -183,11 +205,13 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 					   dnlen++;
 				    }
 				    defname[dnlen] = '\0';
-				    for(int g=0;g<(num_def*2)-2;g+=2){
+					{
+					int g;
+				    for(g=0;g<(num_def*2)-2;g+=2){
 					   if(strcmp((*defbuf)[g],defname)==0){
-//						  printf("definition already exists and is earlier\n");
+/*						  printf("definition already exists and is earlier\n");*/
 						  char *ty;
-//						  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));
+/*						  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));*/
 						  curlen += strlen((*defbuf)[g+1]);
 						  (*defbuf)[a+1] = realloc((*defbuf)[a+1],sizeof(char)*(curlen+3));
 						  ty = (*defbuf)[g+1];
@@ -201,10 +225,11 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 						  (*defbuf)[a+1][count] = ')';
 						  count++;
 						  break;
-						  //  olast = *c;
-						  // *c = getchar(mbuf);
+						  /*  olast = *c;*/
+						  /* *c = getchar(mbuf);*/
 					   }
 				    }
+				}
 				    olast = *c;
 				    *c = getchar(mbuf);
 				    continue;
