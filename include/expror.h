@@ -1,7 +1,7 @@
 #ifndef MEXPROR_H
 #define MEXPROR_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "retodfa.h"
 #include "lex_error.h"

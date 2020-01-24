@@ -1,7 +1,7 @@
 #ifndef SCLEXDRIVER_H
 #define SCLEXDRIVER_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "set.h"
 #include "funcs.h"

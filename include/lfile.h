@@ -10,7 +10,7 @@ and accumulate other data to make a final output source file.
 #ifndef MLFILE_H
 #define MLFILE_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "set.h"
 

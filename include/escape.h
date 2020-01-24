@@ -1,7 +1,7 @@
 #ifndef MESCAP_H
 #define MESCAP_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
 

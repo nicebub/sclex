@@ -1,7 +1,7 @@
 #ifndef MREGEX_H
 #define MREGEX_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
 #include "expror.h"

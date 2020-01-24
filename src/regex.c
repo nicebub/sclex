@@ -1,5 +1,5 @@
 #include "../include/regex.h"
-
+#include <string.h>
 struct _node* regexp(struct _ta ** ta,buffer * mbuf, char *c, struct _lfile* lfile){
     struct _node * temp;
     temp = NULL;

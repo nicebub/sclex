@@ -1,7 +1,7 @@
 #ifndef MDECS_H
 #define MDECS_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "funcs.h"
 #include "lfile.h"
 

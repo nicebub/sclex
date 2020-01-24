@@ -1,7 +1,7 @@
 #ifndef MTRANSLAT_H
 #define MTRANSLAT_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "set.h"
 #include "tree.h"
 #include "lfile.h"

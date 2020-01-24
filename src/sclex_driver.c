@@ -8,7 +8,6 @@ input stream.
 */
 
 #include "../include/sclex_driver.h"
-
 /** Function Prototype
         struct _ta *parse_file(buffer * mbuf,char *c, struct _lfile*);
 
@@ -151,6 +150,7 @@ int main(int argc, const char **argv) {
 
 /* initialize buffer from filename given */
 #define ARGUMENT_IS_FILENAME 1
+  init_base_buffer_vtable();
   mbuf = buffer_from_filename(argv[ARGUMENT_IS_FILENAME]);
 
   /* If the file is a .l file, this will start to parse the
