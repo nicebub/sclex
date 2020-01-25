@@ -107,8 +107,11 @@ base_buffer* base_buffer_from_file(FILE* infile){
     refresh_buffer(mbuf,0);
     
 	/* clear 2nd half of buffer until later */
-    for(int b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
+	{
+		int b;
+    for(b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
 	   mbuf->buf[b]=' ';
+	}
     
     return mbuf;
 }
@@ -141,9 +144,11 @@ base_buffer* base_buffer_from_filename(const char * name){
     refresh_buffer(mbuf,0);
 
 	/* clear the lower half of the buffer */
-    for(int b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
+	{
+		int b;
+    for(b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
 	   mbuf->buf[b]=' ';
-
+	}
     return mbuf;
 }
 

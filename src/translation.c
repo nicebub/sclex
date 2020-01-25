@@ -41,24 +41,33 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
     }
 	/* initialize each regular expressions' firstpos set or print an error and
 		return NULL if issues arise */
-    for(int r=0;r<file->fpos->size;r++){
+	{
+		int r;
+    for(r=0;r<file->fpos->size;r++){
 	   file->fpos->iset[r] = create_iset(file->fpos->size);
 	   if(file->fpos->iset[r] == NULL){
 		  lex_error(5);
 		  return NULL;
 	   }
     }
+}
 	/* still initializing more of the firstpos sets */
-    for(int r=file->fpos->size;r<SETSIZE;r++)
+{
+	int r;
+    for(r=file->fpos->size;r<SETSIZE;r++)
 	   file->fpos->iset[r] = NULL;
+}
     file->fpos->used = file->fpos->size;
 	/* Currently just some debugging information and construction statistics */
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
-    for(int h=0;h<file->tree->used;h++){
+	{
+		int h;
+    for(h=0;h<file->tree->used;h++){
 		  printf("REGEX\n");
 		  display_tree(file->tree->t[h]);
 		  printf("\n");
     }
+}
     printf("\n");
 
 	/* create the entire followpos set on the entire tree of regular expressions */

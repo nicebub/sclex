@@ -1,4 +1,4 @@
-CC= /usr/bin/gcc
+CC= gcc
 YACC= bison
 DEBUG = -g
 BUILDDIR= build
@@ -14,6 +14,9 @@ vpath %.so lib
 vpath %.la lib
 VPATH= src:include
 CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment
+#CFLAGS= -I $(INCLUDEDIR) -ansi
+#CFLAGS= -I $(INCLUDEDIR) -std=c90
+#CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
 #CFLAGS= -I $(INCLUDEDIR) -no-pie
 
 FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
