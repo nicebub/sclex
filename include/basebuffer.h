@@ -1,5 +1,5 @@
-#ifndef BUFFER_CLASS_H
-#define BUFFER_CLASS_H
+#ifndef _BASE_BUFFER_CLASS_H
+#define _BASE_BUFFER_CLASS_H
 
 #include <stdio.h>
 /* Buffer is 8K Bytes */

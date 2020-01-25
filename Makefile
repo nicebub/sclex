@@ -13,7 +13,7 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -Wno-comment
+CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment
 #CFLAGS= -I $(INCLUDEDIR) -no-pie
 
 FILES := $(subst $(SRCDIR)/,,$(wildcard src/*.c))
@@ -30,8 +30,8 @@ NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
 
 .PHONY: all clean run $(BUILDDIR)
 	
-$(NEWCLASSOBJS): $(NEWFILES) | $(BUILDDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+#$(NEWCLASSOBJS): $(NEWFILES) | $(BUILDDIR)
+#	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.o: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.d: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h 
@@ -42,8 +42,8 @@ all: $(BUILDDIR)/sclex
 	
 $(BUILDDIR):
 	[ -d $(BUILDDIR) ] || mkdir -p $(BUILDDIR)
-sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TESTDIR)/lex.l
-	$(BUILDDIR)/sclex $(TESTDIR)/lex.l
+$(SRCDIR)/sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TESTDIR)/lex.l
+	$(BUILDDIR)/sclex $(TESTDIR)/lex.l; mv sclex.yy.c $(SRCDIR)
 $(OUT): $(OUTFILE)
 
 $(OUTFILE):
@@ -60,7 +60,7 @@ $(BUILDDIR)/sclex: $(ASSEMBLYS) $(OBJECTS) $(OUTFILE)
 run:
 	./build/sclex test/expr.l
 
-lex_driver: test/lex_test.c sclex.yy.c $(BUILDDIR)/basebuffer.o
-	$(CC) $(CFLAGS) $(DEBUG) -g $^ -o $@
+lex_driver: test/lex_test.c $(SRCDIR)/sclex.yy.c $(BUILDDIR)/basebuffer.o
+	$(CC) $(CFLAGS) $(DEBUG) -g $^ -o $(BUILDDIR)/$@
  clean:
-	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex lex_driver sclex.yy.c $(BUILDDIR)/*.o;rm -rf *.dSYM; rmdir $(BUILDDIR)
+	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o;rm -rf $(BUILDDIR)/*.dSYM; rmdir $(BUILDDIR)

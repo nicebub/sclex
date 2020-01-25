@@ -13,16 +13,16 @@ characters.
 #include <stdlib.h>
 #include "../include/basebuffer.h"
 
-static base_buffer_vtable base_vtable;
+static base_buffer_vtable vtable_base_buffer;
 
 void init_base_buffer_vtable(){
-	base_vtable.refresh_upper_buffer = &base_refresh_upper_buffer;
-	base_vtable.refresh_lower_buffer = &base_refresh_lower_buffer;
-	base_vtable.refresh_buffer = &base_refresh_buffer;
-	base_vtable.bgetchar = &base_bgetchar;
-	base_vtable.ungetchar = &base_ungetchar;
-	base_vtable.delete_buffer = &base_delete_buffer;
-	base_vtable.display_buffer = &base_display_buffer;
+	vtable_base_buffer.refresh_upper_buffer = &base_refresh_upper_buffer;
+	vtable_base_buffer.refresh_lower_buffer = &base_refresh_lower_buffer;
+	vtable_base_buffer.refresh_buffer = &base_refresh_buffer;
+	vtable_base_buffer.bgetchar = &base_bgetchar;
+	vtable_base_buffer.ungetchar = &base_ungetchar;
+	vtable_base_buffer.delete_buffer = &base_delete_buffer;
+	vtable_base_buffer.display_buffer = &base_display_buffer;
 }
 
 inline void refresh_upper_buffer(base_buffer* inbuf){
@@ -69,7 +69,7 @@ base_buffer * base_buffer_from_string(char* instring){
     mbuf->forward = mbuf->buf;
     mbuf->back = mbuf->buf;
     mbuf->type = 1;
-	mbuf->vtable = &base_vtable;
+	mbuf->vtable = &vtable_base_buffer;
     return mbuf;
 }
 
@@ -97,7 +97,7 @@ base_buffer* base_buffer_from_file(FILE* infile){
     mbuf->buf[BUFFER_LENGTH-1] = EOF;
     mbuf->buf[BUFFER_LENGTH-2] = '\0';
     mbuf->type = 0;
-	mbuf->vtable = &base_vtable;
+	mbuf->vtable = &vtable_base_buffer;
 	/* 
 	Call refresh_buffer to initialize buffer for first time
 	*/
@@ -134,7 +134,7 @@ base_buffer* base_buffer_from_filename(const char * name){
 	mbuf->buf[BUFFER_LENGTH-1] = EOF;
 	mbuf->buf[BUFFER_LENGTH-2] = '\0';
     mbuf->type = 0;
-	mbuf->vtable = &base_vtable;
+	mbuf->vtable = &vtable_base_buffer;
     refresh_buffer(mbuf,0);
 
 	/* clear the lower half of the buffer */
