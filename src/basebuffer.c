@@ -12,6 +12,9 @@ characters.
 #include <string.h>
 #include <stdlib.h>
 #include "../include/basebuffer.h"
+#ifdef __STRICT_ANSI__
+#define inline
+#endif
 
 static base_buffer_vtable vtable_base_buffer;
 
@@ -27,15 +30,15 @@ void init_base_buffer_vtable(){
 
 inline void refresh_upper_buffer(base_buffer* inbuf){
 	inbuf->vtable->refresh_upper_buffer(inbuf);
-};
+}
 
 inline void refresh_lower_buffer(base_buffer* inbuf){
 	inbuf->vtable->refresh_lower_buffer(inbuf);
-};
+}
 
 inline void refresh_buffer(base_buffer* inbuf, const int start){
 	inbuf->vtable->refresh_buffer(inbuf,start);
-};
+}
 inline void delete_buffer(base_buffer* mbuf){
 	mbuf->vtable->delete_buffer(mbuf);
 }
