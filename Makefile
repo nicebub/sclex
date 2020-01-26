@@ -26,7 +26,7 @@ OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o,$(FILES))
 ASSEMBLYS := $(patsubst %.s,$(BUILDDIR)/%.o,$(AFILES))
 DEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(FILES))
 	
-.PHONY: all clean run $(BUILDDIR)
+.PHONY: all clean $(BUILDDIR)
 	
 all: $(BUILDDIR)/sclex
 	
@@ -47,8 +47,5 @@ $(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h
 -include $(DEPS)
 $(BUILDDIR)/sclex: $(ASSEMBLYS) $(OBJECTS) $(OUTFILE)
 	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
-run:
-	./build/sclex test/expr.l
-
 clean:
 	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)
