@@ -51,7 +51,7 @@ base_buffer* base_buffer_from_filename(const char * name);
 
 base_buffer* base_buffer_from_string(char* instring);
 
-void init_base_buffer_vtable();
+void init_base_buffer_vtable(void);
 
 void refresh_upper_buffer(base_buffer* inbuf);
 

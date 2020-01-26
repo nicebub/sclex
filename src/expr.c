@@ -186,13 +186,13 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 }
 
 struct _node* apply_def(struct _cset** ta,buffer* mbuf,char* c, struct _lfile* lfile){
-    struct _node* rnode;
+/*    struct _node* rnode;*/
     buffer * tempbuf;
     char str[200];
     int e;
     char v;
     tempbuf = NULL;
-    rnode = NULL;
+/*    rnode = NULL;*/
     for(e=0;*c != '}';e++){
 	   str[e] = *c;
 	   *c = getchar(mbuf);
