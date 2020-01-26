@@ -7,7 +7,6 @@ ie, if the buffer is 8K then the backwards direction can be up to 4K of
 characters.
 
 */
-
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
@@ -252,11 +251,8 @@ buffer* buffer_from_file(FILE* infile){
     refresh_buffer(mbuf,0);
     
 	/* clear 2nd half of buffer until later */
-	{
-		int b;
-    for(b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
+    for(int b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
 	   mbuf->buf[b]=' ';
-	}
     
     return mbuf;
 }
@@ -305,11 +301,9 @@ buffer* buffer_from_filename(const char * name){
     refresh_buffer(mbuf,0);
 
 	/* clear the lower half of the buffer */
-	{
-		int b;
-    for(b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
+    for(int b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
 	   mbuf->buf[b]=' ';
-	}
+
     return mbuf;
 }
 

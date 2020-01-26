@@ -37,7 +37,7 @@ struct _type {
 
 */
 struct _tsys {
-    /* array of available types*/
+    // array of available types
     struct _type ** type;
     int size;
     int used;

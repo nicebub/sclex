@@ -45,7 +45,7 @@ struct _hr{
     int r;
     int i;
 };
-/*typedef struct _ca ** ca;*/
+//typedef struct _ca ** ca;
 
 struct _hash {
     hashbucket_array bucket;
@@ -54,7 +54,7 @@ struct _hash {
     int cused;
     int size;
     int used;
- /*   int lasth;*/
+ //   int lasth;
     int alpha;
 };
 struct _hash *create_hash(int size);

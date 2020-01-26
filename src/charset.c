@@ -33,9 +33,6 @@ struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
 
 
     int a;
- char start;
- char end;
- char m;
     a =0;
     temp = temp2 = temp3 = NULL;
 	/* either the current character meets our requirements for starting a
@@ -94,9 +91,9 @@ struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
 			 add_to_cset(ta,temp2->value);
 			 /* loop through the set and do the same for all the other characters
 			 	found in in the character range */
-			 start  = temp->value +1;
-			 end  = temp2->value;
-			 for(m=start;m<end;m++){
+			 char start = temp->value +1;
+			 char end = temp2->value;
+			 for(char m=start;m<end;m++){
 				add_to_cset(ta,m);
 				temp = create_node(m);
 				if(temp == NULL){

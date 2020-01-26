@@ -32,14 +32,12 @@ struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt){
 }
 struct _hash *create_hash(int size){
     struct _hash *h;
-	int j;
-	int i;
     int cache_size = 100;
     h = malloc(sizeof(*h));
     h->size = 0;
     h->bucket = malloc(sizeof(*(h->bucket))*size);
     h->cache = malloc(sizeof(*(h->cache))*size*cache_size);
-    for(j=0,i=0;i<size*cache_size;i++){
+    for(int j=0,i=0;i<size*cache_size;i++){
 	   h->cache[i].p = NULL;
 	   h->cache[i].pt = -1;
 	   h->cache[i].r = 0;
@@ -52,7 +50,7 @@ struct _hash *create_hash(int size){
     h->cused = 0;
     h->size = size;
     h->used = 0;
- /*   h->lasth = 0;*/
+ //   h->lasth = 0;
     h->alpha = 2;
     return h;
 }
@@ -83,13 +81,11 @@ void delete_hashnodel(struct _hashnode* hn){
 
 void delete_hash(struct _hash* h){
     if(h){
-		int t;
- 	   int a;
-	   for(t=1;t<=h->size;t++){
+	   for(int t=1;t<=h->size;t++){
 		  delete_hashnodel(h->bucket[t-1]);
 		  h->bucket[t-1] = NULL;
 	   }
-	   for(a=1;a<=h->csize;a++){
+	   for(int a=1;a<=h->csize;a++){
 		  free(h->cache[a-1].p);
 		  h->cache[a-1].p = NULL;
 	   }
@@ -203,7 +199,7 @@ void add_to_hash(struct _hash * h, void * v, int vt, void * k, int kt){
 		  temp->next = hn;
 	   }
 	   h->used++;
-/*	   h->lasth = r;*/
+//	   h->lasth = r;
     }
 }
 struct _hashnode *remove_from_hash(struct _hash* h,void* k, int kt){
@@ -245,8 +241,8 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
     char a;
     int h;
     struct _hr result;
-    size_t leng;
     h=0;
+    size_t leng;
     if(key){
 /*	   result = search_cache(s,key,kt);
 	   if(result.r != -1)
@@ -255,11 +251,8 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 		  case 0:
 			 sprintf((char*)&integer,"%d",*(int*)key);
 			 leng = strlen(integer);
-			 {
-			 int r;
-			 for(r=0;r<leng;r++)
+			 for(int r=0;r<leng;r++)
 				h = (s->alpha * h) + integer[r];
-		 }
 			 break;
 		  case 1:
 			 break;
@@ -271,11 +264,8 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 			 string = (char*)key;
 			 printf("this is string: %s\n",string);
 			 leng = strlen(key);
-			 {
-				 int r;
-			 for(r=0;r<leng;r++)
+			 for(int r=0;r<leng;r++)
 				h = (s->alpha * h) + string[r];
-		 }
 			 break;
 		  default:
 			 break;
@@ -302,8 +292,7 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 struct _hr search_cache(struct _hash * s, void * key, int kt){
     struct _hr result;
     if(s->cused <= s->csize){
-		int b;
-    for(b=1; b <= s->cused;b++){
+    for(int b=1; b <= s->cused;b++){
 	   if(s->cache[b].pt == kt){
 		  	switch (kt) {
 			    case 0:
@@ -343,8 +332,7 @@ struct _hr search_cache(struct _hash * s, void * key, int kt){
 struct _hash* combine_hashes(struct _hash* h1, struct _hash* h2){
     struct _hashnode *temp;
     if(h1 && h2){
-		int e;
-	   	for(e=0;e<h2->size;e++){
+	   	for(int e=0;e<h2->size;e++){
 		    temp=h2->bucket[e];
 		    while(temp != NULL){
 			   add_to_hash(h1,temp->value,temp->vtype,temp->key,temp->ktype);
@@ -395,8 +383,7 @@ void print_hash(struct _hash * h){
     struct _hashnode *temp;
     int a=0;
     if(h){
-		int j;
-	   for(j=0;j<h->size;j++){
+	   for(int j=0;j<h->size;j++){
 		  printf("Hash Bucket: %d\n",j);
 		  temp=h->bucket[j];
 		  while(temp != NULL){

@@ -11,7 +11,8 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -ansi -Wpedantic
+CFLAGS= -I $(INCLUDEDIR) -Wall 
+#CFLAGS= -I $(INCLUDEDIR) -ansi -Wpedantic
 #CFLAGS= -I $(INCLUDEDIR) -ansi
 #CFLAGS= -I $(INCLUDEDIR) -std=c90
 #CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
@@ -32,8 +33,8 @@ all: $(BUILDDIR)/sclex
 	
 $(BUILDDIR):
 	[ -d $(BUILDDIR) ] || mkdir -p $(BUILDDIR)
-sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TEST)/lex.l
-	$(BUILDDIR)/sclex $(TESTDIR)/lex.l
+$(SRCDIR)/sclex.yy.c: $(INCLUDEDIR)/outfile.in $(TESTDIR)/lex.l
+	$(BUILDDIR)/sclex $(TESTDIR)/lex.l; mv sclex.yy.c $(SRCDIR)
 $(OUT): $(OUTFILE)
 
 $(OUTFILE):
@@ -48,7 +49,8 @@ $(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h
 $(BUILDDIR)/sclex: $(ASSEMBLYS) $(OBJECTS) $(OUTFILE)
 	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
 run:
-	./build/sclex test/expr.l
-
+	./build/sclex test/lex.l
+$(BUILDDIR)/test: $(SRCDIR)/sclex.yy.c $(TESTDIR)/lex_test.c $(BUILDDIR)/buffer.o
+	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
 clean:
-	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)
+	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/test $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)

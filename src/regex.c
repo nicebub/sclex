@@ -20,7 +20,7 @@ struct _node* regexp(struct _ta ** ta,buffer * mbuf, char *c, struct _lfile* lfi
 				extrafrontbrackets--;
 				sbuf[scount] = *c;
 				scount++;
-				/* *c = getchar(mbuf); */
+				//*c = getchar(mbuf);
 			 }
 			 else{
 				sbuf[scount] = '}';

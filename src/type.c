@@ -1,10 +1,5 @@
-#ifdef __STRICT_ANSI__
-#define inline
-#endif
-
-#define _POSIX_C_SOURCE 200809L
-#include <strings.h>
 #include "../include/type.h"
+
 struct _type * create_type(const char* name, const int value,  struct _type *components);
 void delete_type(struct _type * t);
 
@@ -28,7 +23,7 @@ void remove_type_from_tsysn(struct _tsys *s, char * name);
 void remove_type_from_tsysv(struct _tsys *s, const int value);
 struct _type * get_type_from_name(struct _tsys *s,char * name );
 struct _type * get_type_from_value(struct _tsys *s, int value );
-/*struct _type * tpcpy(struct _type ** array);*/
+//struct _type * tpcpy(struct _type ** array);
 
 
 struct _type * create_type(const char* name, const int value,  struct _type *components){
@@ -87,8 +82,7 @@ inline struct _type * get_type_comp(struct _type * t){
 }
 void delete_tsys(struct _tsys * s){
     if(s){
-		int e;
-	   for(e=0;e<s->used;e++){
+	   for(int e=0;e<s->used;e++){
 		  delete_type(s->type[e]);
 		  s->type[e]= NULL;
 	   }
@@ -100,9 +94,8 @@ void delete_tsys(struct _tsys * s){
 }
 
 inline void init_tsys(struct _tsys * s, int size){
-	int a;
     s->type = malloc(sizeof(struct _type*)*size);
-    for(a=0;a<size;a++)
+    for(int a=0;a<size;a++)
 	   s->type[a] = NULL;
     s->size = size;
     s->used = 0;
@@ -111,9 +104,8 @@ inline void enlarge_type_array(struct _type ** array, const int add){
     struct _type ** newa;
     int zz = sizeof(*array);
     if(add >0){
- 	   int v;
 	   newa = realloc(array,zz+(sizeof(struct _type*)*add));
-	   for(v=0;v<add;v++)
+	   for(int v=0;v<add;v++)
 		  newa[zz+v] = NULL;
     }
 }
@@ -197,25 +189,19 @@ struct _type *get_type_from(struct _tsys *s, void * v, int type){
 	   switch(type){
 		  case 2:
 			 name = (char*)v;
-			 {
-				 int k;
-				for(k=0;k<s->used;k++){
+				for(int k=0;k<s->used;k++){
 				    if(strcmp(s->type[k]->name,name)){
 					   return s->type[k];
 				    }
 				}
-			}
 			 break;
 		  case 0:
 			 	value = *(int*)v;
-				{
-					int k;
-				for(k=0;k<s->used;k++){
+				for(int k=0;k<s->used;k++){
 				    if(s->type[k]->value == value){
 					   return s->type[k];
 				    }
 				}
-			}
 			 break;
 	   }
     }

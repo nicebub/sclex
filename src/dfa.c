@@ -14,14 +14,6 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
     int a;
     int which_re, current_re;
     int sets;
-    struct _iset *fpt;
-    struct _node *tn;
-    int **tTran;
-    struct _iset ***tDUTran;
-    struct _iset * Fstates;
-    struct _iset * FFstates;
-    int lastpos;
-    int fcount;
     Dstates = NULL;
     temps = temps2 = NULL;
     U = NULL;
@@ -39,33 +31,23 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
     }
     Dtran = malloc(sizeof(int*)*al->used);
     DUTran = malloc(sizeof(struct _iset**)*al->used);
-	{
-		int we;
-		for(we=0;we<al->used;we++){
-	   	Dtran[we] = malloc(sizeof(int)*it->used);
-		   DUTran[we] = malloc(sizeof(struct _iset*)*it->used);
-    	}
-	}
-{
-	int i;
-    for(i=0;i<al->used;i++){
-		int j;
-	   for(j=0;j<it->used;j++){
+    for(int we=0;we<al->used;we++){
+	   Dtran[we] = malloc(sizeof(int)*it->used);
+	   DUTran[we] = malloc(sizeof(struct _iset*)*it->used);
+    }
+    for(int i=0;i<al->used;i++){
+	   for(int j=0;j<it->used;j++){
 		  Dtran[i][j] = -1;
 		  DUTran[i][j] = create_iset(it->used);
 	   }
     }
-}
-{
-	int bb;
-    for(bb=0;bb<it->used;bb++){
+    for(int bb=0;bb<it->used;bb++){
 	   Dstates->iset[bb] = create_iset(it->used);
 	   if(Dstates->iset[bb] == NULL){
 		  printf("couldn't create new Dstates state\n");
 		  return NULL;
 	   }
     }
-}
     marked = malloc(sizeof(int)*it->used);
     unmarked = malloc(sizeof(int)*it->used);
     for(a=0;a<it->used;a++){
@@ -73,7 +55,7 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 	   unmarked[a] = -1;
     }
     temps = Dstates->iset[sets];
-	fpt = firstpos(&tree->atop);
+    struct _iset *fpt = firstpos(&tree->atop);
     temps2 = merge_isets(temps,fpt);
     add_iset_to_sa(temps2,Dstates);
     delete_iset(temps);
@@ -88,48 +70,43 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 	   if(unmarked[a] ==1)
 		  break;
     }
+    struct _node *tn;
     tn = NULL;
-/*    printf("Starting State added, it is\n");*/
-/*    display_set(Dstates->iset[0],0);*/
+//    printf("Starting State added, it is\n");
+//    display_set(Dstates->iset[0],0);
     while(a < sets){
-		int same;
- 	   int j;
 	   unmarked[a] =0;
 	   marked[a] = 1;
-	   for(j=0;j<al->used;j++){
-/*		  printf("creating new U set to use\n");*/
+	   for(int j=0;j<al->used;j++){
+//		  printf("creating new U set to use\n");
 		  U = create_iset(it->used);
 		  if(U == NULL){
 			 printf("couldn't create new U\n");
 			 return NULL;
 		  }
-		  {
-		  int g;
-		  for(g=0;g<Dstates->iset[a]->used;g++){
+		  for(int g=0;g<Dstates->iset[a]->used;g++){
 			 tn = get_node_for_uniq(tree->atop,Dstates->iset[a]->s[g]);
 			 if(tn->value == al->s[j]){
-/*				printf("alphabet symbol %c from state %d for position %d\n", \
-					  al->s[j],a+1,Dstates->iset[a]->s[g]);*/
+//				printf("alphabet symbol %c from state %d for position %d\n", \
+					  al->s[j],a+1,Dstates->iset[a]->s[g]);
 				temps = U;
 				U = merge_isets(U,it->iset[Dstates->iset[a]->s[g]-1]);
 				U->uniq = sets;
-/*				printf("U created: displaying ");*/
-/*				display_set(U,0);*/
-/*				printf("Adding to DUTran and displaying\n");*/
+//				printf("U created: displaying ");
+//				display_set(U,0);
+//				printf("Adding to DUTran and displaying\n");
 				add_to_iset(&DUTran[j][a],Dstates->iset[a]->s[g]);
 				delete_iset(temps);
 				temps = NULL;
 				temps = U;
 			 }
 		  }
-	  }
-				same  = 0;
+				int same = 0;
 				if(U->used != 0){
-/*				    printf("U is not empty\n");*/
-					int z;
-				    for(z=0;z<Dstates->used;z++){
+//				    printf("U is not empty\n");
+				    for(int z=0;z<Dstates->used;z++){
 					   	if(isets_are_same(U,Dstates->iset[z])){
-/*						    printf("set already in Dstates\n");*/
+//						    printf("set already in Dstates\n");
 						    U->uniq = Dstates->iset[z]->uniq;
 						    same = 1;
 						    break;
@@ -140,7 +117,7 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 				    if(same != 1){
 					   struct _iset * Fstates;
 					   Fstates = NULL;
-/*					   	printf("haven't seen this state yet\n");*/
+//					   	printf("haven't seen this state yet\n");
 					   	U->uniq = sets+1;
 					   	add_iset_to_sa(U,Dstates);
 					   delete_iset(U);
@@ -163,24 +140,18 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 		  }
 	   }
     }
-/*    printf("DONE CREATING DFA STATES\n");*/
-/*    printf("THEY ARE AS FOLLOWS\n");*/
-/*    for(int j=0;j<Dstates->used;j++)*/
-/*	   display_set(Dstates->iset[j],0);*/
-	tTran = malloc(sizeof(int*)*al->used);
-	tDUTran= malloc(sizeof(struct _iset **)*al->used);
-	{
-	int we;
-    	for(we=0;we<al->used;we++){
-			tTran[we] = malloc(sizeof(int)*Dstates->used);
-	   		tDUTran[we] = malloc(sizeof(struct _iset *)*Dstates->used);
-		}
-}
-{
-	int i;
-    for(i=0;i<al->used;i++){
-		int j;
-	   for(j=0;j<Dstates->used;j++){
+//    printf("DONE CREATING DFA STATES\n");
+//    printf("THEY ARE AS FOLLOWS\n");
+//    for(int j=0;j<Dstates->used;j++)
+//	   display_set(Dstates->iset[j],0);
+    int **tTran = malloc(sizeof(int*)*al->used);
+    struct _iset ***tDUTran = malloc(sizeof(struct _iset **)*al->used);
+    for(int we=0;we<al->used;we++){
+	   tTran[we] = malloc(sizeof(int)*Dstates->used);
+	   tDUTran[we] = malloc(sizeof(struct _iset *)*Dstates->used);
+    }
+    for(int i=0;i<al->used;i++){
+	   for(int j=0;j<Dstates->used;j++){
 		  tTran[i][j] = Dtran[i][j];
 		  tDUTran[i][j] = DUTran[i][j];
 		  DUTran[i][j] = NULL;
@@ -190,66 +161,58 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 	   Dtran[i] = NULL;
 	   DUTran[i] = NULL;
     }
-}
     free(Dtran);
     free(DUTran);
     Dtran = NULL;
     DUTran = NULL;
-/*    printf("Dtran table computed\n");*/
+//    printf("Dtran table computed\n");
     printf("Alphabet Symbol \n");
     printf("S|");
-	{
-		int i;
-		for(i=0;i<al->used;i++){
-		   printf("|%c",al->s[i]);
-		}
-	}
+    for(int i=0;i<al->used;i++){
+	   printf("|%c",al->s[i]);
+    }
     printf("|\n");
-	{
-		{
-		int r;
-		for(r=0;r<Dstates->used;r++){
-			int i;
-			printf("%d|",r+1);
-	   	 	for(i=0;i<al->used;i++){
-		 	   if(tTran[i][r] != -1)
-				   printf("|%d", tTran[i][r]);
-			   else
-				   printf("|x");
-		   }
-		   printf("|\n");
- 	   }
-   }
-}
+    for(int r=0;r<Dstates->used;r++){
+	   printf("%d|",r+1);
+	   for(int i=0;i<al->used;i++){
+		  if(tTran[i][r] != -1)
+			 printf("|%d", tTran[i][r]);
+		  else
+			 printf("|x");
+	   }
+	   printf("|\n");
+
+    }
 /*    printf("DUTran table computed and going to print all sets\n");
     for(int r=0;r<Dstates->used;r++){
 	   for(int i=0;i<al->used;i++){
 		  display_set(tDUTran[i][r],0);
 	   }
     }*/
-/*    printf("number of states %d\n", Dstates->used);*/
-/*    printf("Start State: %d\n",Dstates->iset[0]->uniq);*/
+//    printf("number of states %d\n", Dstates->used);
+//    printf("Start State: %d\n",Dstates->iset[0]->uniq);
     dfa = create_dfa();
     if(dfa == NULL){
 	   printf("couldn't create new DFA\n");
 	   return NULL;
     }
     dfa->Dtran = tTran;
+    struct _iset * Fstates;
+    struct _iset * FFstates;
+    int lastpos;
+    int fcount;
     FFstates = NULL;
     FFstates = create_iset(100);
-/*	printf("number of regular expressions found %d\n",tree->num_re);*/
-	{
-	int k;
-    for(k=0;k<tree->num_re;k++){
-		int y;
+//	printf("number of regular expressions found %d\n",tree->num_re);
+    for(int k=0;k<tree->num_re;k++){
 	   	Fstates = NULL;
 	   	lastpos = tree->finalpos[k];
-/*    printf("Finish States for the whole file RE: \n");*/
+//    printf("Finish States for the whole file RE: \n");
 	   	fcount = 0;
-/*    printf("Position using for last state: %d\n",lastpos);*/
-	   	for(y=0;y<Dstates->used;y++){
+//    printf("Position using for last state: %d\n",lastpos);
+	   	for(int y=0;y<Dstates->used;y++){
 		    if(is_in_iset(Dstates->iset[y],lastpos)==0){
-/*		  	  printf("State %d is in finish states\n",y+1);*/
+//		  	  printf("State %d is in finish states\n",y+1);
 			   fcount++;
 		    }
     		}
@@ -258,21 +221,17 @@ struct _DFA* generate_dfa(struct _ta *tree,struct _iseta * it, struct _cset *al)
 		    printf("couldn't create new Fstates\n");
 		    return NULL;
     		}
-			{
-				int y;
-	   			for(y=0;y<Dstates->used;y++){
-		    		if(is_in_iset(Dstates->iset[y],lastpos)==0){
-/*		  printf("Adding State %d to finish states\n",y+1);*/
-						add_to_iset(&Fstates,y+1);
-						add_to_iset(&FFstates,y+1);
-		   		 	}
-				}
-			}
+	   	for(int y=0;y<Dstates->used;y++){
+		    if(is_in_iset(Dstates->iset[y],lastpos)==0){
+//		  printf("Adding State %d to finish states\n",y+1);
+			   add_to_iset(&Fstates,y+1);
+			   add_to_iset(&FFstates,y+1);
+		    }
+    		}
 	   tree->Fstates[k] = Fstates;
     }
-}
-  /*  printf("final finish state set for the whole file RE\n");*/
-/*    display_set(FFstates,0);*/
+  //  printf("final finish state set for the whole file RE\n");
+//    display_set(FFstates,0);
 
     dfa->FFstates = FFstates;
     dfa->Fstates = tree->Fstates;
@@ -305,12 +264,10 @@ struct _DFA* create_dfa(void){
 }
 void delete_dfa(struct _DFA* dfa){
     if(dfa){
- 	   int b;
 	   free(dfa->Dtran);
 	   dfa->Dtran = NULL;
-	   for(b=0;b<dfa->alphabet->used;b++){
-		   int a;
-		  for(a=0;a<dfa->num_states;a++){
+	   for(int b=0;b<dfa->alphabet->used;b++){
+		  for(int a=0;a<dfa->num_states;a++){
 			 delete_iset(dfa->DUTran[b][a]);
 			 dfa->DUTran[b][a] = NULL;
 		  }
