@@ -1,4 +1,4 @@
-CC= gcc
+CC= gcc-9
 YACC= bison
 DEBUG = -g
 BUILDDIR= build
@@ -7,6 +7,7 @@ INCLUDEDIR= include
 SRCDIR= src
 NEWSRC = new
 TESTDIR= test
+UNITDIR=unit
 vpath %.c src
 vpath %.s src
 vpath %.h include
@@ -14,6 +15,7 @@ vpath %.so lib
 vpath %.la lib
 VPATH= src:include
 CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment
+UNITFLAGS = -I $(INCLUDEDIR)/new/
 #CFLAGS= -I $(INCLUDEDIR) -ansi
 #CFLAGS= -I $(INCLUDEDIR) -std=c90
 #CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
@@ -31,10 +33,18 @@ NEWFILES := $(wildcard $(SRCDIR)/$(NEWSRC)/*.c)
 NEWCLASSOBJS := $(patsubst $(SRCDIR)/$(NEWSRC)/%.c, $(BUILDDIR)/%.o, $(NEWFILES))
 NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
 
-.PHONY: all clean run $(BUILDDIR)
+UTESTABLES := $(wildcard $(SRCDIR)/new/*.c)
+UTESTFILES :=  $(patsubst $(SRCDIR)/new/%.c,$(TESTDIR)/$(UNITDIR)/%_test.c,$(UTESTABLES))
+#UTESTFILES :=  $(wildcard $(TESTDIR)/$(UNITDIR)/*.c)
+UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
+
+.PHONY: all clean run unit_tests $(BUILDDIR)
 	
-#$(NEWCLASSOBJS): $(NEWFILES) | $(BUILDDIR)
-#	$(CC) $(CFLAGS) -c $< -o $@
+unit_tests: $(UTESTABLES) $(UNITTESTS)
+
+$(TESTDIR)/$(UNITDIR)/%_test: $(SRCDIR)/new/%.c $(INCLUDEDIR)/new/%.h $(TESTDIR)/$(UNITDIR)/%_test.c
+	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+	
 $(BUILDDIR)/%.o: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.d: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h 
@@ -66,4 +76,4 @@ run:
 lex_driver: test/lex_test.c $(SRCDIR)/sclex.yy.c $(BUILDDIR)/basebuffer.o
 	$(CC) $(CFLAGS) $(DEBUG) -g $^ -o $(BUILDDIR)/$@
  clean:
-	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o;rm -rf $(BUILDDIR)/*.dSYM; rmdir $(BUILDDIR)
+	rm $(UNITTESTS); rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o;rm -rf $(BUILDDIR)/*.dSYM; rmdir $(BUILDDIR)
