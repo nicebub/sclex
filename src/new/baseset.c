@@ -2,7 +2,19 @@
 #include <stdio.h>
 #include "baseset.h"
 
-static base_set_vtable vtable_base_set;
+static base_set_vtable vtable_base_set={
+	 &base_delete_set,
+	 &base_add_to_set,
+	 &base_remove_from_set,
+	 &base_merge_sets,
+	 &base_copy_sets,
+	 &base_sets_are_same,
+	 &base_is_in_set,
+	 &base_msort_set,
+	 &base_msort_set_helper,
+	 &base_msmerge_sets,
+	 &base_display_set
+};
 
 void init_base_set_vtable(){
 	vtable_base_set.is_in_set = &base_is_in_set;
@@ -21,7 +33,7 @@ void init_base_set_vtable(){
 
 
 base_set* new_set(int size){
-	return base_new_set(size);
+	return new_base_set(size);
 }
 
 void delete_set(base_set* set){
@@ -60,10 +72,9 @@ void display_set(base_set* set){
 }
 
 
-base_set* base_new_set(int size){
+base_set* new_base_set(int size){
 	base_set * set = malloc(sizeof(base_set));
 	set->vtable = &vtable_base_set;
-	set->s = NULL;
 	return set;
 }
 
@@ -101,6 +112,5 @@ base_set * base_msmerge_sets(base_set **left,base_set **right){
 	return 0;
 }
 void base_display_set(base_set* set){
-	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n",
-	(void*)set->vtable,set->s,set->size,set->used,set->uniq,set->id);
+	printf("vtable:%p\n", (void*)set->vtable);
 }

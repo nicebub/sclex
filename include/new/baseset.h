@@ -6,11 +6,6 @@ typedef struct _base_set_vtable base_set_vtable;
 
 struct _base_set {
 	base_set_vtable * vtable;
-    void * s;
-    size_t size;
-    size_t used;
-    size_t uniq;
-    size_t id;
 };
 struct _base_set_vtable{
 	void (*delete_set)(base_set* inset);	
@@ -38,7 +33,7 @@ base_set* new_set(int size);
 
 void delete_set(base_set* inset);	
 int is_in_set(base_set * set, int value);
-int sets_are_same(base_set* set1, base_set* set2);
+/*int sets_are_same(base_set* set1, base_set* set2);*/
 void add_to_set(base_set ** set, int value);
 void remove_from_set(base_set ** set, int value);
 base_set * merge_sets(base_set * set1, base_set* set2);
@@ -54,7 +49,7 @@ void display_set(base_set* set);
 void init_base_set_vtable(void);
 
 /* stubs for base set that don't do anything*/
-base_set* base_new_set(int size);
+base_set* new_base_set(int size);
 
 void base_delete_set(base_set* set);	
 int base_is_in_set(base_set * set, int value);

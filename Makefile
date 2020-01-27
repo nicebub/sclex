@@ -14,8 +14,8 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment
-UNITFLAGS = -I $(INCLUDEDIR)/new/
+CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment 
+UNITFLAGS = -I $(INCLUDEDIR)/new/ -Wno-incompatible-pointer-types
 #CFLAGS= -I $(INCLUDEDIR) -ansi
 #CFLAGS= -I $(INCLUDEDIR) -std=c90
 #CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
@@ -40,10 +40,10 @@ UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
 
 .PHONY: all clean run unit_tests $(BUILDDIR)
 	
-unit_tests: $(UTESTABLES) $(UNITTESTS)
+#unit_tests: $(UTESTABLES) $(UNITTESTS)
 
-$(TESTDIR)/$(UNITDIR)/%_test: $(SRCDIR)/new/%.c $(INCLUDEDIR)/new/%.h $(TESTDIR)/$(UNITDIR)/%_test.c
-	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+#$(TESTDIR)/$(UNITDIR)/%_test: $(SRCDIR)/new/%.c $(INCLUDEDIR)/new/%.h $(TESTDIR)/$(UNITDIR)/%_test.c
+#	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 	
 $(BUILDDIR)/%.o: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@

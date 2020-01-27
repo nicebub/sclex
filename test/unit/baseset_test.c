@@ -2,7 +2,7 @@
 #include <stdio.h>
 int main(){
 	base_set *set1, *set2, *set3, *set4;
-	init_base_set_vtable(); /* needed to set vtable up for rest of runtime */
+/*	init_base_set_vtable();*/ /* needed to set vtable up for rest of runtime */
 	set1 = new_set(10);
 	display_set(set1);
 	add_to_set(&set1,40); /* doesn't do anything */
