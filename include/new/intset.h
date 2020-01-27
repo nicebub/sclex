@@ -7,14 +7,14 @@ typedef struct _int_set int_set;
 
 struct _int_set {
 	base_set super;
-    int * s;
+    int * values;
     size_t size;
     size_t used;
     size_t uniq;
     size_t id;
 };
 
-int_set* new_int_set(int size);
+int_set* new_int_set(size_t size);
 
 void int_delete_set(int_set* set);	
 int int_is_in_set(int_set * set, int value);

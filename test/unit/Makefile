@@ -29,14 +29,14 @@ UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
 .PHONY: all clean run unit_tests $(BUILDDIR)
 	
 %.o: %.c %.h
-	$(CC) $(CFLAGS) $(UNITFLAGS) -c $< 
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) -c $< 
 all: baseset_test intset_test
 	
 baseset_test: baseset.o baseset_test.c
-	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 intset_test: baseset.o ../../include/new/intset.h ../../src/new/intset.c intset_test.c
-	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 
 
 clean:
-	rm baseset_test intset_test *.o
+	rm baseset_test intset_test *.o;rm -rf *.dSYM
