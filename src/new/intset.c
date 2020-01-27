@@ -46,7 +46,17 @@ int int_is_in_set(int_set * set, int value){
 	return 0;
 }
 int int_sets_are_same(int_set* set1, int_set* set2){
-	return 0;
+	int g;
+    if(!set1 || !set2)
+		return 0;
+	if(set1->used != set2->used)
+		return 0;
+
+	for(g=0; g < set1->used;g++)
+		if(set1->values[g] != set2->values[g])
+			return 0;
+
+	return 1;
 }
 
 #define INCREMENT_SIZE 10
