@@ -241,7 +241,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 							   tp++;
 						   }
 					   }
-				   }
+				   
 						   sprintf(tp,"case %d:\n",i);
 						   tp += 7+strlen(cb);
 						   {
@@ -265,6 +265,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 						   sprintf(tp,"break;\n");
 						   tp += 7;
 					    }
+				 }
 						{
 							int tab;
 					   for(tab=0;tab<num_tabs;tab++){
