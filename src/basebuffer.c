@@ -53,6 +53,34 @@ inline int bgetchar(base_buffer* inbuf){
 inline int ungetchar(base_buffer* mbuf){
 	return mbuf->vtable->ungetchar(mbuf);
 }
+base_buffer* new_base_buffer(size_t size){
+    base_buffer *mbuf;
+    mbuf = NULL;
+    mbuf = malloc(sizeof(*mbuf));
+    if(!mbuf){
+	   printf("couldn't allocate memory for new buffer\n");
+	   return NULL;
+    }
+	   mbuf->len = size;
+	   mbuf->buf = malloc(sizeof(char)*(mbuf->len+2));
+    if(!mbuf->buf){
+	   free(mbuf);
+	   mbuf = NULL;
+	   printf("couldn't allocate memory for new buffer\n");
+	   return NULL;
+    }
+
+    /* copy the input string into the buffer, setup the control
+	    characters, and return the buffer
+    */
+	   mbuf->buf[mbuf->len] = '\0';
+	   mbuf->buf[mbuf->len+1] = EOF;
+	   mbuf->forward = mbuf->buf;
+	   mbuf->back = mbuf->buf;
+	   mbuf->type = 1;
+	    mbuf->vtable = &vtable_base_buffer;
+	   return mbuf;
+}
 
 base_buffer * base_buffer_from_string(char* instring){
 /* create a buffer structure, and from the length of the

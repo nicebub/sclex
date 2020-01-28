@@ -6,6 +6,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
     int scount =0;
     char d;
   char **t;
+    t = NULL;
     decs = NULL;
     while((*c = getchar(mbuf))!= EOF && *c !='\0'){
 	   if(*c == '%'){
@@ -60,6 +61,7 @@ void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     int count,num_def;
 	int curlen;
    int olast;
+    int a;
 	    file->num_defs = 0;
     *defbuf = malloc(sizeof(char*)*50);
 	{
@@ -69,7 +71,6 @@ void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
 	}
     num_def = 0;
 	{
-	int a;
     for(a=0;a<50;a+=2){
 	   if(a == 12)
 		  ;

@@ -135,9 +135,12 @@ int main(int argc, const char **argv) {
   c = '\0';
   dfa = NULL;
   mbuf = NULL;
-  lexfile.decs = NULL;
-  lexfile.fpos = NULL;
+  lexfile.defbuf = NULL;
+  lexfile.defs = NULL;
   lexfile.tree = NULL;
+  lexfile.fpos = NULL;
+  lexfile.decs = NULL;
+  lexfile.aux = NULL;
 
 /* looks for 1 filename on the command line
    for the .l spec file if it isn't given then produce an
@@ -282,8 +285,10 @@ void cleanup_lex(buffer **mbuf, struct _lfile *lexfile, struct _DFA **dfa) {
   (*lexfile).decs = NULL;
   /* release included C code attached to each regular expression definition */
   for (y = 0; y < (*lexfile).num_defs; y++) {
-    delete_buffer((*lexfile).defbuf[y]);
-    (*lexfile).defbuf[y] = NULL;
+	 if(lexfile->defbuf[y]){
+		delete_buffer((*lexfile).defbuf[y]);
+		(*lexfile).defbuf[y] = NULL;
+	 }
   }
   free((*lexfile).defbuf);
   (*lexfile).defbuf = NULL;

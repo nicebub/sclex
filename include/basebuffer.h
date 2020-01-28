@@ -40,10 +40,11 @@ struct _base_buffer{
     char *back;
     FILE* work;
     int type;
-    int len;
+    size_t len;
 
 
 };
+base_buffer* new_base_buffer(size_t size);
 
 base_buffer* base_buffer_from_file(FILE*);
 
