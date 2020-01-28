@@ -1,32 +1,32 @@
-#include "intset.h"
+#include "chrset.h"
 #include <stdio.h>
 
 
-static base_set_vtable int_set_vtable = {
- &int_delete_set,
- &int_add_to_set,
- &int_remove_from_set,
- &int_merge_sets,
- &int_copy_sets,
- &int_sets_are_same,
- &int_is_in_set,
- &int_display_set
+static base_set_vtable char_set_vtable = {
+ &char_delete_set,
+ &char_add_to_set,
+ &char_remove_from_set,
+ &char_merge_sets,
+ &char_copy_sets,
+ &char_sets_are_same,
+ &char_is_in_set,
+ &char_display_set
 /* current implementation doesn't need these yet
- * &int_msort_set,
- * &int_msort_set_helper,
- * &int_msmerge_sets,
+ * &char_msort_set,
+ * &char_msort_set_helper,
+ * &char_msmerge_sets,
  */
 };
 
-int_set* new_int_set(size_t size){
-	int_set* set = malloc(sizeof(int_set));
+char_set* new_char_set(size_t size){
+	char_set* set = malloc(sizeof(char_set));
 	if(!set){
 		NEWSETERROR(set);
 		return NULL;
 	}
 	set->values = NULL;
-	set->super.vtable = &int_set_vtable;
-    set->values = malloc(sizeof(int)*size);
+	set->super.vtable = &char_set_vtable;
+    set->values = malloc(sizeof(char)*size);
 	if(!set->values){
 		NEWSETERROR(values);
 		return NULL;
@@ -37,7 +37,7 @@ int_set* new_int_set(size_t size){
     set->id = 0;
 	return set;
 }
-void int_delete_set(int_set* set){
+void char_delete_set(char_set* set){
 	if(set){
 		if(set->values){
 			free(set->values);
@@ -48,7 +48,7 @@ void int_delete_set(int_set* set){
 		set = NULL;
 	}
 }
-int int_is_in_set(int_set * set, int value){
+int char_is_in_set(char_set * set, char value){
 	size_t y;
 	if(!set)
 		return 0;
@@ -58,7 +58,7 @@ int int_is_in_set(int_set * set, int value){
 	}
 	return 0;
 }
-int int_sets_are_same(int_set* set1, int_set* set2){
+int char_sets_are_same(char_set* set1, char_set* set2){
 	size_t g;
     if(!set1 || !set2)
 		return 0;
@@ -74,8 +74,8 @@ int int_sets_are_same(int_set* set1, int_set* set2){
 
 #define INCREMENT_SIZE 10
 
-void int_add_to_set(int_set ** set, int value){
-	int_set *setptr, *tempset;
+void char_add_to_set(char_set ** set, char value){
+	char_set *setptr, *tempset;
 	size_t y;
 	setptr = tempset= NULL;
 	if(!set || !*set)
@@ -83,9 +83,9 @@ void int_add_to_set(int_set ** set, int value){
 
 	setptr = *set;
 	if(setptr->used == setptr->size)
-		tempset = new_int_set(setptr->size+INCREMENT_SIZE);
+		tempset = new_char_set(setptr->size+INCREMENT_SIZE);
 	else
-		tempset = new_int_set(setptr->size);
+		tempset = new_char_set(setptr->size);
 /*		return;*/
 	if(!tempset){
 		NEWSETERROR(tempset);
@@ -94,7 +94,7 @@ void int_add_to_set(int_set ** set, int value){
 
 	for(y=0;y<setptr->used;y++){
 		if(setptr->values[y] == value){
-	    	int_delete_set(tempset);
+	    	char_delete_set(tempset);
 			tempset = NULL;
 	    	return;
 		}
@@ -105,7 +105,7 @@ void int_add_to_set(int_set ** set, int value){
 				tempset->values[a+1] = setptr->values[a];
 			}
 			tempset->used = setptr->used + 1;
-	    	int_delete_set(setptr);
+	    	char_delete_set(setptr);
 	    	setptr = NULL;
 	    	*set = tempset;
 	    	return;
@@ -114,19 +114,19 @@ void int_add_to_set(int_set ** set, int value){
  	}
 	tempset->values[y] = value;
 	tempset->used = setptr->used + 1;
-	int_delete_set(setptr);
+	char_delete_set(setptr);
 	setptr = NULL;
 	*set = tempset;
 	return;
 }
-void int_remove_from_set(int_set ** set, int value){
-	int_set *setptr, *tempset;
+void char_remove_from_set(char_set ** set, char value){
+	char_set *setptr, *tempset;
 	size_t a;
 	setptr =tempset=NULL;
 	if(!set || !*set)
 		return;
 	setptr = *set;
-	tempset = new_int_set(setptr->size);
+	tempset = new_char_set(setptr->size);
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return;
@@ -138,64 +138,64 @@ void int_remove_from_set(int_set ** set, int value){
 		tempset->values[tempset->used] = setptr->values[a];
 		tempset->used++;
 	}
-	int_delete_set(setptr);
+	char_delete_set(setptr);
 	setptr = NULL;
 	*set = tempset;
 	return;
 }
-int_set * int_merge_sets(int_set * set1, int_set* set2){
+char_set * char_merge_sets(char_set * set1, char_set* set2){
 	size_t a;
-    int_set *tempset;
+    char_set *tempset;
     tempset = NULL;
     if(!set1 || !set2)
 		return NULL;
-	tempset = int_copy_sets(set1);
+	tempset = char_copy_sets(set1);
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return NULL;
 	}	
 	for(a=0;a<set2->used;a++){
-		int_add_to_set(&tempset,set2->values[a]);
+		char_add_to_set(&tempset,set2->values[a]);
 	 }
 	 return tempset;
 }
-int_set * int_copy_sets(int_set * set){
+char_set * char_copy_sets(char_set * set){
 	 size_t a;
-	int_set *tempset;
+	char_set *tempset;
 	tempset = NULL;
 
     if(!set)
 		return NULL;
 
-	 tempset = new_int_set(set->size);
+	 tempset = new_char_set(set->size);
 
 	 if(!tempset){
 		NEWSETERROR(tempset);
 		return NULL;
 	 }
 	 for(a=0;a<set->used;a++)
-		int_add_to_set(&tempset,set->values[a]);
+		char_add_to_set(&tempset,set->values[a]);
 	 tempset->uniq = set->uniq;
 	 return tempset;
 }
-void int_display_set(int_set* set){
+void char_display_set(char_set* set){
 	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
 	(void*)set->super.vtable,(void*)set->values,set->size,set->used,set->uniq,set->id);
 	if(set->used >0){
 		size_t r;
 		for(r=0;r<set->used;r++)
-			printf("%d ",set->values[r]);
+			printf("%c ",set->values[r]);
 		printf("\n");
 	}
 }
 /* current implementation doesn't need these yet
- * int_set * int_msort_set(int_set* set){
+ * char_set * char_msort_set(char_set* set){
  *	return 0;
  * }
- * int_set * int_msort_set_helper(int_set* set,int start,int finish){
+ * char_set * char_msort_set_helper(char_set* set,int start,int finish){
  *	return 0;
  * }
- * int_set * int_msmerge_sets(int_set **left,int_set **right){
+ * char_set * char_msmerge_sets(char_set **left,char_set **right){
  *	return 0;
  * }
  */

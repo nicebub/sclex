@@ -30,13 +30,15 @@ UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
 	
 %.o: %.c %.h
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) -c $< 
-all: baseset_test intset_test
+all: baseset_test intset_test chrset_test
 	
 baseset_test: baseset.o baseset_test.c
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 intset_test: baseset.o ../../include/new/intset.h ../../src/new/intset.c intset_test.c
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+chrset_test: baseset.o ../../include/new/chrset.h ../../src/new/chrset.c chrset_test.c
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 
 
 clean:
-	rm baseset_test intset_test *.o;rm -rf *.dSYM
+	rm baseset_test intset_test chrset_test *.o;rm -rf *.dSYM
