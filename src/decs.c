@@ -74,7 +74,7 @@ void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     for(a=0;a<50;a+=2){
 	   if(a == 12)
 		  ;
-   }
+   
 defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 		  *c = getchar(mbuf);
 	   if(*c == '%'){
@@ -249,6 +249,7 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 	   (*defbuf)[a+1][count] = '\0';
 	   curlen = 25;
     }
+	}
     file->num_defs = num_def;
     return;
 }
