@@ -1,5 +1,7 @@
 #include "intset.h"
 #include <stdio.h>
+
+
 static base_set_vtable int_set_vtable = {
  &int_delete_set,
  &int_add_to_set,
@@ -8,16 +10,27 @@ static base_set_vtable int_set_vtable = {
  &int_copy_sets,
  &int_sets_are_same,
  &int_is_in_set,
- &int_msort_set,
- &int_msort_set_helper,
- &int_msmerge_sets,
  &int_display_set
+/* current implementation doesn't need these yet
+ * &int_msort_set,
+ * &int_msort_set_helper,
+ * &int_msmerge_sets,
+ */
 };
 
 int_set* new_int_set(size_t size){
 	int_set* iset = malloc(sizeof(int_set));
+	if(!iset){
+		NEWSETERROR(iset);
+		return NULL;
+	}
+	iset->values = NULL;
 	iset->super.vtable = &int_set_vtable;
     iset->values = malloc(sizeof(int)*size);
+	if(!iset->values){
+		NEWSETERROR(values);
+		return NULL;
+	}
     iset->size = size;
     iset->used = 0;
     iset->uniq = 0;
@@ -74,7 +87,10 @@ void int_add_to_set(int_set ** set, int value){
 	else
 		tempset = new_int_set(setptr->size);
 /*		return;*/
-
+	if(!tempset){
+		NEWSETERROR(tempset);
+		return;
+	}
 
 	for(y=0;y<setptr->used;y++){
 		if(setptr->values[y] == value){
@@ -111,7 +127,10 @@ void int_remove_from_set(int_set ** set, int value){
 		return;
 	setptr = *set;
 	tempset = new_int_set(setptr->size);
-/*			 ist = create_iset(is->size);*/
+	if(!tempset){
+		NEWSETERROR(tempset);
+		return;
+	}	
 	for(a=0;a<setptr->used;a++){
 		if(setptr->values[a] == value){
 			continue;
@@ -125,19 +144,39 @@ void int_remove_from_set(int_set ** set, int value){
 	return;
 }
 int_set * int_merge_sets(int_set * set1, int_set* set2){
-	return 0;
+	int a;
+    int_set *tempset;
+    tempset = NULL;
+    if(!set1 || !set2)
+		return NULL;
+	tempset = int_copy_sets(set1);
+	if(!tempset){
+		NEWSETERROR(tempset);
+		return NULL;
+	}	
+	for(a=0;a<set2->used;a++){
+		int_add_to_set(&tempset,set2->values[a]);
+	 }
+	 return tempset;
 }
 int_set * int_copy_sets(int_set * set){
-	return 0;
-}
-int_set * int_msort_set(int_set* set){
-	return 0;
-}
-int_set * int_msort_set_helper(int_set* set,int start,int finish){
-	return 0;
-}
-int_set * int_msmerge_sets(int_set **left,int_set **right){
-	return 0;
+	 int a;
+	int_set *tempset;
+	tempset = NULL;
+
+    if(!set)
+		return NULL;
+
+	 tempset = new_int_set(set->size);
+
+	 if(!tempset){
+		NEWSETERROR(tempset);
+		return NULL;
+	 }
+	 for(a=0;a<set->used;a++)
+		int_add_to_set(&tempset,set->values[a]);
+	 tempset->uniq = set->uniq;
+	 return tempset;
 }
 void int_display_set(int_set* set){
 	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
@@ -149,3 +188,14 @@ void int_display_set(int_set* set){
 		printf("\n");
 	}
 }
+/* current implementation doesn't need these yet
+ * int_set * int_msort_set(int_set* set){
+ *	return 0;
+ * }
+ * int_set * int_msort_set_helper(int_set* set,int start,int finish){
+ *	return 0;
+ * }
+ * int_set * int_msmerge_sets(int_set **left,int_set **right){
+ *	return 0;
+ * }
+ */
