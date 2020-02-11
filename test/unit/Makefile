@@ -20,7 +20,8 @@ UNITFLAGS = -I ../../$(INCLUDEDIR)/new/ -Wno-incompatible-pointer-types
 #CFLAGS= -I $(INCLUDEDIR) -std=c90
 #CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
 #CFLAGS= -I $(INCLUDEDIR) -no-pie
-
+EXECS := $(patsubst %.c, %, $(wildcard *.c))
+#OBJECTS := $(subst %, %.o $(EXECS))
 UTESTABLES := $(wildcard $(SRCDIR)/new/*.c)
 UTESTFILES :=  $(patsubst $(SRCDIR)/new/%.c,$(TESTDIR)/$(UNITDIR)/%_test.c,$(UTESTABLES))
 
@@ -30,15 +31,21 @@ UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
 	
 %.o: %.c %.h
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) -c $< 
-all: baseset_test intset_test chrset_test
-	
+all: $(EXECS)
+
+
 baseset_test: baseset.o baseset_test.c
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
-intset_test: baseset.o ../../include/new/intset.h ../../src/new/intset.c intset_test.c
+intset_test: baseset.o intset.h intset.c intset_test.c
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
-chrset_test: baseset.o ../../include/new/chrset.h ../../src/new/chrset.c chrset_test.c
+chrset_test: baseset.o chrset.h chrset.c chrset_test.c
 	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
-
+vector_test: basevector.o vector_test.c
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+intvector_test: basevector.o baseset.o intset.o intvector.h intvector.c intvector_test.c
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
+chrvector_test: basevector.o baseset.o chrset.o chrvector.h chrvector.c chrvector_test.c
+	$(CC) $(DEBUG) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 
 clean:
-	rm baseset_test intset_test chrset_test *.o;rm -rf *.dSYM
+	rm $(EXECS)  *.o;rm -rf *.dSYM

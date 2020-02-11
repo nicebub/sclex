@@ -31,10 +31,10 @@ int_set* new_int_set(size_t size){
 		NEWSETERROR(values);
 		return NULL;
 	}
-    set->size = size;
-    set->used = 0;
-    set->uniq = 0;
-    set->id = 0;
+    set->super.size = size;
+    set->super.used = 0;
+    set->super.uniq = 0;
+    set->super.id = 0;
 	return set;
 }
 void int_delete_set(int_set* set){
@@ -52,7 +52,7 @@ int int_is_in_set(int_set * set, int value){
 	size_t y;
 	if(!set)
 		return 0;
-	 for(y=0;y<set->used && set->values[y]<=value;y++){
+	 for(y=0;y<set->super.used && set->values[y]<=value;y++){
 		if(set->values[y] == value)
 			return 1;
 	}
@@ -62,10 +62,10 @@ int int_sets_are_same(int_set* set1, int_set* set2){
 	size_t g;
     if(!set1 || !set2)
 		return 0;
-	if(set1->used != set2->used)
+	if(set1->super.used != set2->super.used)
 		return 0;
 
-	for(g=0; g < set1->used;g++)
+	for(g=0; g < set1->super.used;g++)
 		if(set1->values[g] != set2->values[g])
 			return 0;
 
@@ -82,17 +82,17 @@ void int_add_to_set(int_set ** set, int value){
 		return;
 
 	setptr = *set;
-	if(setptr->used == setptr->size)
-		tempset = new_int_set(setptr->size+INCREMENT_SIZE);
+	if(setptr->super.used == setptr->super.size)
+		tempset = new_int_set(setptr->super.size+INCREMENT_SIZE);
 	else
-		tempset = new_int_set(setptr->size);
+		tempset = new_int_set(setptr->super.size);
 /*		return;*/
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return;
 	}
 
-	for(y=0;y<setptr->used;y++){
+	for(y=0;y<setptr->super.used;y++){
 		if(setptr->values[y] == value){
 	    	int_delete_set(tempset);
 			tempset = NULL;
@@ -101,10 +101,10 @@ void int_add_to_set(int_set ** set, int value){
 		if(setptr->values[y] > value){
 			size_t a;
 	    	tempset->values[y] = value;
-	    	for(a=y;a<setptr->used;a++){
+	    	for(a=y;a<setptr->super.used;a++){
 				tempset->values[a+1] = setptr->values[a];
 			}
-			tempset->used = setptr->used + 1;
+			tempset->super.used = setptr->super.used + 1;
 	    	int_delete_set(setptr);
 	    	setptr = NULL;
 	    	*set = tempset;
@@ -113,7 +113,7 @@ void int_add_to_set(int_set ** set, int value){
 		tempset->values[y] = setptr->values[y];
  	}
 	tempset->values[y] = value;
-	tempset->used = setptr->used + 1;
+	tempset->super.used = setptr->super.used + 1;
 	int_delete_set(setptr);
 	setptr = NULL;
 	*set = tempset;
@@ -126,17 +126,17 @@ void int_remove_from_set(int_set ** set, int value){
 	if(!set || !*set)
 		return;
 	setptr = *set;
-	tempset = new_int_set(setptr->size);
+	tempset = new_int_set(setptr->super.size);
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return;
 	}	
-	for(a=0;a<setptr->used;a++){
+	for(a=0;a<setptr->super.used;a++){
 		if(setptr->values[a] == value){
 			continue;
 		}
-		tempset->values[tempset->used] = setptr->values[a];
-		tempset->used++;
+		tempset->values[tempset->super.used] = setptr->values[a];
+		tempset->super.used++;
 	}
 	int_delete_set(setptr);
 	setptr = NULL;
@@ -154,7 +154,7 @@ int_set * int_merge_sets(int_set * set1, int_set* set2){
 		NEWSETERROR(tempset);
 		return NULL;
 	}	
-	for(a=0;a<set2->used;a++){
+	for(a=0;a<set2->super.used;a++){
 		int_add_to_set(&tempset,set2->values[a]);
 	 }
 	 return tempset;
@@ -167,23 +167,24 @@ int_set * int_copy_sets(int_set * set){
     if(!set)
 		return NULL;
 
-	 tempset = new_int_set(set->size);
+	 tempset = new_int_set(set->super.size);
 
 	 if(!tempset){
 		NEWSETERROR(tempset);
 		return NULL;
 	 }
-	 for(a=0;a<set->used;a++)
+	 for(a=0;a<set->super.used;a++)
 		int_add_to_set(&tempset,set->values[a]);
-	 tempset->uniq = set->uniq;
+	 tempset->super.uniq = set->super.uniq;
 	 return tempset;
 }
 void int_display_set(int_set* set){
 	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
-	(void*)set->super.vtable,(void*)set->values,set->size,set->used,set->uniq,set->id);
-	if(set->used >0){
+		(void*)set->super.vtable,(void*)set->values,set->super.size,set->super.used,
+		set->super.uniq,set->super.id);
+	if(set->super.used >0){
 		size_t r;
-		for(r=0;r<set->used;r++)
+		for(r=0;r<set->super.used;r++)
 			printf("%d ",set->values[r]);
 		printf("\n");
 	}

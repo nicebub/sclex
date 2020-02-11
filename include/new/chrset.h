@@ -8,10 +8,6 @@ typedef struct _char_set char_set;
 struct _char_set {
 	base_set super;
 	char * values;
-	size_t size;
-	size_t used;
-	size_t uniq;
-	size_t id;
 };
 
 char_set* new_char_set(size_t size);

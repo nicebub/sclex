@@ -84,6 +84,10 @@ base_set* new_base_set(int size){
 		return NULL;
 	}	
 	set->vtable = &vtable_base_set;
+	set->size=size;
+	set->used=0;
+	set->uniq=0;
+	set->id=0;
 	return set;
 }
 
@@ -112,8 +116,20 @@ int base_sets_are_same(base_set* set1, base_set* set2){
 	return 0;
 }
 void base_display_set(base_set* set){
-	printf("vtable:%p\n", (void*)set->vtable);
+	printf("vtable:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
+	(void*)set->vtable, set->size,set->used,set->uniq,set->id);
 }
+/*
+void char_display_set(char_set* set){
+	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
+	(void*)set->super.vtable,(void*)set->values,set->size,set->used,set->uniq,set->id);
+	if(set->used >0){
+		size_t r;
+		for(r=0;r<set->used;r++)
+			printf("%c ",set->values[r]);
+		printf("\n");
+	}
+}*/
 /* current implementation doesn't need these yet
  * base_set * base_msort_set(base_set* set){
  * 	return 0;

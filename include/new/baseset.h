@@ -9,6 +9,10 @@ typedef struct _base_set_vtable base_set_vtable;
 
 struct _base_set {
 	base_set_vtable * vtable;
+	size_t size;
+	size_t used;
+	size_t uniq;
+	size_t id;
 };
 struct _base_set_vtable{
 	void (*delete_set)(base_set* inset);	
@@ -71,5 +75,18 @@ void base_display_set(base_set* set);
 base_set * base_msort_set(base_set* set);
 base_set * base_msort_set_helper(base_set* set,int start,int finish);
 base_set * base_msmerge_sets(base_set **left,base_set **right);
+*/
+
+/*
+#define settype(type) type##_set
+#define newset(type,size) new_##type##_set(size)
+#define setvtable(type) type##_set##_vtable
+#define deleteset(type,in) type##_delete_set(in)
+#define isinset(type,in) type##_is_in_set(in)
+#define setsaresame(type,first,second) type##_sets_are_same(first,second)
+#define addtoset(type,first,value) type##_add_to_set(first,value)
+#define removefromset(type,first,value) type##_remove_from_set(first,value)
+#define mergesets(type,first,second) type##_merge_sets(first,second)
+#define dipslayset(type,in) type##_dsiplay_set(in)
 */
 #endif

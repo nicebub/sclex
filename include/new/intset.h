@@ -8,10 +8,6 @@ typedef struct _int_set int_set;
 struct _int_set {
 	base_set super;
 	int * values;
-	size_t size;
-	size_t used;
-	size_t uniq;
-	size_t id;
 };
 
 int_set* new_int_set(size_t size);
