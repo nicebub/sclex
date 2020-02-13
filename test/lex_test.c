@@ -10,7 +10,7 @@ as part of the language described from the regular expressions that the lexer
 represents.
 
 */
-#include "buffer.h"
+#include "basebuffer.h"
 /*#include "basebuffer.h"*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,10 +54,10 @@ int main(int argc, const char ** argv){
 	/* FILE pointer used to open the file name of argument number 1 */
 	FILE * infile=NULL;
 	/* or error if not given, print an error and exit with -1 */
-//	if( argc < 2){
-//		printf("Please provide a filename to scan\n");
-//		exit(-1);
-//	}
+/*	if( argc < 2){*/
+/*		printf("Please provide a filename to scan\n");*/
+/*		exit(-1);*/
+/*	}*/
 	/* we opened the file for reading and we want to process it and tokenized it
 		we print what we find
 	*/

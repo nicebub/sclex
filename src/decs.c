@@ -1,9 +1,12 @@
 #include "../include/decs.h"
+#include <string.h>
 char* declarations(buffer* mbuf, char*c,struct _lfile* file){
     char sbuf[8000];
     char *decs;
     int scount =0;
     char d;
+  char **t;
+    t = NULL;
     decs = NULL;
     while((*c = getchar(mbuf))!= EOF && *c !='\0'){
 	   if(*c == '%'){
@@ -12,7 +15,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 		  if(*c == '}'){
 			 sbuf[scount]='\0';
 			 decs = malloc(sizeof(char)*strlen(sbuf)+1);
-			 strcpy(decs,sbuf);
+			 strncpy(decs,sbuf,strlen(sbuf)+1);
 			 *c = getchar(mbuf);
 			 while(is_ws(*c) == 0)
 				*c = getchar(mbuf);
@@ -54,13 +57,17 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 
 void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     char *** defbuf = &file->defs;
-    file->num_defs = 0;
-    int count,num_def;
+    int count;
+    int num_def,curlen;
+   int olast;
+    int a;
+	    file->num_defs = 0;
     *defbuf = malloc(sizeof(char*)*50);
     for(int a=0;a<50;a++)
 	   (*defbuf)[a] = NULL;
     num_def = 0;
-    for(int a=0;a<50;a+=2){
+	{
+    for(a=0;a<50;a+=2){
 	   if(a == 12)
 		  ;
 defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
@@ -222,6 +229,7 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 	   (*defbuf)[a+1][count] = '\0';
 	   curlen = 25;
     }
+	}
     file->num_defs = num_def;
     return;
 }

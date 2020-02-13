@@ -2,7 +2,9 @@
 #define MTREE_H
 #include <stdlib.h>
 #include <stdio.h>
-#include "set.h"
+#include "baseset.h"
+#include "intset.h"
+#include "chrset.h"
 #include "funcs.h"
 
 /* These macro definitions are used for permanent tokens 
@@ -67,9 +69,9 @@ struct _node
 struct _node {
     struct _node *left;
     struct _node *right;
-    struct _iset *ifirst;
-    struct _iset *ilast;
-    struct _iset *ifollow;
+    base_set *ifirst; /* int_set* */
+    base_set *ilast;	/* int_set* */
+    base_set *ifollow;	/* int_set* */
     int uniq;
     int id;
     int nullable;
@@ -144,9 +146,9 @@ struct _ta
 struct _ta {
     struct _node **t;
     struct _node *atop;
-    struct _cset *alphabet;
+    base_set *alphabet; /* char_set* */
     char**  action_array;
-    struct _iset **Fstates;
+    base_set **Fstates; /* int_set** */
     int *finalpos;
     int size;
     int used;

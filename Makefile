@@ -1,18 +1,21 @@
-CC= gcc
+CC= gcc-9
 YACC= bison
+DEBUG = -g
 BUILDDIR= build
 LIBDIR= lib
 INCLUDEDIR= include
 SRCDIR= src
+NEWSRC = new
 TESTDIR= test
+UNITDIR=unit
 vpath %.c src
 vpath %.s src
 vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -Wall 
-#CFLAGS= -I $(INCLUDEDIR) -ansi -Wpedantic
+CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
+UNITFLAGS = -I $(INCLUDEDIR)/new/ -Wno-incompatible-pointer-types
 #CFLAGS= -I $(INCLUDEDIR) -ansi
 #CFLAGS= -I $(INCLUDEDIR) -std=c90
 #CFLAGS= -I $(INCLUDEDIR) -std=c90 -Wpedantic
@@ -26,9 +29,28 @@ SOURCES := $(patsubst %,$(SRCDIR)/%,$(FILES))
 OBJECTS := $(patsubst %.c,$(BUILDDIR)/%.o,$(FILES))
 ASSEMBLYS := $(patsubst %.s,$(BUILDDIR)/%.o,$(AFILES))
 DEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(FILES))
+NEWFILES := $(wildcard $(SRCDIR)/$(NEWSRC)/*.c)
+NEWCLASSOBJS := $(patsubst $(SRCDIR)/$(NEWSRC)/%.c, $(BUILDDIR)/%.o, $(NEWFILES))
+NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
+
+UTESTABLES := $(wildcard $(SRCDIR)/new/*.c)
+UTESTFILES :=  $(patsubst $(SRCDIR)/new/%.c,$(TESTDIR)/$(UNITDIR)/%_test.c,$(UTESTABLES))
+#UTESTFILES :=  $(wildcard $(TESTDIR)/$(UNITDIR)/*.c)
+UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
+
+.PHONY: all clean run unit_tests $(BUILDDIR)
 	
-.PHONY: all clean run $(BUILDDIR)
+#unit_tests: $(UTESTABLES) $(UNITTESTS)
+
+#$(TESTDIR)/$(UNITDIR)/%_test: $(SRCDIR)/new/%.c $(INCLUDEDIR)/new/%.h $(TESTDIR)/$(UNITDIR)/%_test.c
+#	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
 	
+$(BUILDDIR)/%.o: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILDDIR)/%.d: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h 
+	$(CC) $(CFLAGS) $(DEBUG) -MM $< -o $@
+-include $(NDEPS)
+
 all: $(BUILDDIR)/sclex
 	
 $(BUILDDIR):
@@ -40,17 +62,18 @@ $(OUT): $(OUTFILE)
 $(OUTFILE):
 	
 $(BUILDDIR)/%.o: %.s | $(BUILDDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
 $(BUILDDIR)/%.o: %.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
 $(BUILDDIR)/%.d: $(SRCDIR)/%.c $(INCLUDEDIR)/%.h 
 	$(CC) $(CFLAGS) $(DEBUG) -MM $< -o $@
 -include $(DEPS)
 $(BUILDDIR)/sclex: $(ASSEMBLYS) $(OBJECTS) $(OUTFILE)
 	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
 run:
-	./build/sclex test/lex.l
-$(BUILDDIR)/test: $(SRCDIR)/sclex.yy.c $(TESTDIR)/lex_test.c $(BUILDDIR)/buffer.o
-	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
-clean:
-	rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/test $(BUILDDIR)/*.o *.dSYM; rmdir $(BUILDDIR)
+	./build/sclex test/expr.l
+
+lex_driver: test/lex_test.c $(SRCDIR)/sclex.yy.c $(BUILDDIR)/basebuffer.o
+	$(CC) $(CFLAGS) $(DEBUG) -g $^ -o $(BUILDDIR)/$@
+ clean:
+	rm $(UNITTESTS); rm $(BUILDDIR)/bufferdriver $(BUILDDIR)/hashdriver $(BUILDDIR)/sclex $(BUILDDIR)/lex_driver $(SRCDIR)/sclex.yy.c $(BUILDDIR)/*.o;rm -rf $(BUILDDIR)/*.dSYM; rmdir $(BUILDDIR)

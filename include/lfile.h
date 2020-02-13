@@ -10,9 +10,13 @@ and accumulate other data to make a final output source file.
 #ifndef MLFILE_H
 #define MLFILE_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
-#include "set.h"
+#include "baseset.h"
+#include "intset.h"
+#include "chrset.h"
+#include "basevector.h"
+#include "intvector.h"
 
 /** Structure Definition
 
@@ -42,7 +46,7 @@ struct _lfile {
     buffer **defbuf;
     char ** defs;
     struct _ta *tree;
-    struct _iseta *fpos;
+    base_vector *fpos; /* int_vector* */
     char * decs;
     char * aux;
     int num_defs;

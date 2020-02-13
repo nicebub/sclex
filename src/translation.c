@@ -5,6 +5,9 @@
 	expressions it finds until the end of the definitions section.
 */
 #include "../include/translation.h"
+#include "basevector.h"
+#include "intvector.h"
+#include "chrvector.h"
 
 /**  
 
@@ -32,7 +35,7 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 	*/
     file->tree = regexpset(mbuf,c,file);
 	/* create the initial firpos set for a set amount of  regular expressions */
-    file->fpos = create_iseta(SETSIZE);
+    file->fpos = new_int_vector(SETSIZE);
 	/* if memory error or something else thing print an error to standard
 		output and return NULL */
     if(file->fpos == NULL){
@@ -41,17 +44,22 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
     }
 	/* initialize each regular expressions' firstpos set or print an error and
 		return NULL if issues arise */
-    for(int r=0;r<file->fpos->size;r++){
-	   file->fpos->iset[r] = create_iset(file->fpos->size);
-	   if(file->fpos->iset[r] == NULL){
+	{
+		int r;
+    for(r=0;r<vector_size(file->fpos);r++){
+	   *get_by_index_in_vector(file->fpos,r) = new_int_set(vector_size(file->fpos));
+	   if(*(int_vector**)get_by_index_in_vector(file->fpos,r) == NULL){
 		  lex_error(5);
 		  return NULL;
 	   }
     }
 	/* still initializing more of the firstpos sets */
-    for(int r=file->fpos->size;r<SETSIZE;r++)
-	   file->fpos->iset[r] = NULL;
-    file->fpos->used = file->fpos->size;
+{
+	int r;
+    for(r=vector_size(file->fpos);r<SETSIZE;r++)
+	   *(int_vector**)get_by_index_in_vector(file->fpos,r) = NULL;
+}
+    set_vector_used(file->fpos,vector_size(file->fpos));
 	/* Currently just some debugging information and construction statistics */
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
     for(int h=0;h<file->tree->used;h++){
@@ -66,7 +74,7 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 
     printf("\n");
     printf("ITS ALPHABET\n");
-    display_set(file->tree->alphabet,1);
+    display_set(file->tree->alphabet);
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
 
 	/* return the entire constructed parse tree structure or potentially NULL if 

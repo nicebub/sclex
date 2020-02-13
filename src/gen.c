@@ -52,13 +52,13 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   fseek(infile, 0, SEEK_END);
 		   long len = ftell(infile);
 		   fseek(infile, 0, SEEK_SET);
-		   ala = malloc(sizeof(char)*((6*dfa->alphabet->used)+1));
-		   farra = malloc(sizeof(char)*((dfa->FFstates->used*3)+1));
-		   dara = malloc(sizeof(char)*((dfa->num_states*dfa->alphabet->used*7)+2*dfa->num_states+10));
-		   ffarra = malloc(sizeof(char)*((dfa->num_re*22)+1));
-		   for(int t=0;t<dfa->alphabet->used;t++){
+		   ala = malloc(sizeof(char)*((6*set_used(dfa->alphabet))+1));
+		   farra = malloc(sizeof(char)*((set_used(dfa->FFstates)*3)+1));
+		   dara = malloc(sizeof(char)*((dfa->num_states*set_used(dfa->alphabet)*7)+2*dfa->num_states+10));
+		   ffarra = malloc(sizeof(char)*((dfa->num_re*100)+1));
+		   for(t=0;t<set_used(dfa->alphabet);t++){
 			  ala[acnt] = '\'';
-				 switch(dfa->alphabet->s[t]){
+				 switch(*(char*)get_value_by_index_set(dfa->alphabet,t)){
 					case '\n':
 					    ala[acnt+1] = '\\';
 					    ala[acnt+2] = 'n';
@@ -75,12 +75,12 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					    acnt++;
 					    break;
 					default:
-					    ala[acnt+1] = dfa->alphabet->s[t];
+					    ala[acnt+1] = *(char*)get_value_by_index_set(dfa->alphabet,t);
 					    break;
 				 }
 			  ala[acnt+2] = '\'';
 			  acnt +=3;
-			  if(t != dfa->alphabet->used -1){
+			  if(t != set_used(dfa->alphabet) -1){
 				 ala[acnt] = ',';
 				 acnt++;
 				 ala[acnt] = ' ';
@@ -90,8 +90,11 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   ala[acnt] = '\0';
  //dara start
 		   acnt =0;
-//		   printf("%s\n",ala);
-		   for(int t=0;t<dfa->alphabet->used;t++){
+/*		   printf("%s\n",ala);*/
+		   {
+		   int t;
+		   for(t=0;t<set_used(dfa->alphabet);t++){
+ 			  int s;
 			  dara[acnt] = '{';
 			  acnt++;
 			  for(int s=0;s<dfa->num_states;s++){
@@ -105,7 +108,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			  }
 			  dara[acnt] = '}';
 			  acnt++;
-			  if(t != dfa->alphabet->used -1){
+			  if(t != set_used(dfa->alphabet) -1){
 				 dara[acnt] = ',';
 				 acnt++;
 			  }
@@ -118,11 +121,12 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   for(int t=0;t<dfa->num_re;t++){
 			  ffarra[acnt] = '{';
 			  acnt++;
-			  for(int s=0;s<dfa->Fstates[t]->used;s++){
-				 sprintf(cb,"%d",dfa->Fstates[t]->s[s]);
-				 sprintf(&ffarra[acnt],"%d",dfa->Fstates[t]->s[s]);
+			  for(s=0;s<set_used(dfa->Fstates[t]);s++){
+				 sprintf(cb,"%d",*(int*)get_value_by_index_set(dfa->Fstates[t],s));
+				 sprintf(&ffarra[acnt],"%d",
+				 	*(int*)get_value_by_index_set(dfa->Fstates[t],s));
 				 acnt += strlen(cb);
-				 if(s != dfa->Fstates[t]->used - 1){
+				 if(s != set_used(dfa->Fstates[t]) - 1){
 					ffarra[acnt] = ',';
 					acnt++;
 				 }
@@ -140,11 +144,14 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   
 // farra start		   
 			   	acnt =0;
-				for(int t=0;t<dfa->FFstates->used;t++){
-					 sprintf(cb,"%d", dfa->FFstates->s[t]);
-					 sprintf(&farra[acnt],"%d",dfa->FFstates->s[t]);
+				{
+					int t;
+				for(t=0;t<set_used(dfa->FFstates);t++){
+					 sprintf(cb,"%d", *(int*)get_value_by_index_set(dfa->FFstates,t));
+					 sprintf(&farra[acnt],"%d",
+					 	*(int*)get_value_by_index_set(dfa->FFstates,t));
 					 acnt += strlen(cb);
-					  if(t != dfa->FFstates->used -1){
+					  if(t != set_used(dfa->FFstates) -1){
 						  farra[acnt] = ',';
 						  acnt++;
 				 	 }
@@ -165,8 +172,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					    count++;
 					    break;
 					case 1:
-					    sprintf(alen,"%d",dfa->alphabet->used);
-					    sprintf(tp,"%d",dfa->alphabet->used);
+					    sprintf(alen,"%d",set_used(dfa->alphabet));
+					    sprintf(tp,"%d",set_used(dfa->alphabet));
 					    tp += strlen(alen);
 					    count++;
 					    break;
@@ -177,8 +184,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					    count++;
 					    break;
 					case 3:
-						sprintf(alen,"%d",dfa->FFstates->used);
-						sprintf(tp,"%d",dfa->FFstates->used);
+					    sprintf(alen,"%d",set_used(dfa->FFstates));
+					    sprintf(tp,"%d",set_used(dfa->FFstates));
 						tp += strlen(alen);
 						count++;
 						break;
@@ -218,6 +225,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 							   sprintf(tp,"\t");
 							   tp++;
 						   }
+					   }
+				   
 						   sprintf(tp,"case %d:\n",i);
 						   tp += 7+strlen(cb);
 						   for(int tab=0;tab<=num_tabs;tab++){
@@ -235,7 +244,10 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 						   sprintf(tp,"break;\n");
 						   tp += 7;
 					    }
-					   for(int tab=0;tab<num_tabs;tab++){
+				 }
+						{
+							int tab;
+					   for(tab=0;tab<num_tabs;tab++){
 						   sprintf(tp,"\t");
 						   tp++;
 					   }

@@ -1,4 +1,7 @@
 #include "../include/regex.h"
+#include <string.h>
+#include "baseset.h"
+#include "chrset.h"
 
 struct _node* regexp(struct _ta ** ta,buffer * mbuf, char *c, struct _lfile* lfile){
     struct _node * temp;
@@ -27,7 +30,7 @@ struct _node* regexp(struct _ta ** ta,buffer * mbuf, char *c, struct _lfile* lfi
 				scount++;
 				sbuf[scount]='\0';
 				(*ta)->action_array[(*ta)->used] = malloc(sizeof(char)*strlen(sbuf)+1);
-				strcpy((*ta)->action_array[(*ta)->used],sbuf);
+				strncpy((*ta)->action_array[(*ta)->used],sbuf,strlen(sbuf)+1);
 				*c = getchar(mbuf);
 				while(is_ws(*c) == 0)
 				    *c = getchar(mbuf);
@@ -57,7 +60,7 @@ struct _node* regexp(struct _ta ** ta,buffer * mbuf, char *c, struct _lfile* lfi
     }
 }
 
-struct _node* fullexpr(struct _cset ** ta,buffer *mbuf, char *c, struct _lfile* lfile){
+struct _node* fullexpr(/*char** */base_set ** ta,buffer *mbuf, char *c, struct _lfile* lfile){
 /*
  represents a full expression on a line minus the newline character
  (expr) OR expr.op OR expr|expr OR [range] OR exprlist

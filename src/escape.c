@@ -10,7 +10,8 @@ Examples of escqpe character sequences:
 
 */
 #include "../include/escape.h"
-
+#include "baseset.h"
+#include "chrset.h"
 /**
 
 	struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c)
@@ -32,7 +33,7 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c){
+struct _node* escape_char(/*char** */base_set **ta,buffer* mbuf,char* c){
 	/* temporary node help create new nodes and add them to a tree */
     struct _node* temp;
 

@@ -117,13 +117,13 @@ void delete_node(struct _node* n){
 	   n->left = NULL;
 	   n->right = NULL;
 	   /* delete the firstpos set attached to this _node */
-	   delete_set(n->ifirst,0);
+	   delete_set((base_set*)n->ifirst);
 	   n->ifirst = NULL;
 	   /* delete the lastpos set attached to this _node */
-	   delete_set(n->ilast,0);
+	   delete_set((base_set*)n->ilast);
 	   n->ilast = NULL;
 	   /* delete the followpos set attached to this _node */
-	   delete_iset(n->ifollow);
+	   delete_set((base_set*)n->ifollow);
 	   n->ifollow = NULL;
 	   /* debugging next step */
 	   missinghelp += n->id;
@@ -171,10 +171,11 @@ struct _tree * create_tree(void){
 /**
 	 Unimplemented at this time
 */
+/*
 void add_node_to_tree(struct _node* n, struct _tree* t){
     
 }
-
+*/
 /** Function Prototype
 Destructor for the _tree structure and all the _nodes internal to its struct
 
@@ -356,12 +357,27 @@ struct _ta * create_ta(int size){
 	/* TODO add statements to check to see if either of these mallocs were successful
 		or not */
     temp = malloc(sizeof(*temp));
-    temp->t = malloc(sizeof(*temp->t)*size);
-
-    temp->alphabet = create_cset(ALPHABET_SIZE);
+    if(!temp){
+	   printf("couldn't create temp in create_ta\n");
+	   return NULL;
+    }
+    temp->t = NULL;
+    temp->t = malloc(sizeof(*(temp->t))*size);
+    if(!temp->t){
+	   printf("couldn't create *temp->t in create_ta\n");
+	   free(temp);
+	   temp = NULL;
+	   return NULL;
+    }
+    temp->alphabet = NULL;
+    temp->alphabet = new_char_set(ALPHABET_SIZE);
 	/* we did check for successful mallocs here though */
     if(temp->alphabet == NULL){
 	   printf("couldn't create new alphabet\n");
+	   free(temp->t);
+	   temp->t=NULL;
+	   free(temp);
+	   temp=NULL;
 	   return NULL;
     }
 	/* TODO the below mallocs also have not been checked to see if they were
@@ -407,18 +423,21 @@ void delete_ta(struct _ta * ta){
 	   delete_root(ta->atop);
 	   ta->atop = NULL;
 	   /* free other data structures we've created over our use */
-	   for(int f=0;f<ta->used;f++){
-		  ta->t[f] = NULL;
-		  free(ta->action_array[f]);
-		  ta->action_array[f] = NULL;
-		  delete_iset(ta->Fstates[f]);
-		  ta->Fstates[f] = NULL;
+	   {
+		   int f;
+		   for(f=0;f<ta->used;f++){
+		 	 ta->t[f] = NULL;
+		 	 free(ta->action_array[f]);
+		  	ta->action_array[f] = NULL;
+			  delete_set((base_set*)ta->Fstates[f]);
+			  ta->Fstates[f] = NULL;
+	  	 }
 	   }
 	   free(ta->action_array);
 	   ta->action_array = NULL;
 	   /* delete the final structures attached out our tree array, and then finaly the
 	   	 array itself */
-	   delete_cset(ta->alphabet);
+	   delete_set((base_set*)ta->alphabet);
 	   ta->alphabet = NULL;
 	   free(ta->finalpos);
 	   ta->finalpos= NULL;

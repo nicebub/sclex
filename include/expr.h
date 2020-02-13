@@ -1,7 +1,7 @@
 #ifndef MEXPR_H
 #define MEXPR_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
 #include "retodfa.h"
@@ -10,8 +10,10 @@
 #include "escape.h"
 #include "lfile.h"
 #include "expror.h"
+#include "baseset.h"
+#include "chrset.h"
 
-struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c,struct _lfile* lfile);
-struct _node* apply_def(struct _cset** ta,buffer* mbuf,char* c, struct _lfile* lfile);
+struct _node* expr(base_set ** ta,buffer* mbuf, char *c,struct _lfile* lfile); /* char_set** */
+struct _node* apply_def(base_set** ta,buffer* mbuf,char* c, struct _lfile* lfile); /* char_set** */
 
 #endif

@@ -1,5 +1,6 @@
 #include "../include/expr.h"
-struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfile){
+#include <string.h>
+struct _node* expr(/*char** */base_set ** ta,buffer* mbuf, char *c, struct _lfile* lfile){
     struct _node *temp;
     struct _node *temp2;
     struct _node *temp3;
@@ -18,7 +19,7 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 		  lex_error(12);
 		  return NULL;
 	   }
-	   add_to_cset(ta,temp->value);
+	   add_to_set(ta,temp->value);
     }
     else{
 	   	switch(*c){
@@ -28,7 +29,7 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
 				  lex_error(27);
 				  return NULL;
 			   }
-			   add_to_cset(ta,temp->value);
+			   add_to_set(ta,temp->value);
 			   *c = getchar(mbuf);
 			   break;
 		  case '[':
@@ -184,14 +185,14 @@ struct _node* expr(struct _cset ** ta,buffer* mbuf, char *c, struct _lfile* lfil
     return temp;
 }
 
-struct _node* apply_def(struct _cset** ta,buffer* mbuf,char* c, struct _lfile* lfile){
-    struct _node* rnode;
+struct _node* apply_def(/*char** */base_set** ta,buffer* mbuf,char* c, struct _lfile* lfile){
+/*    struct _node* rnode;*/
     buffer * tempbuf;
     char str[200];
     int e;
     char v;
     tempbuf = NULL;
-    rnode = NULL;
+/*    rnode = NULL;*/
     for(e=0;*c != '}';e++){
 	   str[e] = *c;
 	   *c = getchar(mbuf);

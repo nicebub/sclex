@@ -1,13 +1,14 @@
 #ifndef MEXPROR_H
 #define MEXPROR_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "retodfa.h"
 #include "lex_error.h"
 #include "exprcat.h"
 #include "lfile.h"
-
+#include "baseset.h"
+#include "chrset.h"
 /** Function Prototype
 
 	struct _node* expror(struct _cset ** ta,buffer *mbuf, char* c, struct _lfile* lfile);
@@ -34,6 +35,6 @@ Results: A parse tree is constructed to represent a list of expressions that are
 
 
 */
-struct _node* expror(struct _cset ** ta,buffer *mbuf, char* c, struct _lfile* lfile);
+struct _node* expror(base_set ** ta,buffer *mbuf, char* c, struct _lfile* lfile);/* char_set** */
 
 #endif

@@ -112,7 +112,7 @@ inline void enlarge_type_array(struct _type ** array, const int add){
 void add_type_to_tsys(struct _tsys * s, struct _type * t){
     if(s->used == s->size){
 	   enlarge_type_array(s->type,TRSIZE_AMT);
-	   s->size = s->size = TRSIZE_AMT;
+	   s->size = s->size + TRSIZE_AMT;
     }
     s->type[s->used] = t;
     s->used++;

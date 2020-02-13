@@ -1,12 +1,13 @@
 #ifndef MCHARSET_H
 #define MCHARSET_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
 #include "retodfa.h"
 #include "escape.h"
-
+#include "baseset.h"
+#include "chrset.h"
 /* Function Prototype
 
 	struct _node* charset(struct _cset ** ta,buffer* mbuf, char*c);
@@ -25,6 +26,6 @@ Results: a parse tree of nodes is constructed to represent the character
 	classes/sets found in the input stream
 
 */
-struct _node* charset(struct _cset ** ta,buffer* mbuf, char*c);
+struct _node* charset(/*char** */base_set ** ta,buffer* mbuf, char*c);
 
 #endif

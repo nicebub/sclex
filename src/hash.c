@@ -271,7 +271,7 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 			 break;
 			 
 	   }
-	   h = h % s->size;
+	   h = h % (int)s->size;
 /*	   if(s->cused <= s->csize){
 		  	s->cache[s->cused].p = malloc(sizeof(key));
 		  	memcpy(s->cache[s->cused].p,key,sizeof(key));

@@ -8,7 +8,6 @@ input stream.
 */
 
 #include "../include/sclex_driver.h"
-
 /** Function Prototype
         struct _ta *parse_file(buffer * mbuf,char *c, struct _lfile*);
 
@@ -136,9 +135,12 @@ int main(int argc, const char **argv) {
   c = '\0';
   dfa = NULL;
   mbuf = NULL;
-  lexfile.decs = NULL;
-  lexfile.fpos = NULL;
+  lexfile.defbuf = NULL;
+  lexfile.defs = NULL;
   lexfile.tree = NULL;
+  lexfile.fpos = NULL;
+  lexfile.decs = NULL;
+  lexfile.aux = NULL;
 
 /* looks for 1 filename on the command line
    for the .l spec file if it isn't given then produce an
@@ -151,6 +153,7 @@ int main(int argc, const char **argv) {
 
 /* initialize buffer from filename given */
 #define ARGUMENT_IS_FILENAME 1
+  init_base_buffer_vtable();
   mbuf = buffer_from_filename(argv[ARGUMENT_IS_FILENAME]);
 
   /* If the file is a .l file, this will start to parse the
@@ -241,25 +244,26 @@ struct _ta *parse_file(buffer *mbuf, char *current_char, struct _lfile *file) {
 Functionality; To include all the code found in the auxilary
         portion of the specification file. Currently its unimplemented
 */
+/*
 char *aux(buffer *mbuf, char *c) { return NULL; }
-
+*/
 /* DEBUG Function for displaying memory usage */
 void display_memstats(void) {
-  int tnm = tnum_created();
+/*  int tnm = tnum_created();*/
   printf("+--------------------------------------------------------------------"
          "-------------------+\n");
   printf("+ value		|	ta	|	t	|	"
          "sa	|	s		+\n");
-  printf("+ created	|	%d	|	%d	|	%d	"
+/*  printf("+ created	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
-         atnum_created(), tnm, asnum_created(), snum_created());
-  printf("+ deleted	|	%d	|	%d	|	%d	"
+         atnum_created(), tnm, asnum_created(), snum_created());*/
+/*  printf("+ deleted	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
-         atnum_deleted(), tnum_deleted(), asnum_deleted(), snum_deleted());
-  printf("+Total Loss	|	%d	|	%d	|	%d	"
+         atnum_deleted(), tnum_deleted(), asnum_deleted(), snum_deleted());*/
+/*  printf("+Total Loss	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
          atnum_created() - atnum_deleted(), tnm - tnum_deleted(),
-         asnum_created() - asnum_deleted(), snum_created() - snum_deleted());
+         asnum_created() - asnum_deleted(), snum_created() - snum_deleted());*/
   printf("+--------------------------------------------------------------------"
          "-------------------+\n");
   printf("*note - ta is tree arrays, t are tree nodes, sa are set \n");
@@ -277,23 +281,25 @@ void cleanup_lex(buffer **mbuf, struct _lfile *lexfile, struct _DFA **dfa) {
   /* release memory buffer */
   delete_buffer(*mbuf);
   /* release declarations portion of spec file */
-  free((*lexfile).decs);
-  (*lexfile).decs = NULL;
+  free(lexfile->decs);
+  lexfile->decs = NULL;
   /* release included C code attached to each regular expression definition */
-  for (int y = 0; y < (*lexfile).num_defs; y++) {
-    delete_buffer((*lexfile).defbuf[y]);
-    (*lexfile).defbuf[y] = NULL;
+  for (y = 0; y < lexfile->num_defs; y++) {
+	 if(lexfile->defbuf[y]){
+		delete_buffer(lexfile->defbuf[y]);
+		lexfile->defbuf[y] = NULL;
+	 }
   }
-  free((*lexfile).defbuf);
-  (*lexfile).defbuf = NULL;
+  free(lexfile->defbuf);
+  lexfile->defbuf = NULL;
   /* release parse tree */
-  delete_ta((*lexfile).tree);
+  delete_ta(lexfile->tree);
   /* release firstpos sets */
-  delete_iseta((*lexfile).fpos);
+  delete_vector(lexfile->fpos);
   /* release DFA table constructed */
   delete_dfa(*dfa);
   *dfa = NULL;
-  (*lexfile).fpos = NULL;
-  (*lexfile).tree = NULL;
+  lexfile->fpos = NULL;
+  lexfile->tree = NULL;
   *mbuf = NULL;
 }

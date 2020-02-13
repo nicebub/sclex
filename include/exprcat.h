@@ -1,13 +1,14 @@
 #ifndef MEXPRCAT_H
 #define MEXPRCAT_H
 
-#include "buffer.h"
+#include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
 #include "retodfa.h"
 #include "expr.h"
 #include "lfile.h"
-
+#include "baseset.h"
+#include "chrset.h"
 
 /** Function Prototype
 
@@ -31,7 +32,7 @@ Results: A parse tree is constructed to represent a list of expressions that are
 
 
 */
-struct _node* exprlist(struct _cset ** ta,buffer *mbuf, char* c,struct _lfile* lfile);
+struct _node* exprlist(base_set ** ta,buffer *mbuf, char* c,struct _lfile* lfile);/* char_set** */
 
 
 #endif
