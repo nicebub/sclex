@@ -70,10 +70,10 @@ int nullable(struct _node ** n){
     return -1;
 }
 /* int_set* */base_set* pos(struct _node ** n, int ff){
-    int_set* h1;
-    int_set*h2;
-    int_set*h3;
-    int_set*h4;
+    base_set* h1; /* int_set* */
+    base_set*h2; /* int_set* */
+    base_set*h3; /* int_set* */
+    base_set*h4; /* int_set* */
     char c,d;
     h1 = h2 = h3 = h4 = NULL;
     if(*n){
@@ -261,9 +261,9 @@ int nullable(struct _node ** n){
 }
 
 /* int_set* */base_set* followpos(/*int*/base_vector** ta,struct _node ** n){
-    int_set*temp, *temp2;
-    int_set*left;
-    int_set*right;
+    base_set*temp, *temp2; /* int_set* */
+    base_set*left; /* int_set* */
+    base_set*right; /* int_set* */
     temp = temp2 = left = right = NULL;
     if(*n){
 	   if((*n)->ifollow)
@@ -280,16 +280,16 @@ int nullable(struct _node ** n){
 		  {
 			  int u;
 			 for(u=0;u<set_used((*n)->ilast);u++){
-				temp = *(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
+				temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
 /*				printf("followpos id temp solo: %d\n",temp->id);*/
-				*(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1)) = merge_sets(temp,(*n)->ifirst);
+				*(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1)) = merge_sets(temp,(*n)->ifirst);
 /*				printf("followpos id temp2 merged from temp and nodes firstpos set: %d\n",temp2->id);*/
 /*				printf("followpos id ta->iset[n->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->ilast->s[u]-1]->id);*/
 /*				printf("Deleting followpos temp with id: %d\n", temp->id);*/
 				delete_set(temp);
 				temp = NULL;
 /*				printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
-				temp = *(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
+				temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
 /*				display_set(temp,0);*/
 /*				printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
 /*			    printf("current followpos of %c for what node is ", gcfprint(n->value));*/
@@ -303,16 +303,16 @@ int nullable(struct _node ** n){
 		  {
 		  int u;
 		 for(u=0;u<set_used((*n)->left->ilast);u++){
-			temp = *(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
+			temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
 /*			printf("followpos id temp solo: %d\n",temp->id);*/
-			*(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1)) = merge_sets(temp,(*n)->right->ifirst);
+			*(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1)) = merge_sets(temp,(*n)->right->ifirst);
 /*			printf("followpos id temp2 merged from temp and nodes right child  firstpos set: %d\n",temp2->id);*/
 /*			printf("followpos id ta->iset[n->left->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->left->ilast->s[u]-1]->id);*/
 /*			printf("Deleting followpos temp with id: %d\n", temp->id);*/
 			delete_set(temp);
 			temp = NULL;
 /*			printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
-			temp = *(int_set**)(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
+			temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
 /*			printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
 /*				    printf("current followpos of %c for what node is ", gcfprint(n->value));*/
 /*					printf("%d\n",n->left->ilast->s[u]);*/

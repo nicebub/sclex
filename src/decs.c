@@ -59,7 +59,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     char *** defbuf = &file->defs;
     int count;
-    size_t num_def,curlen;
+    int num_def,curlen;
    int olast;
     int a;
 	    file->num_defs = 0;

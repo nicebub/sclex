@@ -295,7 +295,7 @@ inline void base_refresh_buffer(base_buffer* inbuf, const int start){
     static size_t amount;
 	/* read more data into the buffer and store the amount read into 'amount' */
 	if(inbuf->work == stdin){
-		fgets(&inbuf->buf[start],(size_t)(HALF_BUFFER-2),inbuf->work);
+		fgets(&inbuf->buf[start],(int)(HALF_BUFFER-2),inbuf->work);
 		amount = strlen(&inbuf->buf[start]);
 	}
 	else

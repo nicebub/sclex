@@ -10,10 +10,10 @@ typedef struct _base_set_vtable base_set_vtable;
 
 struct _base_set {
 	base_set_vtable * vtable;
-	size_t size;
-	size_t used;
-	size_t uniq;
-	size_t id;
+	int size;
+	int used;
+	int uniq;
+	int id;
 };
 struct _base_set_vtable{
 	void (*delete_set)(base_set* inset);	
@@ -28,9 +28,9 @@ struct _base_set_vtable{
 	int (*is_in_set)(base_set * set, int value);
 
 	void (*display_set)(base_set* set);
-	size_t (*set_used)(base_set* set);
-	void* (*get_value_by_index_set)(base_set* set, size_t index);
-	size_t (*set_size)(base_set* set);
+	int (*set_used)(base_set* set);
+	void* (*get_value_by_index_set)(base_set* set, int index);
+	int (*set_size)(base_set* set);
 	/* current simple implementation won't need these functions
 	 * yet 
 	 * base_set * (*msort_set)(base_set* set);
@@ -41,7 +41,7 @@ struct _base_set_vtable{
 };
 
 
-base_set* new_set(size_t size);
+base_set* new_set(int size);
 /* standard set funtions that are used to call set functions
  * of through their individual vtable entries */
 
@@ -53,9 +53,9 @@ base_set * merge_sets(base_set * set1, base_set* set2);
 base_set * copy_sets(base_set * set);
 int sets_are_same(base_set* set1, base_set* set2);
 void display_set(base_set* set);
-size_t set_used(base_set* set);
-void* get_value_by_index_set(base_set* set, size_t index);
-size_t set_size(base_set* set);
+int set_used(base_set* set);
+void* get_value_by_index_set(base_set* set, int index);
+int set_size(base_set* set);
 /* unneeded at this time
 base_set * msort_set(base_set* set);
 base_set * msort_set_helper(base_set* set,int start,int finish);
@@ -66,7 +66,7 @@ base_set * msmerge_sets(base_set **left,base_set **right);
  * stub functions below */
 void init_base_set_vtable(void);
 
-base_set* new_base_set(size_t size);
+base_set* new_base_set(int size);
 
 void base_delete_set(base_set* set);	
 int base_is_in_set(base_set * set, int value);
@@ -77,9 +77,9 @@ base_set * base_merge_sets(base_set * set1, base_set* set2);
 base_set * base_copy_sets(base_set * set);
 int base_sets_are_same(base_set* set1, base_set* set2);
 void base_display_set(base_set* set);
-size_t base_set_used(base_set* set);
-void* base_get_value_by_index_set(base_set* set, size_t index);
-size_t base_set_size(base_set* set);
+int base_set_used(base_set* set);
+void* base_get_value_by_index_set(base_set* set, int index);
+int base_set_size(base_set* set);
 
 /* unneeded at this time
 base_set * base_msort_set(base_set* set);

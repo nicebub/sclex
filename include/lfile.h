@@ -49,7 +49,7 @@ struct _lfile {
     base_vector *fpos; /* int_vector* */
     char * decs;
     char * aux;
-    size_t num_defs;
+    int num_defs;
 };
 
 

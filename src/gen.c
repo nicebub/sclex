@@ -38,10 +38,10 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	if((outfile = fopen("sclex.yy.c","w"))!=NULL){
 #if defined(__linux__)
 		extern uint8_t _blob[];
-		extern size_t _blob_size;
+		extern int _blob_size;
 #else
 		extern uint8_t blob[];
-		extern size_t blob_size;
+		extern int blob_size;
 #endif
 		FILE* temp_file = NULL;
 		if((temp_file = fopen("outfile.in","w"))!=NULL){
@@ -54,7 +54,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		}
 	    if((infile = fopen("outfile.in","r")) != NULL){
  		   long len;
-		   size_t t;
+		   int t;
 		   int i;
 		   fseek(infile, 0, SEEK_END);
 		   len = ftell(infile);
@@ -99,9 +99,9 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   acnt =0;
 /*		   printf("%s\n",ala);*/
 		   {
-		   size_t t;
+		   int t;
 		   for(t=0;t<set_used(dfa->alphabet);t++){
- 			  size_t s;
+ 			  int s;
 			  dara[acnt] = '{';
 			  acnt++;
 			  for(s=0;s<dfa->num_states;s++){
@@ -127,9 +127,9 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 /*ffarra start*/
 		   acnt =0;
 		   {
-			   size_t t;
+			   int t;
 		   for(t=0;t<dfa->num_re;t++){
- 			  size_t s;
+ 			  int s;
 			  ffarra[acnt] = '{';
 			  acnt++;
 			  for(s=0;s<set_used(dfa->Fstates[t]);s++){
@@ -157,7 +157,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 /* farra start	*/	   
 			   	acnt =0;
 				{
-					size_t t;
+					int t;
 				for(t=0;t<set_used(dfa->FFstates);t++){
 					 sprintf(cb,"%d", *(int*)get_value_by_index_set(dfa->FFstates,t));
 					 sprintf(&farra[acnt],"%d",
@@ -185,8 +185,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					    count++;
 					    break;
 					case 1:
-					    sprintf(alen,"%ld",set_used(dfa->alphabet));
-					    sprintf(tp,"%ld",set_used(dfa->alphabet));
+					    sprintf(alen,"%d",set_used(dfa->alphabet));
+					    sprintf(tp,"%d",set_used(dfa->alphabet));
 					    tp += strlen(alen);
 					    count++;
 					    break;
@@ -197,8 +197,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					    count++;
 					    break;
 					case 3:
-						sprintf(alen,"%ld",set_used(dfa->FFstates));
-						sprintf(tp,"%ld",set_used(dfa->FFstates));
+					    sprintf(alen,"%d",set_used(dfa->FFstates));
+					    sprintf(tp,"%d",set_used(dfa->FFstates));
 						tp += strlen(alen);
 						count++;
 						break;

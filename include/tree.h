@@ -98,7 +98,7 @@ struct _tree
 struct _tree {
     struct _node *root;
     int depth;
-    size_t size;
+    int size;
 };
 
 /** Structure Definition
@@ -150,8 +150,8 @@ struct _ta {
     char**  action_array;
     base_set **Fstates; /* int_set** */
     int *finalpos;
-    size_t size;
-    size_t used;
+    int size;
+    int used;
     int num_re;
     int id;
 };
@@ -210,7 +210,7 @@ Results: A _ta tree Array struct is created and initialized in memory and return
 	to the caller, or an error occurs, and NULL is returned.
 
 */
-struct _ta * create_ta(size_t size);
+struct _ta * create_ta(int size);
 
 /** Function Prototype
 Destructor for the _ta struct, and all the tree's in the array

@@ -21,7 +21,7 @@ static base_set_vtable int_set_vtable = {
  */
 };
 
-base_set* new_int_set(size_t size){
+base_set* new_int_set(int size){
 	int_set* set = malloc(sizeof(int_set));
 	if(!set){
 		NEWSETERROR(set);
@@ -56,7 +56,7 @@ void int_delete_set(base_set* set){
 	}
 }
 int int_is_in_set(base_set * set, int value){
-	size_t y;
+	int y;
     if(set){
 	   for(y=0;y<set_used(set) && *(int*)get_value_by_index_set(set,y)<=value;y++){
 		if(*(int*)get_value_by_index_set(set,y) == value)
@@ -66,7 +66,7 @@ int int_is_in_set(base_set * set, int value){
 	return 0;
 }
 int int_sets_are_same(base_set* set1, base_set* set2){
-	size_t g;
+	int g;
     int_set* nset1,*nset2;
     if(!set1 || !set2)
 		return 0;
@@ -85,7 +85,7 @@ int int_sets_are_same(base_set* set1, base_set* set2){
 
 void int_add_to_set(base_set ** set, int value){
 	int_set *setptr, *tempset;
-	size_t y;
+	int y;
 	setptr = tempset= NULL;
 	if(!set || !*set)
 		return;
@@ -108,7 +108,7 @@ void int_add_to_set(base_set ** set, int value){
 	    	return;
 		}
 		if(*(int*)get_value_by_index_set(*set,y)> value){
-			size_t a;
+			int a;
 	    	tempset->values[y] = value;
 	    	for(a=y;a<set_used(*set);a++){
 				tempset->values[a+1] = setptr->values[a];
@@ -131,7 +131,7 @@ void int_add_to_set(base_set ** set, int value){
 }
 void int_remove_from_set(base_set ** set, int value){
 	int_set *setptr, *tempset;
-	size_t a;
+	int a;
 	setptr =tempset=NULL;
 	if(!set || !*set)
 		return;
@@ -154,7 +154,7 @@ void int_remove_from_set(base_set ** set, int value){
 	return;
 }
 base_set * int_merge_sets(base_set * set1, base_set* set2){
-	size_t a;
+	int a;
     int_set *tempset;
     int_set* nset2;
     tempset = NULL;
@@ -172,7 +172,7 @@ base_set * int_merge_sets(base_set * set1, base_set* set2){
 	 return (base_set*)tempset;
 }
 base_set * int_copy_sets(base_set * set){
-	 size_t a;
+	 int a;
 	int_set *tempset;
 	int_set* nset;
 	tempset = NULL;
@@ -193,27 +193,27 @@ base_set * int_copy_sets(base_set * set){
 }
 void int_display_set(base_set* set){
     int_set* nset = (int_set*)set;
-	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
+    printf("vtable:%p set:%p size: %d used: %d uniq%d id: %d", 
 		(void*)nset->super.vtable,(void*)nset->values,set_size(set),set_used(set),
 		nset->super.uniq,nset->super.id);
 	if(set_used(set) >0){
-		size_t r;
+		int r;
 		for(r=0;r<set_used(set);r++)
 			printf("%d ",*(int*)get_value_by_index_set(set,r));
 		printf("\n");
 	}
 }
 
-size_t int_set_used(base_set* set){
+int int_set_used(base_set* set){
 	int_set* nset = (int_set*)set;
 	return base_set_used(&nset->super);
 }
 
-void* int_get_value_by_index_set(base_set* set, size_t index){
+void* int_get_value_by_index_set(base_set* set, int index){
 	int_set* nset = (int_set*)set;
 	return &nset->values[index];
 }
-size_t int_set_size(base_set* set){
+int int_set_size(base_set* set){
 	int_set* nset = (int_set*)set;
 	return base_set_size(&nset->super);
 }

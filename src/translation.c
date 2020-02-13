@@ -45,9 +45,9 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 	/* initialize each regular expressions' firstpos set or print an error and
 		return NULL if issues arise */
 	{
-		size_t r;
+		int r;
     for(r=0;r<vector_size(file->fpos);r++){
-	   *(int_vector**)get_by_index_in_vector(file->fpos,r) = new_int_set(vector_size(file->fpos));
+	   *get_by_index_in_vector(file->fpos,r) = new_int_set(vector_size(file->fpos));
 	   if(*(int_vector**)get_by_index_in_vector(file->fpos,r) == NULL){
 		  lex_error(5);
 		  return NULL;

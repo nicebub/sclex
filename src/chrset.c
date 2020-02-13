@@ -21,7 +21,7 @@ static base_set_vtable char_set_vtable = {
  */
 };
 
-base_set* new_char_set(size_t size){
+base_set* new_char_set(int size){
 	char_set* set = malloc(sizeof(char_set));
 	if(!set){
 		NEWSETERROR(set);
@@ -55,8 +55,8 @@ void char_delete_set(base_set* set){
 	    set = NULL;
 	}
 }
-int char_is_in_set(base_set * set, char value){
-	size_t y;
+int char_is_in_set(base_set * set, int value){
+	int y;
     if(set){
 	   for(y=0;y<set_used(set) && *(char*)get_value_by_index_set(set,y)<=value;y++){
 		if(*(char*)get_value_by_index_set(set,y) == value)
@@ -66,7 +66,7 @@ int char_is_in_set(base_set * set, char value){
 	return 0;
 }
 int char_sets_are_same(base_set* set1, base_set* set2){
-	size_t g;
+	int g;
     char_set* nset1,*nset2;
     if(!set1 || !set2)
 		return 0;
@@ -83,9 +83,9 @@ int char_sets_are_same(base_set* set1, base_set* set2){
 
 #define INCREMENT_SIZE 10
 
-void char_add_to_set(base_set ** set, char value){
+void char_add_to_set(base_set ** set, int value){
 	char_set *setptr, *tempset;
-	size_t y;
+	int y;
 	setptr = tempset= NULL;
 	if(!set || !*set)
 		return;
@@ -108,8 +108,8 @@ void char_add_to_set(base_set ** set, char value){
 	    	return;
 		}
 		if(*(char*)get_value_by_index_set(*set,y)> value){
-			size_t a;
-	    	tempset->values[y] = value;
+			int a;
+	    	tempset->values[y] = (char)value;
 	    	for(a=y;a<set_used(*set);a++){
 				tempset->values[a+1] = setptr->values[a];
 			}
@@ -122,16 +122,16 @@ void char_add_to_set(base_set ** set, char value){
 		}
 		tempset->values[y] = setptr->values[y];
  	}
-	tempset->values[y] = value;
+	tempset->values[y] = (char)value;
 	tempset->super.used = set_used(*set) + 1;
 	char_delete_set(*set);
 	setptr = NULL;
 	*set = (base_set*)tempset;
 	return;
 }
-void char_remove_from_set(base_set ** set, char value){
+void char_remove_from_set(base_set ** set, int value){
 	char_set *setptr, *tempset;
-	size_t a;
+	int a;
 	setptr =tempset=NULL;
 	if(!set || !*set)
 		return;
@@ -154,7 +154,7 @@ void char_remove_from_set(base_set ** set, char value){
 	return;
 }
 base_set * char_merge_sets(base_set * set1, base_set* set2){
-	size_t a;
+	int a;
     char_set *tempset;
     char_set* nset2;
     tempset = NULL;
@@ -172,7 +172,7 @@ base_set * char_merge_sets(base_set * set1, base_set* set2){
 	 return (base_set*)tempset;
 }
 base_set * char_copy_sets(base_set * set){
-	 size_t a;
+	 int a;
 	char_set *tempset;
 	char_set* nset;
 	tempset = NULL;
@@ -193,27 +193,27 @@ base_set * char_copy_sets(base_set * set){
 }
 void char_display_set(base_set* set){
     char_set* nset = (char_set*)set;
-	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
+    printf("vtable:%p set:%p size: %d used: %d uniq: %d id: %d\n", 
 		(void*)nset->super.vtable,(void*)nset->values,set_size(set),set_used(set),
 		nset->super.uniq,nset->super.id);
 	if(set_used(set) >0){
-		size_t r;
+		int r;
 		for(r=0;r<set_used(set);r++)
 			printf("%c ",*(char*)get_value_by_index_set(set,r));
 		printf("\n");
 	}
 }
 
-size_t char_set_used(base_set* set){
+int char_set_used(base_set* set){
 	char_set* nset = (char_set*)set;
 	return base_set_used(&nset->super);
 }
 
-void* char_get_value_by_index_set(base_set* set, size_t index){
+void* char_get_value_by_index_set(base_set* set, int index){
 	char_set* nset = (char_set*)set;
 	return &nset->values[index];
 }
-size_t char_set_size(base_set* set){
+int char_set_size(base_set* set){
 	char_set* nset = (char_set*)set;
 	return base_set_size(&nset->super);
 }

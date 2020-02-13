@@ -10,7 +10,7 @@ struct _int_set {
 	int * values;
 };
 
-base_set* new_int_set(size_t size);
+base_set* new_int_set(int size);
 
 void int_delete_set(base_set* set);	
 int int_is_in_set(base_set * set, int value);
@@ -20,9 +20,9 @@ void int_remove_from_set(base_set ** set, int value);
 base_set * int_merge_sets(base_set * set1, base_set* set2);
 base_set * int_copy_sets(base_set * set);
 void int_display_set(base_set* set);
-size_t int_set_used(base_set* set);
-void* int_get_value_by_index_set(base_set* set, size_t index);
-size_t int_set_size(base_set* set);
+int int_set_used(base_set* set);
+void* int_get_value_by_index_set(base_set* set, int index);
+int int_set_size(base_set* set);
 
 /* may not need these anymore, for now with current
  * implementation */

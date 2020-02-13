@@ -351,7 +351,7 @@ Results: A _ta tree Array struct is created and initialized in memory and return
 	to the caller, or an error occurs, and NULL is returned.
 
 */
-struct _ta * create_ta(size_t size){
+struct _ta * create_ta(int size){
 	/* temporary pointer user to setup the newly created tree array */
     struct _ta *temp;
     temp = NULL;
@@ -360,12 +360,27 @@ struct _ta * create_ta(size_t size){
 	/* TODO add statements to check to see if either of these mallocs were successful
 		or not */
     temp = malloc(sizeof(*temp));
-    temp->t = malloc(sizeof(*temp->t)*size);
-
+    if(!temp){
+	   printf("couldn't create temp in create_ta\n");
+	   return NULL;
+    }
+    temp->t = NULL;
+    temp->t = malloc(sizeof(*(temp->t))*size);
+    if(!temp->t){
+	   printf("couldn't create *temp->t in create_ta\n");
+	   free(temp);
+	   temp = NULL;
+	   return NULL;
+    }
+    temp->alphabet = NULL;
     temp->alphabet = new_char_set(ALPHABET_SIZE);
 	/* we did check for successful mallocs here though */
     if(temp->alphabet == NULL){
 	   printf("couldn't create new alphabet\n");
+	   free(temp->t);
+	   temp->t=NULL;
+	   free(temp);
+	   temp=NULL;
 	   return NULL;
     }
 	/* TODO the below mallocs also have not been checked to see if they were

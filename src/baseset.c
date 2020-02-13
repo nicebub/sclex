@@ -39,7 +39,7 @@ void init_base_set_vtable(){
 }
 
 
-base_set* new_set(size_t size){
+base_set* new_set(int size){
 	return new_base_set(size);
 }
 
@@ -81,17 +81,17 @@ void display_set(base_set* set){
 	   set->vtable->display_set(set);
 }
 
-size_t set_used(base_set* set){
+int set_used(base_set* set){
     if(set)
 	   return set->vtable->set_used(set);
     return 0;
 }
-void* get_value_by_index_set(base_set* set, size_t index){
+void* get_value_by_index_set(base_set* set, int index){
     if(set)
 	   return set->vtable->get_value_by_index_set(set,index);
     return NULL;
 }
-size_t set_size(base_set* set){
+int set_size(base_set* set){
 	if(set)
 	    return set->vtable->set_size(set);
     return 0;
@@ -109,7 +109,7 @@ size_t set_size(base_set* set){
  * }
  */
 
-base_set* new_base_set(size_t size){
+base_set* new_base_set(int size){
 	base_set * set = malloc(sizeof(base_set));
 	if(!set){
 		NEWSETERROR(set);
@@ -148,16 +148,16 @@ int base_sets_are_same(base_set* set1, base_set* set2){
 	return 0;
 }
 void base_display_set(base_set* set){
-	printf("vtable:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
+    printf("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
 	(void*)set->vtable, set->size,set->used,set->uniq,set->id);
 }
-size_t base_set_used(base_set* set){
+int base_set_used(base_set* set){
 	return set->used;
 }
-void* base_get_value_by_index_set(base_set* set, size_t index){
+void* base_get_value_by_index_set(base_set* set, int index){
 	return NULL;
 }
-size_t base_set_size(base_set* set){
+int base_set_size(base_set* set){
 	return set->size;
 }
 /*
@@ -165,7 +165,7 @@ void char_display_set(char_set* set){
 	printf("vtable:%p set:%p size: %ld used: %ld uniq: %ld id: %ld\n", 
 	(void*)set->super.vtable,(void*)set->values,set->size,set->used,set->uniq,set->id);
 	if(set->used >0){
-		size_t r;
+		int r;
 		for(r=0;r<set->used;r++)
 			printf("%c ",set->values[r]);
 		printf("\n");

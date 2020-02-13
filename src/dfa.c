@@ -5,6 +5,7 @@
 #include "baseset.h"
 #include "intset.h"
 #include "chrset.h"
+#include <stdlib.h>
 
 
 struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*char* */ base_set*alphabet){
@@ -18,7 +19,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     int * unmarked;
     int a;
     int which_re, current_re;
-    size_t sets;
+    int sets;
     base_set*fpt; /* int_set* */
     struct _node *tn;
     int **tTran;
@@ -37,13 +38,27 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     current_re = 0;
     which_re = 0;
     sets =0;
-    Dstates = new_vector(vector_used(firstpos));
+    Dstates = new_int_vector(vector_used(firstpos));
     if(Dstates == NULL){
 	   printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
 	   return NULL;
     }
     Dtran = malloc(sizeof(int*)*set_used(alphabet));
+    if(!Dtran){
+	   printf("Couldnt' allocate memory for Dtran in dfa gen\n");
+	   delete_vector(Dstates);
+	   Dstates = NULL;
+	   return NULL;
+    }
     DUTran = malloc(sizeof(int_set**)*set_used(alphabet));
+	if(!DUTran){
+	    printf("Couldnt' allocate memory for DUTran in dfa gen\n");
+	    delete_vector(Dstates);
+	    Dstates = NULL;
+	    free(Dtran);
+	    Dtran = NULL;
+	    return NULL;
+	}
 	{
 		int we;
 		for(we=0;we<set_used(alphabet);we++){
@@ -57,14 +72,14 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 		int j;
 	   for(j=0;j<vector_used(firstpos);j++){
 		  Dtran[i][j] = -1;
-		  DUTran[i][j] = new_set(vector_used(firstpos));
+		  DUTran[i][j] = new_int_set(vector_used(firstpos));
 	   }
     }
 }
 {
-	size_t bb;
+	int bb;
     for(bb=0;bb<vector_used(firstpos);bb++){
-	   *(int_set**)get_by_index_in_vector(Dstates,bb) = (int_set*)new_set(vector_used(firstpos));
+	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(firstpos)));
 	   if(*(int**)get_by_index_in_vector(Dstates,bb) == NULL){
 		  printf("couldn't create new Dstates state\n");
 		  return NULL;
@@ -77,7 +92,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	   marked[a]= -1;
 	   unmarked[a] = -1;
     }
-    temps = *(int_set**)get_by_index_in_vector(Dstates,sets);
+    temps = *get_by_index_in_vector(Dstates,sets);
 	fpt = firstpos(&tree->atop);
     temps2 = merge_sets(temps,fpt);
     add_to_vector(temps2,Dstates);
@@ -85,7 +100,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     temps = NULL;
     delete_set(temps2);
     temps2 = NULL;
-    temps = *(int_set**)get_by_index_in_vector(Dstates,sets);
+    temps = *get_by_index_in_vector(Dstates,sets);
     ((int_set*)temps)->super.uniq = sets+1;
     unmarked[sets]=1;
     sets++;
@@ -98,36 +113,35 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 /*    display_set(Dstates->iset[0],0);*/
     while(a < sets){
 		int same;
- 	   size_t j;
+ 	   int j;
 	   unmarked[a] =0;
 	   marked[a] = 1;
 	   for(j=0;j<set_used(alphabet);j++){
 /*		  printf("creating new U set to use\n");*/
-		  U = new_set(vector_used(firstpos));
+		  U = new_int_set(vector_used(firstpos));
 		  if(U == NULL){
 			 printf("couldn't create new U\n");
 			 return NULL;
 		  }
 		  {
-		  size_t g;
+		  int g;
 		  for(g=0;
-		  	g<set_used(*(int_set**)get_by_index_in_vector(Dstates,a));
+		  	g<set_used(*get_by_index_in_vector(Dstates,a));
 		  	g++){
 			 tn = get_node_for_uniq(tree->atop,
-			 	*(int*)get_value_by_index_set(*(int_set**)get_by_index_in_vector(Dstates,a),g));
+			 	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
 			 if(tn->value == *(char*)get_value_by_index_set(alphabet,j)){
 /*				printf("alphabet symbol %c from state %d for position %d\n", \
 					  alphabet->s[j],a+1,Dstates->iset[a]->s[g]);*/
 				temps = U;
 				U = merge_sets(U,
-					get_by_index_in_vector(firstpos,
-						*(int*)get_value_by_index_set(*(int_set**)get_by_index_in_vector(Dstates,a),g)-1));
+					*get_by_index_in_vector(firstpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
 				((int_set*)U)->super.uniq = sets;
 /*				printf("U created: displaying ");*/
 /*				display_set(U,0);*/
 /*				printf("Adding to DUTran and displaying\n");*/
 				add_to_set(&DUTran[j][a],
-					*(int*)get_value_by_index_set(*(int_set**)get_by_index_in_vector(Dstates,a),g));
+					*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
 				delete_set(temps);
 				temps = NULL;
 				temps = U;
@@ -137,10 +151,9 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 				same  = 0;
 				if(set_used(U) != 0){
 /*				    printf("U is not empty\n");*/
-					size_t z;
+					int z;
 				    for(z=0;z<vector_used(Dstates);z++){
-					   	if(sets_are_same(U,
-						*(int_set**)get_by_index_in_vector(Dstates,z))){
+					   	if(sets_are_same(U,*get_by_index_in_vector(Dstates,z))){
 /*						    printf("set already in Dstates\n");*/
 						    ((int_set*)U)->super.uniq = (*(int_set**)get_by_index_in_vector(Dstates,z))->super.uniq;
 						    same = 1;
@@ -157,7 +170,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 					   	add_to_vector(U,Dstates);
 					   delete_set(U);
 					   U = NULL;
-					   U = *(int_set**)get_by_index_in_vector(Dstates,vector_used(Dstates)-1);
+					   U = *get_by_index_in_vector(Dstates,vector_used(Dstates)-1);
 					   	unmarked[sets] = 1;
 					   	marked[sets] = 0;
 				    		sets++;
@@ -211,7 +224,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     printf("Alphabet Symbol \n");
     printf("S|");
 	{
-		size_t i;
+		int i;
 		for(i=0;i<set_used(alphabet);i++){
 		   printf("|%c",*(char*)get_value_by_index_set(alphabet,i));
 		}
@@ -248,24 +261,24 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     }
     dfa->Dtran = tTran;
     FFstates = NULL;
-    FFstates = new_set(100);
+    FFstates = new_int_set(100);
 /*	printf("number of regular expressions found %d\n",tree->num_re);*/
 	{
 	int k;
     for(k=0;k<tree->num_re;k++){
-		size_t y;
+		int y;
 	   	Fstates = NULL;
 	   	lastpos = tree->finalpos[k];
 /*    printf("Finish States for the whole file RE: \n");*/
 	   	fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
 	   	for(y=0;y<vector_used(Dstates);y++){
-		    if(is_in_set(*(int_set**)get_by_index_in_vector(Dstates,y),lastpos)==0){
+		    if(is_in_set(*get_by_index_in_vector(Dstates,y),lastpos)==0){
 /*		  	  printf("State %d is in finish states\n",y+1);*/
 			   fcount++;
 		    }
     		}
-	   	Fstates = new_set(fcount);
+	   	Fstates = new_int_set(fcount);
 	   	if(Fstates == NULL){
 		    printf("couldn't create new Fstates\n");
 		    return NULL;
@@ -273,7 +286,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 			{
 				int y;
 	   			for(y=0;y<vector_used(Dstates);y++){
-		    		if(is_in_set(*(int_set**)get_by_index_in_vector(Dstates,y),lastpos)==0){
+		    		if(is_in_set(*get_by_index_in_vector(Dstates,y),lastpos)==0){
 /*		  printf("Adding State %d to finish states\n",y+1);*/
 						add_to_set(&Fstates,y+1);
 						add_to_set(&FFstates,y+1);
