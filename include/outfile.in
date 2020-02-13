@@ -6,7 +6,7 @@
 #include "basebuffer.h"
 #include <stdlib.h>
 #include <stdio.h>
-//extern FILE* scin;
+/*/extern FILE* scin;*/
 /* Function Prototype
 
 	int sclex(FILE* infile);
@@ -58,14 +58,14 @@ int is_in_final_states(int scl_state);
 
 /* replaced below will be the first part of the specification file
 	 declarations and source code includes */
-#0#													// lexfile.decs
+#0#													/* lexfile.decs*/
 /* alphabet size, number of states of the DFA, accept_size defines the
  number of final states that we accept on, num_regex defines the number
  of actual regular expressions the DFA recognizes */
-#define scl_asize #0# 						//dfa->alphabet->used
-#define scl_tsize #0#						//dfa->num_states
-#define scl_accept_size #0#					//dfa->Fstates->used
-#define scl_num_regex #0#					//dfa->num_re
+#define scl_asize #0# 						/*dfa->alphabet->used*/
+#define scl_tsize #0#						/*dfa->num_states*/
+#define scl_accept_size #0#					/*dfa->Fstates->used*/
+#define scl_num_regex #0#					/*dfa->num_re*/
 	 /* The alphabet array */
 	 const static char scl_al[scl_asize] = { #0#	};
 	 /* The DFA movement table */
@@ -85,10 +85,13 @@ int is_in_final_states(int scl_state);
 
 	 /* As defined above */
 int sclex(FILE* scl_infile){
+	 char *scl_endmatch;
+	 int scl_s, scl_last, scl_failed, scl_accepted, scl_count,scl_done,scl_id;
+	 char scl_c;
+
 	if(!scin){
 		scin = stdin;
 	}
-	 char *scl_endmatch;
 	 /*
 	 accepted = tells whether we have moved into an accept state
 	 failed = we have failed on the input somehow
@@ -99,8 +102,6 @@ int sclex(FILE* scl_infile){
 	 id =
 	 c = current input character
 	 */
-	 int scl_s, scl_last, scl_failed, scl_accepted, scl_count,scl_done,scl_id;
-	 char scl_c;
 	 scl_done = 1;
 	 /* Come back to this label when we need go back to state 0 of the DFA
 	 	and reset some other variables */
@@ -130,8 +131,10 @@ dstart:
 		}
 		/* we're in an accept state and haven't flagged a failure yet */
 		if(scl_accepted == 0 && scl_failed == 1){
+			char* j;
+			int n,m;
 			/* store any matched input into our temporary character buffer */
-			for(char *j=scl_dbuf->back;j<=scl_endmatch;j++){
+			for(j=scl_dbuf->back;j<=scl_endmatch;j++){
 				sctext[scl_count] = *j;
 				scl_count++;
 			}
@@ -149,8 +152,8 @@ dstart:
 			/* Find out which regular expression we just matched and then run its 
 				associated code that was included with the regular expression pattern
 				inside the specification file. */
-			for(int n=0;n<scl_num_regex;n++){
-				for(int m=0;m<scl_accept_size;m++){
+			for(n=0;n<scl_num_regex;n++){
+				for(m=0;m<scl_accept_size;m++){
 					if(scl_each_re_accepted[n][m]-1 == scl_s){
 						/* Below we run the user-defined code */
 						#0#
@@ -225,7 +228,8 @@ dstart:
 
  /* As defined above */
 int get_id_for_symbol(char scl_c){
-	for(int a=0;a< scl_asize;a++){
+	int a;
+	for(a=0;a< scl_asize;a++){
 		if(scl_al[a] == scl_c)
 			return a;
 	}
@@ -234,7 +238,8 @@ int get_id_for_symbol(char scl_c){
 
  /* As defined above */
 int is_in_final_states(int scl_state){
-	for(int r=0;r<scl_accept_size;r++){
+	int r;
+	for(r=0;r<scl_accept_size;r++){
 		if(scl_accepted[r]-1 == scl_state)
 			return 0;
 	}

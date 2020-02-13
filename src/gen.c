@@ -62,7 +62,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 		   ala = malloc(sizeof(char)*((6*set_used(dfa->alphabet))+1));
 		   farra = malloc(sizeof(char)*((set_used(dfa->FFstates)*3)+1));
 		   dara = malloc(sizeof(char)*((dfa->num_states*set_used(dfa->alphabet)*7)+2*dfa->num_states+10));
-		   ffarra = malloc(sizeof(char)*((dfa->num_re*22)+1));
+		   ffarra = malloc(sizeof(char)*((dfa->num_re*100)+1));
 		   for(t=0;t<set_used(dfa->alphabet);t++){
 			  ala[acnt] = '\'';
 				 switch(*(char*)get_value_by_index_set(dfa->alphabet,t)){
