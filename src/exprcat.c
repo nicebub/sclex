@@ -9,7 +9,8 @@ of the input stream.
 */
 
 #include "../include/exprcat.h"
-
+#include "baseset.h"
+#include "chrset.h"
 
 /**  
 
@@ -34,7 +35,7 @@ Results: A parse tree is constructed to represent a list of expressions that are
 
 */
 
-struct _node* exprlist(struct _cset ** ta,buffer * mbuf, char* c, struct _lfile* lfile){
+struct _node* exprlist(/*char** */base_set ** ta,buffer * mbuf, char* c, struct _lfile* lfile){
     /*
 	1 or more expressions concatenated expr.expr.expr
 	*/

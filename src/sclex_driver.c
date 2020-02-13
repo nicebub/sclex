@@ -244,25 +244,26 @@ struct _ta *parse_file(buffer *mbuf, char *current_char, struct _lfile *file) {
 Functionality; To include all the code found in the auxilary
         portion of the specification file. Currently its unimplemented
 */
+/*
 char *aux(buffer *mbuf, char *c) { return NULL; }
-
+*/
 /* DEBUG Function for displaying memory usage */
 void display_memstats(void) {
-  int tnm = tnum_created();
+/*  int tnm = tnum_created();*/
   printf("+--------------------------------------------------------------------"
          "-------------------+\n");
   printf("+ value		|	ta	|	t	|	"
          "sa	|	s		+\n");
-  printf("+ created	|	%d	|	%d	|	%d	"
+/*  printf("+ created	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
-         atnum_created(), tnm, asnum_created(), snum_created());
-  printf("+ deleted	|	%d	|	%d	|	%d	"
+         atnum_created(), tnm, asnum_created(), snum_created());*/
+/*  printf("+ deleted	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
-         atnum_deleted(), tnum_deleted(), asnum_deleted(), snum_deleted());
-  printf("+Total Loss	|	%d	|	%d	|	%d	"
+         atnum_deleted(), tnum_deleted(), asnum_deleted(), snum_deleted());*/
+/*  printf("+Total Loss	|	%d	|	%d	|	%d	"
          "|	%d		+\n",
          atnum_created() - atnum_deleted(), tnm - tnum_deleted(),
-         asnum_created() - asnum_deleted(), snum_created() - snum_deleted());
+         asnum_created() - asnum_deleted(), snum_created() - snum_deleted());*/
   printf("+--------------------------------------------------------------------"
          "-------------------+\n");
   printf("*note - ta is tree arrays, t are tree nodes, sa are set \n");
@@ -281,25 +282,25 @@ void cleanup_lex(buffer **mbuf, struct _lfile *lexfile, struct _DFA **dfa) {
   /* release memory buffer */
   delete_buffer(*mbuf);
   /* release declarations portion of spec file */
-  free((*lexfile).decs);
-  (*lexfile).decs = NULL;
+  free(lexfile->decs);
+  lexfile->decs = NULL;
   /* release included C code attached to each regular expression definition */
-  for (y = 0; y < (*lexfile).num_defs; y++) {
+  for (y = 0; y < lexfile->num_defs; y++) {
 	 if(lexfile->defbuf[y]){
-		delete_buffer((*lexfile).defbuf[y]);
-		(*lexfile).defbuf[y] = NULL;
+		delete_buffer(lexfile->defbuf[y]);
+		lexfile->defbuf[y] = NULL;
 	 }
   }
-  free((*lexfile).defbuf);
-  (*lexfile).defbuf = NULL;
+  free(lexfile->defbuf);
+  lexfile->defbuf = NULL;
   /* release parse tree */
-  delete_ta((*lexfile).tree);
+  delete_ta(lexfile->tree);
   /* release firstpos sets */
-  delete_iseta((*lexfile).fpos);
+  delete_vector(lexfile->fpos);
   /* release DFA table constructed */
   delete_dfa(*dfa);
   *dfa = NULL;
-  (*lexfile).fpos = NULL;
-  (*lexfile).tree = NULL;
+  lexfile->fpos = NULL;
+  lexfile->tree = NULL;
   *mbuf = NULL;
 }

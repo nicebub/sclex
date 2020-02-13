@@ -2,12 +2,17 @@
 #define MTRANSLAT_H
 
 #include "basebuffer.h"
-#include "set.h"
 #include "tree.h"
 #include "lfile.h"
 #include "allregex.h"
 #include "lex_error.h"
 #include "retodfa.h"
+#include "baseset.h"
+#include "intset.h"
+#include "chrset.h"
+#include "basevector.h"
+#include "intvector.h"
+#include "chrvector.h"
 
 /** Function Prototype
 

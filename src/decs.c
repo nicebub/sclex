@@ -15,7 +15,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 		  if(*c == '}'){
 			 sbuf[scount]='\0';
 			 decs = malloc(sizeof(char)*strlen(sbuf)+1);
-			 strcpy(decs,sbuf);
+			 strncpy(decs,sbuf,strlen(sbuf)+1);
 			 *c = getchar(mbuf);
 			 while(is_ws(*c) == 0)
 				*c = getchar(mbuf);
@@ -58,8 +58,8 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 
 void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
     char *** defbuf = &file->defs;
-    int count,num_def;
-	int curlen;
+    int count;
+    size_t num_def,curlen;
    int olast;
     int a;
 	    file->num_defs = 0;

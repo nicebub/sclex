@@ -19,7 +19,7 @@ struct _type * get_type_comp(struct _type * t);
 struct _tsys * create_tsys(void);
 void delete_tsys(struct _tsys * s);
 
-void init_tsys(struct _tsys *, int size);
+void init_tsys(struct _tsys *, size_t size);
 void enlarge_type_array(struct _type ** array, const int add);
 void add_type_to_tsys(struct _tsys * s, struct _type * t);
 void remove_type_from_tsys(struct _tsys *s, void * v, const int type);
@@ -99,7 +99,7 @@ void delete_tsys(struct _tsys * s){
     }
 }
 
-inline void init_tsys(struct _tsys * s, int size){
+inline void init_tsys(struct _tsys * s, size_t size){
 	int a;
     s->type = malloc(sizeof(struct _type*)*size);
     for(a=0;a<size;a++)

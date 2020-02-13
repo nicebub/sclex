@@ -4,7 +4,8 @@
 #include "basebuffer.h"
 #include "tree.h"
 #include "lex_error.h"
-
+#include "baseset.h"
+#include "chrset.h"
 /*
 
 	struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c);
@@ -26,6 +27,6 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-struct _node* escape_char(struct _cset **ta,buffer* mbuf,char* c);
+struct _node* escape_char(base_set **ta,buffer* mbuf,char* c); /* char_set** */
 
 #endif

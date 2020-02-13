@@ -120,13 +120,13 @@ void delete_node(struct _node* n){
 	   n->left = NULL;
 	   n->right = NULL;
 	   /* delete the firstpos set attached to this _node */
-	   delete_set(n->ifirst,0);
+	   delete_set((base_set*)n->ifirst);
 	   n->ifirst = NULL;
 	   /* delete the lastpos set attached to this _node */
-	   delete_set(n->ilast,0);
+	   delete_set((base_set*)n->ilast);
 	   n->ilast = NULL;
 	   /* delete the followpos set attached to this _node */
-	   delete_iset(n->ifollow);
+	   delete_set((base_set*)n->ifollow);
 	   n->ifollow = NULL;
 	   /* debugging next step */
 	   missinghelp += n->id;
@@ -174,10 +174,11 @@ struct _tree * create_tree(void){
 /**
 	 Unimplemented at this time
 */
+/*
 void add_node_to_tree(struct _node* n, struct _tree* t){
     
 }
-
+*/
 /** Function Prototype
 Destructor for the _tree structure and all the _nodes internal to its struct
 
@@ -350,7 +351,7 @@ Results: A _ta tree Array struct is created and initialized in memory and return
 	to the caller, or an error occurs, and NULL is returned.
 
 */
-struct _ta * create_ta(int size){
+struct _ta * create_ta(size_t size){
 	/* temporary pointer user to setup the newly created tree array */
     struct _ta *temp;
     temp = NULL;
@@ -361,7 +362,7 @@ struct _ta * create_ta(int size){
     temp = malloc(sizeof(*temp));
     temp->t = malloc(sizeof(*temp->t)*size);
 
-    temp->alphabet = create_cset(ALPHABET_SIZE);
+    temp->alphabet = new_char_set(ALPHABET_SIZE);
 	/* we did check for successful mallocs here though */
     if(temp->alphabet == NULL){
 	   printf("couldn't create new alphabet\n");
@@ -419,7 +420,7 @@ void delete_ta(struct _ta * ta){
 		 	 ta->t[f] = NULL;
 		 	 free(ta->action_array[f]);
 		  	ta->action_array[f] = NULL;
-			  delete_iset(ta->Fstates[f]);
+			  delete_set((base_set*)ta->Fstates[f]);
 			  ta->Fstates[f] = NULL;
 	  	 }
 	   }
@@ -427,7 +428,7 @@ void delete_ta(struct _ta * ta){
 	   ta->action_array = NULL;
 	   /* delete the final structures attached out our tree array, and then finaly the
 	   	 array itself */
-	   delete_cset(ta->alphabet);
+	   delete_set((base_set*)ta->alphabet);
 	   ta->alphabet = NULL;
 	   free(ta->finalpos);
 	   ta->finalpos= NULL;

@@ -7,11 +7,16 @@
 static base_vector_vtable char_vector_vtable = {
  &char_delete_vector,
  &char_add_to_vector,
- &char_display_vector
+ &char_display_vector,
+ &char_vector_used,
+ &char_get_by_index_in_vector,
+ &char_vector_size,
+ &char_set_vector_used,
+ &char_set_vector_size
 };
 
-char_vector* new_char_vector(size_t size){
-	int i;
+base_vector* new_char_vector(size_t size){
+	size_t i;
 	char_vector* vec = malloc(sizeof(char_vector));
 	if(!vec){
 		NEWVECERROR(vec);
@@ -28,40 +33,64 @@ char_vector* new_char_vector(size_t size){
 	for(i=0;i<size;i++)
 		vec->values[i] = NULL;
 	vec->super.vtable = &char_vector_vtable;
-    vec->super.size = size;
-    vec->super.used = 0;
+    set_vector_size((base_vector*)vec,size);
+    set_vector_used((base_vector*)vec,0);
     vec->super.id = 0;
-	return vec;	
-
+	return (base_vector*)vec;
 }
 
 
-void char_delete_vector(char_vector* vec){
+void char_delete_vector(/*char* */base_vector* vec){
 	if(vec){
-		int i;
-		for(i=0;i<vec->super.used;i++){
-			delete_set(vec->values[i]);
-			vec->values[i] = NULL;
+	    char_vector* nvec = (char_vector*)vec;
+		size_t i;
+		for(i=0;i<vector_used(vec);i++){
+			delete_set(*(base_set**)get_by_index_in_vector(vec,i));
+			nvec->values[i] = NULL;
 		}
-		vec->super.vtable = NULL;
-		free(vec);
-		vec = NULL;
+		nvec->super.vtable = NULL;
+		free(nvec);
+		nvec = NULL;
+	     vec = NULL;
 	}
 }
 
-void char_add_to_vector(char_set* data, char_vector* vec){
+void char_add_to_vector(void* data, base_vector* vec){
 	if(data && vec){
-		if(vec->super.used >= vec->super.size)
+	    char_vector* nvec = (char_vector*)vec;
+		if(vector_used(vec) >= vector_size(vec))
 			return;
-		vec->values[vec->super.used] = copy_sets(data);
-		vec->super.used++;
+		nvec->values[vector_used(vec)] = copy_sets(data);
+		set_vector_used(vec,vector_used(vec)+1);
 	}
 }
 
-void char_display_vector(char_vector* vec){
-	int i;
+void char_display_vector(base_vector* vec){
+	size_t i;
 	if(vec){
-		for(i=0;i<vec->super.used;i++)
-			display_set(vec->values[i]);
+		for(i=0;i<vector_used(vec);i++)
+			display_set(get_by_index_in_vector(vec,i));
 	}
+}
+
+size_t char_vector_used(base_vector* vec){
+    char_vector* nvec = (char_vector*)vec;
+	return base_vector_used(&nvec->super);
+}
+
+/*char_set** */void ** char_get_by_index_in_vector(base_vector* vec, size_t index){
+	char_vector* nvec = (char_vector*)vec;
+	return (void**)&nvec->values[index];
+}
+size_t char_vector_size(base_vector* vec){
+    char_vector* nvec = (char_vector*)vec;
+	return base_vector_size(&nvec->super);
+}
+void char_set_vector_used(base_vector* vec, size_t used){
+	char_vector* nvec = (char_vector*)vec;
+	base_set_vector_used(&nvec->super,used);
+}
+void char_set_vector_size(base_vector* vec, size_t size){
+	char_vector* nvec = (char_vector*)vec;
+	base_set_vector_size(&nvec->super,size);
 }

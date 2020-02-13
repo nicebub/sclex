@@ -50,14 +50,14 @@ struct _hr{
 struct _hash {
     hashbucket_array bucket;
     struct _ca *cache;
-    int csize;
-    int cused;
-    int size;
-    int used;
+    size_t csize;
+    size_t cused;
+    size_t size;
+    size_t used;
  /*   int lasth;*/
     int alpha;
 };
-struct _hash *create_hash(int size);
+struct _hash *create_hash(size_t size);
 void add_to_hash(struct _hash *, void * v, int vt, void * k, int kt);
 
 struct _hash *copy_hash(struct _hash * h);

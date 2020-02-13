@@ -14,7 +14,7 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 VPATH= src:include
-CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment 
+CFLAGS= -I $(INCLUDEDIR) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
 UNITFLAGS = -I $(INCLUDEDIR)/new/ -Wno-incompatible-pointer-types
 #CFLAGS= -I $(INCLUDEDIR) -ansi
 #CFLAGS= -I $(INCLUDEDIR) -std=c90

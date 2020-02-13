@@ -30,11 +30,11 @@ struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt){
     uniques++;
     return h;
 }
-struct _hash *create_hash(int size){
+struct _hash *create_hash(size_t size){
     struct _hash *h;
-	int j;
-	int i;
-    int cache_size = 100;
+	size_t j;
+	size_t i;
+    size_t cache_size = 100;
     h = malloc(sizeof(*h));
     h->size = 0;
     h->bucket = malloc(sizeof(*(h->bucket))*size);
@@ -281,7 +281,7 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 			 break;
 			 
 	   }
-	   h = h % s->size;
+	   h = h % (int)s->size;
 /*	   if(s->cused <= s->csize){
 		  	s->cache[s->cused].p = malloc(sizeof(key));
 		  	memcpy(s->cache[s->cused].p,key,sizeof(key));

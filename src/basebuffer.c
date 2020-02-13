@@ -89,7 +89,7 @@ base_buffer * base_buffer_from_string(char* instring){
 */
 	size_t in_len = strnlen(instring,128);
     base_buffer *mbuf = malloc(sizeof(*mbuf));
-    mbuf->len = (int)in_len;
+    mbuf->len = in_len;
     mbuf->buf = malloc(sizeof(char)*(mbuf->len+2));
 /* copy the input string into the buffer, setup the control
 	characters, and return the buffer

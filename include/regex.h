@@ -6,8 +6,10 @@
 #include "lex_error.h"
 #include "expror.h"
 #include "lfile.h"
+#include "baseset.h"
+#include "chrset.h"
 
 struct _node* regexp(struct _ta ** ta,buffer* mbuf, char *c, struct _lfile* lfile);
-struct _node* fullexpr(struct _cset ** ta,buffer *mbuf,char* c, struct _lfile* lfile);
-
+struct _node* fullexpr(base_set ** ta,buffer *mbuf,char* c, struct _lfile* lfile);
+/* base_set ** ta is a char_set ** */
 #endif

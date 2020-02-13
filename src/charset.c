@@ -6,10 +6,11 @@ parse tree.
 
 */
 #include "../include/charset.h"
-
+#include "baseset.h"
+#include "chrset.h"
 /* Function Prototype
 
-	struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c)
+	struct _node* charset(char_set ** ta,buffer *mbuf, char *c)
 
 Functionality: Charset is the part of the predictive parser that
 	recognizes and puts into the parse tree, character sets [a-z]|[tbt@m;]
@@ -25,7 +26,7 @@ Results: a parse tree of nodes is constructed to represent the character
 	classes/sets found in the input stream
 
 */
-struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
+struct _node* charset(/* char***/base_set ** ta,buffer *mbuf, char *c){
 	/* a few temporary node pointers declared for later */
     struct _node *temp;
     struct _node *temp2;
@@ -90,14 +91,14 @@ struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
 			 temp3->left = temp;
 			 temp3->right = temp2;
 			 /* add to the alphabet set the first and last letters of the class */
-			 add_to_cset(ta,temp->value);
-			 add_to_cset(ta,temp2->value);
+			 add_to_set(ta,temp->value);
+			 add_to_set(ta,temp2->value);
 			 /* loop through the set and do the same for all the other characters
 			 	found in in the character range */
 			 start  = temp->value +1;
 			 end  = temp2->value;
 			 for(m=start;m<end;m++){
-				add_to_cset(ta,m);
+				add_to_set(ta,m);
 				temp = create_node(m);
 				if(temp == NULL){
 				    lex_error(21);
@@ -158,7 +159,7 @@ struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
 			 }
 		  }
 		  /* add first character to alphabet */
-		  add_to_cset(ta,temp->value);
+		  add_to_set(ta,temp->value);
 		  *c= getchar(mbuf);
 		  /* now loop through the rest of the character set until we are through 
 		  */
@@ -193,7 +194,7 @@ struct _node* charset(struct _cset ** ta,buffer *mbuf, char *c){
 				    }
 				}
 				/* add this character the the alphabet set */
-				add_to_cset(ta,temp->value);
+				add_to_set(ta,temp->value);
 				temp2->right = temp;
 				temp = temp2;
 			 }

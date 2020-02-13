@@ -3,7 +3,12 @@
 
 #include "tree.h"
 #include "funcs.h"
-#include "set.h"
+#include "baseset.h"
+#include "intset.h"
+#include "chrset.h"
+#include "basevector.h"
+#include "intvector.h"
+
 
 #define firstpos(h) pos(h,1)
 #define lastpos(h)  pos(h,0)
@@ -13,8 +18,8 @@ struct _set {
 };
 
 int nullable(struct _node **);
-struct _iset* pos(struct _node **,int);
-struct _iset* followpos(struct _iseta**,struct _node **);
+/*returns int_set* */ base_set* pos(struct _node **,int);
+/*returns int_set* */ base_set* followpos(base_vector**,struct _node **); /*base_vector* is an int_vector* */
 char gcfprint(char c);
 
 #endif
