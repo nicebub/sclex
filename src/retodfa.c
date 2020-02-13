@@ -76,7 +76,6 @@ int nullable(struct _node ** n){
     base_set*h4; /* int_set* */
     char c,d;
     h1 = h2 = h3 = h4 = NULL;
-    char c,d;
     if(*n){
 	   switch((*n)->value){
 /*		  case '\n':
@@ -89,7 +88,7 @@ int nullable(struct _node ** n){
 			 	if(nullable(&(*n)->left)==0){
 				    if(((*n)->ifirst)==NULL){
 					   	h1 = pos(&(*n)->left,ff);
-//					   printf("firstpos id h1 solo: %d\n",h1->id);
+/*					   printf("firstpos id h1 solo: %d\n",h1->id);*/
 					   	h2 = pos(&(*n)->right,ff);
 /*					   printf("firstpos id h2 solo : %d\n",h2->id);*/
 /*					   printf("firstpos id h3 copied from h1: %d\n",h3->id);*/
@@ -119,7 +118,7 @@ int nullable(struct _node ** n){
 				if(nullable(&(*n)->right)==0){
 				    if(((*n)->ilast)==NULL){
 					   	h1 = pos(&(*n)->left,ff);
-//					   printf("lastpos id h1 solo: %d\n",h1->id);
+/*					   printf("lastpos id h1 solo: %d\n",h1->id);*/
 					   	h2 = pos(&(*n)->right,ff);
 /*					   printf("lastpos id h2 solo: %d\n",h2->id);*/
 /*					   printf("lastpos id h3 copied from h1: %d\n",h3->id);*/
@@ -129,8 +128,8 @@ int nullable(struct _node ** n){
 /*					   printf("lastpos of %c\n",gcfprint((*n)->value));*/
 /*					   display_set((*n)->ilast,0);*/
 					   
-//					   printf("lastpos id n->ilast copied from h4: %d\n",n->ilast->id);
-//					   printf("deleting lastpos id h4: %d\n",h4->id);
+/*					   printf("lastpos id n->ilast copied from h4: %d\n",n->ilast->id);*/
+/*					   printf("deleting lastpos id h4: %d\n",h4->id);*/
 				    }
 				    return (*n)->ilast;
 				}
@@ -152,7 +151,7 @@ int nullable(struct _node ** n){
 			 if(ff == 1){
 				if(((*n)->ifirst)==NULL){
 				    h1 = pos(&(*n)->left,ff);
-//				    printf("firstpos id h1 solo: %d\n",h1->id);
+/*				    printf("firstpos id h1 solo: %d\n",h1->id);*/
 				    h2 = pos(&(*n)->right,ff);
 /*				    printf("firstpos id h2 solo: %d\n",h2->id);*/
 /*				    printf("firstpos id h3 copied from h1: %d\n",h3->id);*/
@@ -170,7 +169,7 @@ int nullable(struct _node ** n){
 			 else{
 				if(((*n)->ilast)==NULL){
 				    h1 = pos(&(*n)->left,ff);
-//				    printf("lastpos id h1 solo: %d\n",h1->id);
+/*				    printf("lastpos id h1 solo: %d\n",h1->id);*/
 				    h2 = pos(&(*n)->right,ff);
 /*				    printf("lastpos id h2 solo: %d\n",h2->id);*/
 /*				    printf("lastpos id h3 copied from h1: %d\n",h3->id);*/
@@ -220,7 +219,7 @@ int nullable(struct _node ** n){
 				    printf("couldn't create new iset in MINUS\n");
 				    return NULL;
 				}
-//				printf("firstpos id h1 solo: %d\n",h1->id);
+/*				printf("firstpos id h1 solo: %d\n",h1->id);*/
 				c = (*n)->left->value;
 				d = (*n)->right->value;
 				if(c > d) return NULL;
@@ -269,7 +268,7 @@ int nullable(struct _node ** n){
     if(*n){
 	   if((*n)->ifollow)
 		  return (*n)->ifollow;
-//	   printf("taking followpos of %c\n",gcfprint(n->value));
+/*	   printf("taking followpos of %c\n",gcfprint(n->value));*/
 	   left = followpos(ta,&(*n)->left);
 	   right = followpos(ta,&(*n)->right);
 	   switch((*n)->value){
@@ -295,8 +294,9 @@ int nullable(struct _node ** n){
 /*				printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
 /*			    printf("current followpos of %c for what node is ", gcfprint(n->value));*/
 /*				printf("%d\n",n->ilast->s[u]);*/
-\			 }
-//			 display_set(n->ifollow,0);
+			 }
+/*			 display_set(n->ifollow,0);*/
+		 }
 			 break;
 			 
 		  case (char)CONCAT:
@@ -318,10 +318,11 @@ int nullable(struct _node ** n){
 /*					printf("%d\n",n->left->ilast->s[u]);*/
 /*			display_set(temp,0);*/
 		 }
+	 }
 			 break;
 		  case (char) MINUS:
 			 ;
-	//		 printf("MINUS FOLLOWPOS\n");
+	/*		 printf("MINUS FOLLOWPOS\n");*/
 	   }
     }
     return NULL;

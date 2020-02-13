@@ -34,6 +34,7 @@ struct _node* charset(/* char***/base_set ** ta,buffer *mbuf, char *c){
 
 
     int a;
+	char start,end,m;
     a =0;
     temp = temp2 = temp3 = NULL;
 	/* either the current character meets our requirements for starting a

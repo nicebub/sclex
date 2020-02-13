@@ -44,7 +44,7 @@ struct _node* expr(/*char** */base_set ** ta,buffer* mbuf, char *c, struct _lfil
 				    exit(-1);
 	   			}
 			   break;
-		  case '\(':
+		  case '(':
 			   *c = getchar(mbuf);
 			   while(is_ws(*c) ==0)
 			    	*c = getchar(mbuf);
@@ -176,8 +176,8 @@ struct _node* expr(/*char** */base_set ** ta,buffer* mbuf, char *c, struct _lfil
     			 return temp;
     			 break;
 				
- //				lex_error(13);
- //				exit(-1);
+ /*				lex_error(13);*/
+ /*				exit(-1);*/
 			 }
 	   }
     pos(&temp,1);

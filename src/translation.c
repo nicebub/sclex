@@ -53,6 +53,7 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 		  return NULL;
 	   }
     }
+}
 	/* still initializing more of the firstpos sets */
 {
 	int r;
@@ -62,11 +63,14 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
     set_vector_used(file->fpos,vector_size(file->fpos));
 	/* Currently just some debugging information and construction statistics */
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
-    for(int h=0;h<file->tree->used;h++){
+	{
+		int h;
+    for(h=0;h<file->tree->used;h++){
 		  printf("REGEX\n");
 		  display_tree(file->tree->t[h]);
 		  printf("\n");
     }
+}
     printf("\n");
 
 	/* create the entire followpos set on the entire tree of regular expressions */

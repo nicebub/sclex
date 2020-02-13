@@ -129,7 +129,7 @@ int main(int argc, const char **argv) {
   /* UNUSED */
   /* currently stores result after running the created DFA on the opened source
    * file */
-  //   int result;
+  /*   int result;*/
 
   /* Initialize Variables */
   c = '\0';
@@ -178,7 +178,7 @@ int main(int argc, const char **argv) {
 
   /* Cleanup and release memory and file buffers, and exit */
   cleanup_lex(&mbuf, &lexfile, &dfa);
-  //    display_memstats();
+  /*    display_memstats();*/
   return EXIT_SUCCESS;
 }
 
@@ -278,6 +278,7 @@ Functionality: Clean up and release all memory used and closing and releasing
         all files that were opened and pointers attained
 */
 void cleanup_lex(buffer **mbuf, struct _lfile *lexfile, struct _DFA **dfa) {
+    int y;
   /* release memory buffer */
   delete_buffer(*mbuf);
   /* release declarations portion of spec file */

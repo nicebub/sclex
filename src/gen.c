@@ -1,12 +1,16 @@
 #include "../include/gen.h"
 #include <string.h>
 #include <stdint.h>
+#include <stdarg.h>
 void use_later(void){
 	/*
 */
 }
 
+/*
+only after C99
 #define to_file(...) fprintf(outfile, __VA_ARGS__)
+*/
 
 void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	char 	cb[50];
@@ -49,8 +53,11 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			fclose(temp_file);
 		}
 	    if((infile = fopen("outfile.in","r")) != NULL){
+ 		   long len;
+		   int t;
+		   int i;
 		   fseek(infile, 0, SEEK_END);
-		   long len = ftell(infile);
+		   len = ftell(infile);
 		   fseek(infile, 0, SEEK_SET);
 		   ala = malloc(sizeof(char)*((6*set_used(dfa->alphabet))+1));
 		   farra = malloc(sizeof(char)*((set_used(dfa->FFstates)*3)+1));
@@ -88,7 +95,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			  }
 		   }
 		   ala[acnt] = '\0';
- //dara start
+ /*dara start*/
 		   acnt =0;
 /*		   printf("%s\n",ala);*/
 		   {
@@ -97,7 +104,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
  			  int s;
 			  dara[acnt] = '{';
 			  acnt++;
-			  for(int s=0;s<dfa->num_states;s++){
+			  for(s=0;s<dfa->num_states;s++){
 				 sprintf(cb,"%d",dfa->Dtran[t][s]);
 				 sprintf(&dara[acnt],"%d",dfa->Dtran[t][s]);
 				 acnt += strlen(cb);
@@ -115,10 +122,14 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			  dara[acnt] = '\n';
 			  acnt++;
 		   }
+	   }
 		   dara[acnt] = '\0';
-//ffarra start
+/*ffarra start*/
 		   acnt =0;
-		   for(int t=0;t<dfa->num_re;t++){
+		   {
+			   int t;
+		   for(t=0;t<dfa->num_re;t++){
+ 			  int s;
 			  ffarra[acnt] = '{';
 			  acnt++;
 			  for(s=0;s<set_used(dfa->Fstates[t]);s++){
@@ -140,9 +151,10 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			  ffarra[acnt] = '\n';
 			  acnt++;
 		   }
+	   }
 		  ffarra[acnt] = '\0';
 		   
-// farra start		   
+/* farra start	*/	   
 			   	acnt =0;
 				{
 					int t;
@@ -156,13 +168,14 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 						  acnt++;
 				 	 }
 			   }
+		   }
 			   farra[acnt] = '\0';
 			    printf("%s",farra);
 		   infstring = malloc(sizeof(char)*len);
 		   temp = malloc(sizeof(char)*(len+20000));
 		   tp = temp;
 		   fread(infstring,1,len,infile);
-		   for(int i=0;i<len;i++){
+		   for(i=0;i<len;i++){
 			  if(i < len-3 && infstring[i] == '#' && infstring[i+1] == '0' && infstring[i+2] == '#'){
 				 i += 2;
 				 switch(count){
@@ -218,10 +231,14 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					case 9:
 					   sprintf(tp,"switch(n){\n");
 					   tp += 11;
-					    for(int i=0;i<lexfile.tree->used;i++){
-//						   printf("action array %d: %s\n",i,lexfile.tree->action_array[i]);
+					   {
+					   int i;
+					    for(i=0;i<lexfile.tree->used;i++){
+/*						   printf("action array %d: %s\n",i,lexfile.tree->action_array[i]);*/
 						   sprintf(cb,"%d",i);
-						   for(int tab=0;tab<num_tabs;tab++){
+						   {
+						   int tab;
+						   for(tab=0;tab<num_tabs;tab++){
 							   sprintf(tp,"\t");
 							   tp++;
 						   }
@@ -229,18 +246,24 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 				   
 						   sprintf(tp,"case %d:\n",i);
 						   tp += 7+strlen(cb);
-						   for(int tab=0;tab<=num_tabs;tab++){
+						   {
+							   int tab;
+						   for(tab=0;tab<=num_tabs;tab++){
 							   sprintf(tp,"\t");
 							   tp++;
 						   }
+					   }
 						   sprintf(tp,"%s\n",lexfile.tree->action_array[i]);
 						   tp += strlen(lexfile.tree->action_array[i]);
 						   sprintf(tp,"\n");
 						   tp++;
-						   for(int tab=0;tab<=num_tabs;tab++){
+						   {
+							   int tab;
+						   for(tab=0;tab<=num_tabs;tab++){
 							   sprintf(tp,"\t");
 							   tp++;
 						   }
+					   }
 						   sprintf(tp,"break;\n");
 						   tp += 7;
 					    }
@@ -251,6 +274,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 						   sprintf(tp,"\t");
 						   tp++;
 					   }
+				   }
 						sprintf(tp,"}\n");
 						tp += 2;
 					    count++;
@@ -263,8 +287,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			  }
 		   }
 		   *tp = '\0';
-
-		   to_file("%s",temp);
+		   fprintf(outfile,"%s",temp);
+/*		   to_file("%s",temp);*/
 
 		   free(ala);
 		   ala = NULL;

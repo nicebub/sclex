@@ -108,11 +108,12 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	   if(unmarked[a] ==1)
 		  break;
     }
-    struct _node *tn;
     tn = NULL;
 /*    printf("Starting State added, firstpos is\n");*/
 /*    display_set(Dstates->iset[0],0);*/
     while(a < sets){
+		int same;
+ 	   int j;
 	   unmarked[a] =0;
 	   marked[a] = 1;
 	   for(j=0;j<set_used(alphabet);j++){
@@ -214,11 +215,12 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	   Dtran[i] = NULL;
 	   DUTran[i] = NULL;
     }
+}
     free(Dtran);
     free(DUTran);
     Dtran = NULL;
     DUTran = NULL;
-//    printf("Dtran table computed\n");
+/*    printf("Dtran table computed\n");*/
     printf("Alphabet Symbol \n");
     printf("S|");
 	{
@@ -258,10 +260,6 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	   return NULL;
     }
     dfa->Dtran = tTran;
-    struct _iset * Fstates;
-    struct _iset * FFstates;
-    int lastpos;
-    int fcount;
     FFstates = NULL;
     FFstates = new_int_set(100);
 /*	printf("number of regular expressions found %d\n",tree->num_re);*/
@@ -271,7 +269,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 		int y;
 	   	Fstates = NULL;
 	   	lastpos = tree->finalpos[k];
-//    printf("Finish States for the whole file RE: \n");
+/*    printf("Finish States for the whole file RE: \n");*/
 	   	fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
 	   	for(y=0;y<vector_used(Dstates);y++){
@@ -297,8 +295,9 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 			}
 	   tree->Fstates[k] = Fstates;
     }
-  //  printf("final finish state set for the whole file RE\n");
-//    display_set(FFstates,0);
+}
+  /*  printf("final finish state set for the whole file RE\n");*/
+/*    display_set(FFstates,0);*/
 
     dfa->FFstates = FFstates;
     dfa->Fstates = tree->Fstates;
@@ -331,6 +330,7 @@ struct _DFA* create_dfa(void){
 }
 void delete_dfa(struct _DFA* dfa){
     if(dfa){
+ 	   int b;
 	   free(dfa->Dtran);
 	   dfa->Dtran = NULL;
 	   for(b=0;b<set_used(dfa->alphabet);b++){
