@@ -21,7 +21,15 @@ characters.
 #define inline
 #endif
 
-static base_buffer_vtable vtable_base_buffer;
+static base_buffer_vtable vtable_base_buffer = {
+	&base_refresh_upper_buffer,
+	&base_refresh_lower_buffer,
+	&base_refresh_buffer,
+	&base_bgetchar,
+	&base_ungetchar,
+	&base_delete_buffer,
+	&base_display_buffer
+};
 
 void init_base_buffer_vtable(){
 	vtable_base_buffer.refresh_upper_buffer = &base_refresh_upper_buffer;
