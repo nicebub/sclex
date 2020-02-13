@@ -9,9 +9,14 @@ characters.
 */
 
 
+
+#ifndef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE 200809L
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include "../include/basebuffer.h"
+
 #ifdef __STRICT_ANSI__
 #define inline
 #endif

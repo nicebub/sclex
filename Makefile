@@ -1,4 +1,4 @@
-CC= gcc-9
+CC= gcc
 YACC= bison
 DEBUG = -g
 BUILDDIR= build
