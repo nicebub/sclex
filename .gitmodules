@@ -4,3 +4,6 @@
 [submodule "CMock"]
 	path = CMock
 	url = https://github.com/ThrowTheSwitch/CMock.git
+[submodule "CException"]
+	path = CException
+	url = https://github.com/ThrowTheSwitch/CException.git
