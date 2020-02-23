@@ -33,7 +33,7 @@ SRCT = $(wildcard $(PATHT)*.c)
 COMPILE=gcc -c
 LINK=gcc
 DEPEND=gcc -MM -MG -MF
-CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -DTEST -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
+CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -DTEST
 
 RESULTS = $(patsubst $(PATHT)Test%.c,$(PATHR)Test%.txt,$(SRCT) )
 
@@ -59,7 +59,7 @@ $(PATHB)Test%.$(TARGET_EXTENSION): $(PATHO)Test%.o $(PATHO)%.o $(PATHU)unity.o #
 $(PATHO)%.o:: $(PATHT)%.c
 	$(COMPILE) $(CFLAGS) $< -o $@
 
-$(PATHO)%.o:: $(PATHS)%.c $(PATHI)%.h
+$(PATHO)%.o:: $(PATHS)%.c
 	$(COMPILE) $(CFLAGS) $< -o $@
 
 $(PATHO)%.o:: $(PATHU)%.c $(PATHU)%.h
@@ -80,16 +80,10 @@ $(PATHO):
 $(PATHR):
 	$(MKDIR) $(PATHR)
 
-
-
-
 clean:
 	$(CLEANUP) $(PATHO)*.o
 	$(CLEANUP) $(PATHB)*.$(TARGET_EXTENSION)
 	$(CLEANUP) $(PATHR)*.txt
-	$(CLEANDIR) $(PATHD)
-	$(CLEANDIR) $(PATHO)
-	$(CLEANDIR) $(PATHR)
 	$(CLEANDIR) $(PATHB)
 
 .PRECIOUS: $(PATHB)Test%.$(TARGET_EXTENSION)

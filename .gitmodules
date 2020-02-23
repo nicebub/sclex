@@ -1,5 +1,5 @@
-[submodule "Unity"]
-	path = Unity
+[submodule "unity"]
+	path = unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
 [submodule "CMock"]
 	path = CMock
