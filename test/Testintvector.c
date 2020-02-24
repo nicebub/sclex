@@ -2,7 +2,8 @@
 #include "intset.h"
 #include "basevector.h"
 #include "intvector.h"
-int main(){
+/*int main(){*/
+void test_int_vector(void){
 	int_set* set1, *set2, *set3, *set4;
 	int_vector *my_vec;
 	int i;
@@ -39,5 +40,4 @@ int main(){
 	*/
 
 	set1 = set2 = set3 = set4 = NULL;
-	return 0;
 }

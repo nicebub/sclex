@@ -2,42 +2,9 @@
 #include <stdio.h>
 #include "baseset.h"
 
-static base_set_vtable vtable_base_set={
-	 &base_delete_set,
-	 &base_add_to_set,
-	 &base_remove_from_set,
-	 &base_merge_sets,
-	 &base_copy_sets,
-	 &base_sets_are_same,
-	 &base_is_in_set,
-	 &base_display_set,
-	 &base_set_used,
-	 &base_get_value_by_index_set,
-	 &base_set_size
-		 /* current implementation doesn't need these yet
-		  * &base_msort_set,
-		  * &base_msort_set_helper,
-		  * &base_msmerge_sets,
-		  */
-};
-
-void init_base_set_vtable(){
-	vtable_base_set.is_in_set = &base_is_in_set;
-	vtable_base_set.add_to_set = &base_add_to_set;
-	vtable_base_set.remove_from_set = &base_remove_from_set;
-	vtable_base_set.merge_sets = &base_merge_sets;
-	vtable_base_set.copy_sets = &base_copy_sets;
-	vtable_base_set.sets_are_same = &base_sets_are_same;
-	vtable_base_set.display_set = &base_display_set;
-	vtable_base_set.delete_set = &base_delete_set;
-
-	/* current implementation doesn't need these yet
-	 * vtable_base_set.msort_set_helper = &base_msort_set_helper;
-	 * vtable_base_set.msmerge_sets = &base_msmerge_sets;
-	 * vtable_base_set.msort_set = &base_msort_set;
-	 */
-}
-
+#ifdef __STRICT_ANSI__
+#define inline
+#endif
 
 base_set* new_set(int size){
 	return new_base_set(size);
@@ -86,7 +53,7 @@ int set_used(base_set* set){
 	   return set->vtable->set_used(set);
     return 0;
 }
-void* get_value_by_index_set(base_set* set, int index){
+inline void* get_value_by_index_set(base_set* set, int index){
     if(set)
 	   return set->vtable->get_value_by_index_set(set,index);
     return NULL;
@@ -110,7 +77,12 @@ int set_size(base_set* set){
  */
 
 base_set* new_base_set(int size){
-	base_set * set = malloc(sizeof(base_set));
+	base_set * set;
+	if(size <= 0){
+		NEWSETERROR(set);
+		return NULL;
+	}
+		set  = malloc(sizeof(base_set));
 	if(!set){
 		NEWSETERROR(set);
 		return NULL;
@@ -148,13 +120,14 @@ int base_sets_are_same(base_set* set1, base_set* set2){
 	return 0;
 }
 void base_display_set(base_set* set){
-    printf("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
-	(void*)set->vtable, set->size,set->used,set->uniq,set->id);
+	if(set)
+		printf("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
+		(void*)set->vtable, set->size,set->used,set->uniq,set->id);
 }
 int base_set_used(base_set* set){
 	return set->used;
 }
-void* base_get_value_by_index_set(base_set* set, int index){
+inline void* base_get_value_by_index_set(base_set* set, int index){
 	return NULL;
 }
 int base_set_size(base_set* set){

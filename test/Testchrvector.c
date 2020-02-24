@@ -3,7 +3,8 @@
 #include "basevector.h"
 #include "chrvector.h"
 
-int main(){
+/*int main(){*/
+void test_chr_set(void){
 	char_set* set1, *set2, *set3, *set4;
 	char_vector *my_vec;
 	int i;
@@ -41,5 +42,4 @@ int main(){
 	*/
 
 	set1 = set2 = set3 = set4 = NULL;
-	return 0;
 }

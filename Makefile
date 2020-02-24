@@ -11,7 +11,8 @@ else
 	CLEANUP = rm -f
 	CLEANDIR = rmdir
 	MKDIR = mkdir -p
-	TARGET_EXTENSION=out
+	TARGET_EXTENSION=.out
+#	GENERATE_RUNNER= ruby unity/auto/generate_test_runner.rb
 endif
 
 .PHONY: clean
@@ -28,20 +29,26 @@ PATHR = build/results/
 
 BUILD_PATHS = $(PATHB) $(PATHD) $(PATHO) $(PATHR)
 
-SRCT = $(wildcard $(PATHT)*.c)
+BASE_SRCT = $(wildcard $(PATHT)*base*.c)
+SRCT = $(wildcard $(PATHT)*[!b][!a][!s][!e]*.c)
 
 COMPILE=gcc -c
 LINK=gcc
 DEPEND=gcc -MM -MG -MF
 CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -DTEST -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
-
-RESULTS = $(patsubst $(PATHT)Test%.c,$(PATHR)Test%.txt,$(SRCT) )
+CFLAGS += -g
+BASE_RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(BASE_SRCT) )
+RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(SRCT) )
 
 PASSED = `grep -s PASS $(PATHR)*.txt`
 FAIL = `grep -s FAIL $(PATHR)*.txt`
 IGNORE = `grep -s IGNORE $(PATHR)*.txt`
 
-test: $(BUILD_PATHS) $(RESULTS)
+test: $(BUILD_PATHS) $(BASE_RESULTS) $(RESULTS)
+#	@echo "RESULTS: $(RESULTS)"
+#	@echo "BASE_RESULTS: $(BASE_RESULTS)"
+#	@echo "BASE_SRCT $(BASE_SRCT)"
+#	@echo "SRCT $(SRCT)"
 	@echo "-----------------------\nIGNORES:\n-----------------------"
 	@echo "$(IGNORE)"
 	@echo "-----------------------\nFAILURES:\n-----------------------"
@@ -50,11 +57,26 @@ test: $(BUILD_PATHS) $(RESULTS)
 	@echo "$(PASSED)"
 	@echo "\nDONE"
 
-$(PATHR)%.txt: $(PATHB)%.$(TARGET_EXTENSION)
+
+$(PATHR)%.txt: $(PATHB)%$(TARGET_EXTENSION)
 	-./$< > $@ 2>&1
 
-$(PATHB)Test%.$(TARGET_EXTENSION): $(PATHO)Test%.o $(PATHO)%.o $(PATHU)unity.o #$(PATHD)Test%.d
+$(PATHB)Testbase%_Runner$(TARGET_EXTENSION): $(PATHO)Testbase%_Runner.o $(PATHO)Testbase%.o $(PATHO)base%.o $(PATHO)unity.o #$(PATHD)Test%.d
 	$(LINK) -o $@ $^
+
+$(PATHB)Test%set_Runner$(TARGET_EXTENSION): $(PATHO)Test%set_Runner.o $(PATHO)baseset.o $(PATHO)Test%set.o $(PATHO)%set.o  $(PATHO)unity.o #$(PATHD)Test%.d
+	$(LINK) -o $@ $^
+
+$(PATHB)Test%vector_Runner$(TARGET_EXTENSION): $(PATHO)Test%vector_Runner.o $(PATHO)Test%vector.o $(PATHO)baseset.o $(PATHO)basevector.o $(PATHO)%set.o $(PATHO)%vector.o $(PATHO)unity.o #$(PATHD)Test%.d
+	$(LINK) -o $@ $^
+
+
+#$(PATHB)Test%_Runner$(TARGET_EXTENSION): $(PATHO)Test%_Runner.o $(PATHO)Test%.o $(PATHO)%.o $(PATHO)unity.o #$(PATHD)Test%.d
+#	$(LINK) -o $@ $^ $(PATHO)base*.o
+
+
+#$(PATHB)Test%$(TARGET_EXTENSION): $(PATHO)Test%.o $(PATHO)%.o $(PATHU)unity.o #$(PATHD)Test%.d
+#	$(LINK) -o $@ $^
 
 $(PATHO)%.o:: $(PATHT)%.c
 	$(COMPILE) $(CFLAGS) $< -o $@
@@ -85,14 +107,18 @@ $(PATHR):
 
 clean:
 	$(CLEANUP) $(PATHO)*.o
-	$(CLEANUP) $(PATHB)*.$(TARGET_EXTENSION)
+	$(CLEANUP) $(PATHB)*$(TARGET_EXTENSION)
 	$(CLEANUP) $(PATHR)*.txt
+	$(CLEANUP) $(PATHD)*.d
+	$(CLEANUP) $(PATHT)*_Runner.c
 	$(CLEANDIR) $(PATHD)
 	$(CLEANDIR) $(PATHO)
 	$(CLEANDIR) $(PATHR)
 	$(CLEANDIR) $(PATHB)
 
-.PRECIOUS: $(PATHB)Test%.$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Testbase%_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Test%set_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Test%vector_Runner$(TARGET_EXTENSION)
 .PRECIOUS: $(PATHD)%.d
 .PRECIOUS: $(PATHO)%.o
 .PRECIOUS: $(PATHR)%.txt

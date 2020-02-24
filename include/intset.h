@@ -3,6 +3,8 @@
 
 #include "baseset.h"
 
+#define INCREMENT_SIZE 10
+
 typedef struct _int_set int_set;
 
 struct _int_set {
@@ -31,4 +33,24 @@ base_set * int_msort_set(base_set* set);
 base_set * int_msort_set_helper(base_set* set,int start,int finish);
 base_set * int_msmerge_sets(base_set **left,base_set **right);
 */
+
+static base_set_vtable int_set_vtable = {
+ &int_delete_set,
+ &int_add_to_set,
+ &int_remove_from_set,
+ &int_merge_sets,
+ &int_copy_sets,
+ &int_sets_are_same,
+ &int_is_in_set,
+ &int_display_set,
+ &int_set_used,
+ &int_get_value_by_index_set,
+ &int_set_used
+/* current implementation doesn't need these yet
+ * &int_msort_set,
+ * &int_msort_set_helper,
+ * &int_msmerge_sets,
+ */
+};
+
 #endif

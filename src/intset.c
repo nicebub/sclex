@@ -1,28 +1,15 @@
 #include "intset.h"
 #include <stdio.h>
 
+#ifdef __STRICT_ANSI__
+#define inline
+#endif
 
-static base_set_vtable int_set_vtable = {
- &int_delete_set,
- &int_add_to_set,
- &int_remove_from_set,
- &int_merge_sets,
- &int_copy_sets,
- &int_sets_are_same,
- &int_is_in_set,
- &int_display_set,
- &int_set_used,
- &int_get_value_by_index_set,
- &int_set_used
-/* current implementation doesn't need these yet
- * &int_msort_set,
- * &int_msort_set_helper,
- * &int_msmerge_sets,
- */
-};
 
 base_set* new_int_set(int size){
-	int_set* set = malloc(sizeof(int_set));
+	int_set* set;
+	if(size <= 0) return NULL;
+	set = malloc(sizeof(int_set));
 	if(!set){
 		NEWSETERROR(set);
 		return NULL;
@@ -55,10 +42,10 @@ void int_delete_set(base_set* set){
 	    set = NULL;
 	}
 }
-int int_is_in_set(base_set * set, int value){
+inline int int_is_in_set(base_set * set, int value){
 	int y;
     if(set){
-	   for(y=0;y<set_used(set) && *(int*)get_value_by_index_set(set,y)<=value;y++){
+	   for(y=0;y<base_set_used(set) && *(int*)get_value_by_index_set(set,y)<=value;y++){
 		if(*(int*)get_value_by_index_set(set,y) == value)
 			return 1;
 	   }
@@ -72,16 +59,14 @@ int int_sets_are_same(base_set* set1, base_set* set2){
 		return 0;
     nset1 = (int_set*)set1;
     nset2=(int_set*)set2;
-	if(set_used(set1) != set_used(set2))
+	if(base_set_used(set1) != base_set_used(set2))
 		return 0;
-	for(g=0; g < set_used(set1);g++)
+	for(g=0; g < base_set_used(set1);g++)
 		if(nset1->values[g] != nset2->values[g])
 			return 0;
 
 	return 1;
 }
-
-#define INCREMENT_SIZE 10
 
 void int_add_to_set(base_set ** set, int value){
 	int_set *setptr, *tempset;
@@ -91,17 +76,16 @@ void int_add_to_set(base_set ** set, int value){
 		return;
 
 	setptr = (int_set*)*set;
-	if(set_used(*set) == set_size(*set))
-		tempset = (int_set*)new_int_set(set_size(*set)+INCREMENT_SIZE);
+	if(base_set_used(*set) == base_set_size(*set))
+		tempset = (int_set*)new_int_set(base_set_size(*set)+INCREMENT_SIZE);
 	else
-		tempset = (int_set*)new_int_set(set_size(*set));
-/*		return;*/
+		tempset = (int_set*)new_int_set(base_set_size(*set));
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return;
 	}
 
-	for(y=0;y<set_used(*set);y++){
+	for(y=0;y<base_set_used(*set);y++){
 		if(setptr->values[y] == value){
 	    	int_delete_set((base_set*)tempset);
 			tempset = NULL;
@@ -110,21 +94,18 @@ void int_add_to_set(base_set ** set, int value){
 		if(*(int*)get_value_by_index_set(*set,y)> value){
 			int a;
 	    	tempset->values[y] = value;
-	    	for(a=y;a<set_used(*set);a++){
+	    	for(a=y;a<base_set_used(*set);a++){
 				tempset->values[a+1] = setptr->values[a];
 			}
-			tempset->super.used = setptr->super.used + 1;
-	    	int_delete_set(*set);
-		    *set = NULL;
-		    setptr = NULL;
-	    	*set = (base_set*)tempset;
-	    	return;
+			break;
 		}
 		tempset->values[y] = setptr->values[y];
  	}
-	tempset->values[y] = value;
-	tempset->super.used = set_used(*set) + 1;
+	if(y == base_set_used(*set))
+		tempset->values[y] = value;
+	tempset->super.used = base_set_used(*set) + 1;
 	int_delete_set(*set);
+	*set = NULL;
 	setptr = NULL;
 	*set = (base_set*)tempset;
 	return;
@@ -136,16 +117,16 @@ void int_remove_from_set(base_set ** set, int value){
 	if(!set || !*set)
 		return;
 	setptr = (int_set*)*set;
-	tempset = (int_set*)new_int_set(set_size(*set));
+	tempset = (int_set*)new_int_set(base_set_size(*set));
 	if(!tempset){
 		NEWSETERROR(tempset);
 		return;
 	}	
-	for(a=0;a<set_used(*set);a++){
+	for(a=0;a<base_set_used(*set);a++){
 		if(setptr->values[a] == value){
 			continue;
 		}
-		tempset->values[set_used((base_set*)tempset)] = setptr->values[a];
+		tempset->values[base_set_used((base_set*)tempset)] = setptr->values[a];
 		tempset->super.used++;
 	}
 	int_delete_set(*set);
@@ -166,7 +147,7 @@ base_set * int_merge_sets(base_set * set1, base_set* set2){
 		return NULL;
 	}
     nset2 = (int_set*) set2;
-	for(a=0;a<set_used(set2);a++){
+	for(a=0;a<base_set_used(set2);a++){
 		int_add_to_set((base_set**)&tempset,nset2->values[a]);
 	 }
 	 return (base_set*)tempset;
@@ -180,41 +161,50 @@ base_set * int_copy_sets(base_set * set){
     if(!set)
 		return NULL;
 
-	 tempset =(int_set*) new_int_set(set_size(set));
+	 tempset =(int_set*) new_int_set(base_set_size(set));
 	 if(!tempset){
 		NEWSETERROR(tempset);
 		return NULL;
 	 }
     nset = (int_set*)set;
-	 for(a=0;a<set_used(set);a++)
+	 for(a=0;a<base_set_used(set);a++)
 		int_add_to_set((base_set**)&tempset,nset->values[a]);
 	 tempset->super.uniq = nset->super.uniq;
 	 return (base_set*)tempset;
 }
 void int_display_set(base_set* set){
-    int_set* nset = (int_set*)set;
-    printf("vtable:%p set:%p size: %d used: %d uniq%d id: %d", 
-		(void*)nset->super.vtable,(void*)nset->values,set_size(set),set_used(set),
+    int_set* nset;
+	if(!set) return;
+	nset = (int_set*)set;
+    printf("vtable:%p set:%p size: %d used: %d uniq%d id: %d\n", 
+		(void*)nset->super.vtable,(void*)nset->values,base_set_size(set),base_set_used(set),
 		nset->super.uniq,nset->super.id);
-	if(set_used(set) >0){
+	if(base_set_used(set) >0){
 		int r;
-		for(r=0;r<set_used(set);r++)
+		for(r=0;r<base_set_used(set);r++)
 			printf("%d ",*(int*)get_value_by_index_set(set,r));
 		printf("\n");
 	}
 }
 
-int int_set_used(base_set* set){
-	int_set* nset = (int_set*)set;
+inline int int_set_used(base_set* set){
+	int_set* nset;
+	if(!set) return 0;
+	nset = (int_set*)set;
 	return base_set_used(&nset->super);
 }
 
-void* int_get_value_by_index_set(base_set* set, int index){
-	int_set* nset = (int_set*)set;
+inline void* int_get_value_by_index_set(base_set* set, int index){
+	int_set* nset;
+	if(!set || index < 0 || index >= base_set_used(set))
+		return NULL;
+	nset = (int_set*)set;
 	return &nset->values[index];
 }
-int int_set_size(base_set* set){
-	int_set* nset = (int_set*)set;
+inline int int_set_size(base_set* set){
+	int_set* nset;
+	if(!set) return 0;
+	nset = (int_set*)set;
 	return base_set_size(&nset->super);
 }
 /* current implementation doesn't need these yet
