@@ -15,8 +15,13 @@ else
 #	GENERATE_RUNNER= ruby unity/auto/generate_test_runner.rb
 endif
 
-.PHONY: clean
-.PHONY: test
+.PHONY: all clean test run lex_driver
+
+vpath %.c src
+vpath %.s src
+vpath %.h include
+vpath %.so lib
+vpath %.la lib
 
 PATHU = unity/src/
 PATHS = src/
@@ -27,22 +32,91 @@ PATHD = build/depends/
 PATHO = build/objs/
 PATHR = build/results/
 
+EXAMPLES = example/
+EXEC = $(PATHB)sclex
+
 BUILD_PATHS = $(PATHB) $(PATHD) $(PATHO) $(PATHR)
 
 BASE_SRCT = $(wildcard $(PATHT)*base*.c)
 SRCT = $(wildcard $(PATHT)*[!b][!a][!s][!e]*.c)
 
+SRC_FILES := $(subst $(PATHS),,$(wildcard $(PATHS)*.c))
+ASSEM_FILES := $(subst $(PATHS),,$(wildcard $(PATHS)*.s))
+OUTFILE := $(PATHI)outfile.in
+HEAD_FILES:= $(subst $(PATHI),,$(wildcard $(PATHI)*.h))
+SOURCES := $(patsubst %,$(PATHS)%,$(SRC_FILES))
+OBJECTS := $(patsubst %.c,$(PATHO)%.o,$(SRC_FILES))
+ASSEMBLYS := $(patsubst %.s,$(PATHO)%.o,$(ASSEM_FILES))
+DEPS := $(patsubst %.c, $(PATHD)%.d,$(SRC_FILES))
+#NEWFILES := $(wildcard $(PATHS)$(NEWSRC)/*.c)
+#NEWCLASSOBJS := $(patsubst $(PATHS)$(NEWSRC)/%.c, $(PATHB)%.o, $(NEWFILES))
+#NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
+
 COMPILE=gcc -c
 LINK=gcc
 DEPEND=gcc -MM -MG -MF
-CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -DTEST -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
+CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
 CFLAGS += -g
+TFLAGS = $(CFLAGS) -DTEST
 BASE_RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(BASE_SRCT) )
 RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(SRCT) )
 
 PASSED = `grep -s PASS $(PATHR)*.txt`
 FAIL = `grep -s FAIL $(PATHR)*.txt`
 IGNORE = `grep -s IGNORE $(PATHR)*.txt`
+
+all: $(BUILD_PATHS) $(EXEC)
+
+clean:
+	$(CLEANUP) sclex.yy.c
+	$(CLEANUP) $(PATHB)sclex.yy.c
+	$(CLEANUP) $(PATHO)*.o
+	$(CLEANUP) $(PATHB)*$(TARGET_EXTENSION)
+	$(CLEANUP) $(PATHR)*.txt
+	$(CLEANUP) $(PATHD)*.d
+	$(CLEANUP) $(PATHB)sclex
+	$(CLEANUP) $(PATHB)lex_driver
+	$(CLEANUP) $(PATHT)*_Runner.c
+	$(CLEANUP) -rf $(PATHB)lex_driver.dSYM
+	$(CLEANDIR) $(PATHD)
+	$(CLEANDIR) $(PATHO)
+	$(CLEANDIR) $(PATHR)
+	$(CLEANDIR) $(PATHB)
+
+.PRECIOUS: $(PATHB)Testbase%_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Test%set_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Test%vector_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHD)%.d
+.PRECIOUS: $(PATHO)%.o
+.PRECIOUS: $(PATHR)%.txt
+
+
+$(PATHD)%.d:: %.c %.h $(BUILD_PATHS)
+	$(CC) $(CFLAGS) $(DEBUG) -MM -MG $< -o $@
+#-include $(DEPS)
+
+$(PATHB)sclex.yy.c:: $(EXAMPLES)lex.l
+	$(EXEC) $<
+	mv sclex.yy.c $(PATHB)
+
+#$(OUTFILE):
+
+$(PATHO)%.o:: %.s
+	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
+
+#$(PATHO)%.o:: %.c $(PATHI)%.h $(PATHD)%.d
+#	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
+
+$(EXEC):: $(BUILD_PATHS) $(ASSEMBLYS) $(OBJECTS) $(OUTFILE) #$(DEPS)
+	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
+
+run: $(EXEC)
+	./$(EXEC) $(EXAMPLES)expr.l
+
+lex_driver: $(EXEC) $(PATHB)lex_driver
+
+$(PATHB)lex_driver: $(EXAMPLES)lex_test.c $(PATHB)sclex.yy.c $(PATHO)basebuffer.o
+	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
 
 test: $(BUILD_PATHS) $(BASE_RESULTS) $(RESULTS)
 #	@echo "RESULTS: $(RESULTS)"
@@ -79,13 +153,13 @@ $(PATHB)Test%vector_Runner$(TARGET_EXTENSION): $(PATHO)Test%vector_Runner.o $(PA
 #	$(LINK) -o $@ $^
 
 $(PATHO)%.o:: $(PATHT)%.c
-	$(COMPILE) $(CFLAGS) $< -o $@
+	$(COMPILE) $(TFLAGS) $< -o $@
 
 $(PATHO)%.o:: $(PATHS)%.c $(PATHI)%.h
-	$(COMPILE) $(CFLAGS) $< -o $@
+	$(COMPILE) $(TFLAGS) $< -o $@
 
 $(PATHO)%.o:: $(PATHU)%.c $(PATHU)%.h
-	$(COMPILE) $(CFLAGS) $< -o $@
+	$(COMPILE) $(TFLAGS) $< -o $@
 
 $(PATHD)%.d:: $(PATHT)%.c
 	$(DEPEND) $@ $<
@@ -101,24 +175,3 @@ $(PATHO):
 
 $(PATHR):
 	$(MKDIR) $(PATHR)
-
-
-
-
-clean:
-	$(CLEANUP) $(PATHO)*.o
-	$(CLEANUP) $(PATHB)*$(TARGET_EXTENSION)
-	$(CLEANUP) $(PATHR)*.txt
-	$(CLEANUP) $(PATHD)*.d
-	$(CLEANUP) $(PATHT)*_Runner.c
-	$(CLEANDIR) $(PATHD)
-	$(CLEANDIR) $(PATHO)
-	$(CLEANDIR) $(PATHR)
-	$(CLEANDIR) $(PATHB)
-
-.PRECIOUS: $(PATHB)Testbase%_Runner$(TARGET_EXTENSION)
-.PRECIOUS: $(PATHB)Test%set_Runner$(TARGET_EXTENSION)
-.PRECIOUS: $(PATHB)Test%vector_Runner$(TARGET_EXTENSION)
-.PRECIOUS: $(PATHD)%.d
-.PRECIOUS: $(PATHO)%.o
-.PRECIOUS: $(PATHR)%.txt

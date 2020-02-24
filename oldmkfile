@@ -39,12 +39,7 @@ UTESTFILES :=  $(patsubst $(SRCDIR)/new/%.c,$(TESTDIR)/$(UNITDIR)/%_test.c,$(UTE
 UNITTESTS := $(patsubst %.c,%, $(UTESTFILES))
 
 .PHONY: all clean run unit_tests $(BUILDDIR)
-	
-#unit_tests: $(UTESTABLES) $(UNITTESTS)
 
-#$(TESTDIR)/$(UNITDIR)/%_test: $(SRCDIR)/new/%.c $(INCLUDEDIR)/new/%.h $(TESTDIR)/$(UNITDIR)/%_test.c
-#	$(CC) $(CFLAGS) $(UNITFLAGS) $^ -o $@
-	
 $(BUILDDIR)/%.o: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h $(BUILDDIR)/%.d| $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 $(BUILDDIR)/%.d: $(SRCDIR)/$(NEWSRC)/%.c $(INCLUDEDIR)/%.h 
