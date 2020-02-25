@@ -70,11 +70,19 @@ computer:src/sclex nicebub$ ./build/lex_driver examples/ex.r
 ```
 
 # Running Tests
-First initialize the git submodules within the project directory:
+First initialize the git submodules once, within the project directory:
 ```
 computer:src/sclex nicebub$ git submodule init
 ```
+
+Next, run the genrunner.sh script from the tools directory to create the test runners. Start this script from the root directory of the source code project:
+
+```
+computer:src/sclex nicebub$ ./tools/genrunners.sh
+```
+
 Then run make test:
+
 ```
 computer:src/sclex nicebub$ make test
 ```
