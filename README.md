@@ -5,20 +5,25 @@ sclex follows the same specifications that ***lex*** and **GNU *flex*** follow, 
      been implemented *yet*.
 
 ## Background
-I wrote sclex as my first project to get back into programming after **15** *years*.  I am currently
-     adding documentation after having rushed to complete it before my other job started. 
-     Now I am currently motivated to work on this program again. I hope to turn this experiment and
-     learning-to-code-again experience into something understandable and useful.
+I wrote sclex as my first project to get back into programming after some time AFK.
+
+Currently,
+  I am adding refactoring, adding unit tests via Unity, and CMock, and adding to the already existing
+  documentation.
 
 ### Other Goals
- You may notice a lack of the use of the C Standard Library and my own weaker versions of certain existing code written out.  This is on purpose.  As I DON'T REALLY WANT to REINVENT THE WHEEL, there is a reason.
+
+*   For educational purposes I am not using the C Standard Library much
+   but I am implementing my own data structures, alogorithms, and functions
  
-   I intend on trying to recompile Sclex with my own C compiler when that is finished and I don't expect to be able to have support for the C Standard Library right off the bat.
+*   I intend on trying to recompile sclex with my own C compiler when that is finished.
    
-   Therefore with that in mind, I am trying to limit and or remove Library usage (FOR NOW) until I can compile sclex with my compiler.
+*   Add additional Unit Tests and Mocks.
    
-   Eventually, once I do add support for the C Standard Library to the compiler, I can rework Sclex to include existing Library code, thus making it more efficent, clean, portable, and reusable.
-  
+*   Keep refactoring and refining code - going more modular and object-oriented.
+
+*   Remove existing use of streams and buffers from C Standard Library and use OS calls instead.
+
   EXCUSE THE MESS! 
 ## Internal Features
 * *Recursive Descent* Predictive **Parser** (to parse the *Regular Expressions*(RE's) in the specificiation file
@@ -35,6 +40,34 @@ I wrote sclex as my first project to get back into programming after **15** *yea
 * a subset of escape characters
 * lex/flex specification file -- ending in **.l**
 * **and more...**
+
+# Compiling
+To COMPILE: (in the source directory) Run make:
+```
+computer:src/sclex nicebub$ make
+```
+# Running
+To Run the generator on the specification file and generate the source file "sclex.yy.c"
+(lex.l is a properly written specification file)
+```
+computer:src/sclex nicebub$ ./build/sclex example/lex.l 
+```
+
+To Run the demo lexer driver
+Use the included "ex.r" file in the examples folder, with the "lex_driver" demo binary.
+
+The "ex.r" example follows the language definition described in the example "lex.l"
+
+First make the lex_driver binary:
+```
+computer:src/sclex nicebub$ make lex_driver
+```
+
+Then run the lex_driver binary on the example file:_
+```
+
+computer:src/sclex nicebub$ ./build/lex_driver examples/ex.r
+```
 
 ## Regular Expression Usages and Definitions
 In the right column are examples or symbols that represent what can be written as a regular expression. The regular expressions are used to to tell the lexer how to match patterns of the input.
@@ -89,14 +122,11 @@ digits {digit}+
 
 %%
 
-	/* regular expressions */
+	/* regular expressions with C source code to run when this
+	 * regular expression is matched to the input */
 
-a|b*(cat[cat]){digits}   ___at least 1 required space token___ {
-
-			/* C source code to run when this regular expression is matched to the input */
-
-
-			return STMT;   				/* returns token STMT defined above */
+a|b*(cat[cat]){digits}   _at least 1 required space token_ {
+	return STMT; 			/* returns token STMT defined above */
 
 }
 
@@ -117,37 +147,18 @@ int my_function(float* in_float, int num_args){
 ```
 
 # Output
-The generator will output a C source file called "sclex.yy.c" with a function called **sclex()**. This function can be called from another program or *main* function to start tokenizing input from an already opened file represented with a **FILE** pointer.
+The generator will output a C source file called "sclex.yy.c". Within this file is a function called **sclex()**. This function can be called from another program or *main* function to start tokenizing input from an already opened file represented with a **FILE** pointer.
 
 The prototype for the function is:
 ```
 int sclex(FILE * opened_file);
 ```
-Calling this function will run the lexer, when a token is found, the existing C code will be run. Ideally it will eventually return an **INTEGER** which represents a token defined somewhere else in the program.
+Calling this function will run the lexer. 
+When a token is found, the existing C code will be run. Ideally it will eventually return an **INTEGER** which represents a token defined somewhere else in the program.
 
-Subsequent calls to ***sclex(filename)*** will run on the lexer again on any left over file input.
+Subsequent calls to ***sclex(filename)*** will run the lexer again on any left over file input in the buffer.
 (See lex_test.c for a demo use case of the lexer)
 
-# Compiling
-To COMPILE: (in the source directory)
-```
-computer:src/sclex nicebub$ make
-```
-# Running
-To Run the generator on the specification file and generate the source file "sclex.yy.c"
-(lex.l is a properly written specification file)
-```
-computer:src/sclex nicebub$ ./scandriver lex.l 
-```
-
-To Run the demo lexer driver
-Use the included "ex.r" file with the "lex_driver" demo binary.
-
-The "ex.r" example follows the language definition described in the example "lex.l"
-```
-
-computer:src/sclex nicebub$ ./lex_driver ex.r
-```
 # Further Goals
 A few GOALS for this projects progress:
 
@@ -161,7 +172,7 @@ A few GOALS for this projects progress:
 	* etc...
 * I intend on creating a few other tools to complement sclex:
 	* a suite, or toolchain, for a complete compiler.
-	* a YACC/BISON minimal type of clone to create the next stage to my own compiler I am constructing.
+	* a YACC/BISON minimal type of clone to create the next stage to my own compiler - available [here](https://github.com/nicebub/scyak/).
 			
 * Sclex Features
 	* To make this program a threaded app where the lexer will buffer at most a certain amount of tokens
