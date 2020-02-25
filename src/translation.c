@@ -35,7 +35,7 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 	*/
     file->tree = regexpset(mbuf,c,file);
 	/* create the initial firpos set for a set amount of  regular expressions */
-    file->fpos = new_int_vector(SETSIZE);
+    file->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
 	/* if memory error or something else thing print an error to standard
 		output and return NULL */
     if(file->fpos == NULL){
@@ -44,7 +44,7 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
     }
 	/* initialize each regular expressions' firstpos set or print an error and
 		return NULL if issues arise */
-	{
+/*	{
 		int r;
     for(r=0;r<vector_size(file->fpos);r++){
 	   *get_by_index_in_vector(file->fpos,r) = new_int_set(vector_size(file->fpos));
@@ -53,14 +53,18 @@ struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file){
 		  return NULL;
 	   }
     }
-}
+}*/
 	/* still initializing more of the firstpos sets */
 {
 	int r;
-    for(r=vector_size(file->fpos);r<SETSIZE;r++)
+    for(r=vector_size(file->fpos);r<SETSIZE;r++){
+	/*   printf("setting extra to NULL\n");*/
 	   *(int_vector**)get_by_index_in_vector(file->fpos,r) = NULL;
+    }
 }
+/*    printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
     set_vector_used(file->fpos,vector_size(file->fpos));
+/*	printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
 	/* Currently just some debugging information and construction statistics */
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
 	{

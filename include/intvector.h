@@ -11,7 +11,10 @@ struct _int_vector {
 	int_set ** values;
 };
 
+static base_vector_vtable int_vector_vtable;
+
 base_vector* new_int_vector(int size);
+base_vector* new_int_vector_with_init_sets(int vec_size, int data_size);
 
 void int_delete_vector(base_vector* vector);	
 void int_add_to_vector(void* data,base_vector * vector);

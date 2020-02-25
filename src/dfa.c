@@ -95,8 +95,9 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     temps = *get_by_index_in_vector(Dstates,sets);
 	fpt = firstpos(&tree->atop);
     temps2 = merge_sets(temps,fpt);
-    add_to_vector(temps2,Dstates);
     delete_set(temps);
+    set_by_index_in_vector(Dstates,sets,temps2);
+/*    add_to_vector(temps2,Dstates);*/
     temps = NULL;
     delete_set(temps2);
     temps2 = NULL;

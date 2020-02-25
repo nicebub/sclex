@@ -5,6 +5,25 @@
 #define inline
 #endif
 
+static base_set_vtable char_set_vtable = {
+ &char_delete_set,
+ &char_add_to_set,
+ &char_remove_from_set,
+ &char_merge_sets,
+ &char_copy_sets,
+ &char_sets_are_same,
+ &char_is_in_set,
+ &char_display_set,
+ &char_set_used,
+ &char_get_value_by_index_set,
+ &char_set_size
+/* current implementation doesn't need these yet
+ * &char_msort_set,
+ * &char_msort_set_helper,
+ * &char_msmerge_sets,
+ */
+};
+
 base_set* new_char_set(int size){
 	char_set* set;
 	if(size <=0){

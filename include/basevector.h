@@ -27,8 +27,10 @@ struct _base_vector_vtable{
 	void (*set_vector_size)(base_vector* vec,int size);
 };
 
-base_vector* new_vector(int size);
+static base_vector_vtable vtable_base_vector;
 
+base_vector* new_vector(int size);
+base_vector* new_vector_with_init_sets(int vec_size, int data_size);
 
 void delete_vector(base_vector* vec);
 void add_to_vector(void* to_add, base_vector* vec);
@@ -41,6 +43,7 @@ void set_vector_used(base_vector* vec,int used);
 void set_vector_size(base_vector* vec,int size);
 
 base_vector* new_base_vector(int size);
+base_vector* new_base_vector_with_init_sets(int vec_size, int data_size);
 void base_delete_vector(base_vector* vec);
 void base_add_to_vector(void* to_add, base_vector* vec);
 void base_display_vector(base_vector* vec);

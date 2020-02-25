@@ -32,7 +32,7 @@ void test_inheritance_with_base_pointer(void){
 	bset = new_char_set(0);
 	TEST_ASSERT_NULL(bset);
 	bset = new_char_set(1);
-	char_delete_set(bset);
+	delete_set(bset);
 	bset = NULL;
 }
 

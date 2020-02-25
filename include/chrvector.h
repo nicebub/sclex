@@ -11,7 +11,10 @@ struct _char_vector {
 	base_set ** values; /*char_set** */
 };
 
+static base_vector_vtable char_vector_vtable;
+
 base_vector* new_char_vector(int size);
+base_vector* new_char_vector_with_init_sets(int vec_size, int data_size);
 
 void char_delete_vector(base_vector* vector);
 void char_add_to_vector(void* data,base_vector * vector);

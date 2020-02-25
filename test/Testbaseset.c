@@ -1,6 +1,5 @@
 #include "unity.h"
 #include "baseset.h"
-#include <stdio.h>
 
 void test_new_and_delete_base_set(void){
 	base_set *set1;

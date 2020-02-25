@@ -5,6 +5,24 @@
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
+static base_set_vtable vtable_base_set={
+	 &base_delete_set,
+	 &base_add_to_set,
+	 &base_remove_from_set,
+	 &base_merge_sets,
+	 &base_copy_sets,
+	 &base_sets_are_same,
+	 &base_is_in_set,
+	 &base_display_set,
+	 &base_set_used,
+	 &base_get_value_by_index_set,
+	 &base_set_size
+		 /* current implementation doesn't need these yet
+		  * &base_msort_set,
+		  * &base_msort_set_helper,
+		  * &base_msmerge_sets,
+		  */
+};
 
 base_set* new_set(int size){
 	return new_base_set(size);

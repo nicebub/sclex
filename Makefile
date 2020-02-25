@@ -12,16 +12,18 @@ else
 	CLEANDIR = rmdir
 	MKDIR = mkdir -p
 	TARGET_EXTENSION=.out
-#	GENERATE_RUNNER= ruby unity/auto/generate_test_runner.rb
+#	GENERATE_RUNNER= tools/genrunners.sh
 endif
 
-.PHONY: all clean test run lex_driver
+.PHONY: all clean test run lex_driver #regen
 
 vpath %.c src
 vpath %.s src
 vpath %.h include
 vpath %.so lib
 vpath %.la lib
+
+COMPILER=gcc-9
 
 PATHU = unity/src/
 PATHS = src/
@@ -52,9 +54,9 @@ DEPS := $(patsubst %.c, $(PATHD)%.d,$(SRC_FILES))
 #NEWCLASSOBJS := $(patsubst $(PATHS)$(NEWSRC)/%.c, $(PATHB)%.o, $(NEWFILES))
 #NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
 
-COMPILE=gcc -c
-LINK=gcc
-DEPEND=gcc -MM -MG -MF
+COMPILE=$(COMPILER) -c
+LINK=$(COMPILER)
+DEPEND=$(COMPILER) -MM -MG -MF
 CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
 CFLAGS += -g
 TFLAGS = $(CFLAGS) -DTEST
@@ -67,7 +69,7 @@ IGNORE = `grep -s IGNORE $(PATHR)*.txt`
 
 all: $(BUILD_PATHS) $(EXEC)
 
-clean:
+clean: test_clean
 	$(CLEANUP) sclex.yy.c
 	$(CLEANUP) $(PATHB)sclex.yy.c
 	$(CLEANUP) $(PATHO)*.o
@@ -76,12 +78,13 @@ clean:
 	$(CLEANUP) $(PATHD)*.d
 	$(CLEANUP) $(PATHB)sclex
 	$(CLEANUP) $(PATHB)lex_driver
-	$(CLEANUP) $(PATHT)*_Runner.c
 	$(CLEANUP) -rf $(PATHB)lex_driver.dSYM
 	$(CLEANDIR) $(PATHD)
 	$(CLEANDIR) $(PATHO)
 	$(CLEANDIR) $(PATHR)
 	$(CLEANDIR) $(PATHB)
+test_clean:
+	$(CLEANUP) $(PATHT)*_Runner.c
 
 .PRECIOUS: $(PATHB)Testbase%_Runner$(TARGET_EXTENSION)
 .PRECIOUS: $(PATHB)Test%set_Runner$(TARGET_EXTENSION)
@@ -117,6 +120,9 @@ lex_driver: $(EXEC) $(PATHB)lex_driver
 
 $(PATHB)lex_driver: $(EXAMPLES)lex_test.c $(PATHB)sclex.yy.c $(PATHO)basebuffer.o
 	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
+
+#regen:
+#	$(GENERATE_RUNNER)
 
 test: $(BUILD_PATHS) $(BASE_RESULTS) $(RESULTS)
 #	@echo "RESULTS: $(RESULTS)"
