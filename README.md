@@ -69,6 +69,16 @@ Then run the lex_driver binary on the example file:_
 computer:src/sclex nicebub$ ./build/lex_driver examples/ex.r
 ```
 
+# Running Tests
+First initialize the git submodules within the project directory:
+```
+computer:src/sclex nicebub$ git submodule init
+```
+Then run make test:
+```
+computer:src/sclex nicebub$ make test
+```
+
 ## Regular Expression Usages and Definitions
 In the right column are examples or symbols that represent what can be written as a regular expression. The regular expressions are used to to tell the lexer how to match patterns of the input.
 
