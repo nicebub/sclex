@@ -86,6 +86,7 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	   }
     }
 }
+    set_vector_used(Dstates,0);
     marked = malloc(sizeof(int)*vector_used(firstpos));
     unmarked = malloc(sizeof(int)*vector_used(firstpos));
     for(a=0;a<vector_used(firstpos);a++){
@@ -96,8 +97,8 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	fpt = firstpos(&tree->atop);
     temps2 = merge_sets(temps,fpt);
     delete_set(temps);
-    set_by_index_in_vector(Dstates,sets,temps2);
-/*    add_to_vector(temps2,Dstates);*/
+/*    set_by_index_in_vector(Dstates,sets,temps2);*/
+    add_to_vector(temps2,Dstates);
     temps = NULL;
     delete_set(temps2);
     temps2 = NULL;
