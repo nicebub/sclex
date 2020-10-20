@@ -1,6 +1,6 @@
 #include "../include/decs.h"
 #include <string.h>
-char* declarations(buffer* mbuf, char*c,struct _lfile* file){
+char* declarations(Buffer* mbuf, char*c,struct _lfile* file){
     char sbuf[8000];
     char *decs;
     int scount =0;
@@ -43,7 +43,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 			 printf("Definition Name: %s Definition Value %s\n",t[0],t[1]);
 			 t += 2;
 		  }
-		  file->defbuf = malloc(sizeof(buffer*)*file->num_defs);
+		  file->defbuf = malloc(sizeof(Buffer*)*file->num_defs);
 		  {
 			  int y;
 			  for(y=0;y<file->num_defs;y++)
@@ -56,7 +56,7 @@ char* declarations(buffer* mbuf, char*c,struct _lfile* file){
 
 }
 
-void read_definitions(buffer* mbuf,char* c,struct _lfile* file ){
+void read_definitions(Buffer* mbuf,char* c,struct _lfile* file ){
     char *** defbuf = &file->defs;
     int count;
     int num_def,curlen;

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 
-struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*char* */ base_set*alphabet){
+struct _DFA* generate_dfa(Io* programIO){
     base_set*** DUTran; /* int_set*** */
     base_vector * Dstates; /* int_vector* */
     base_set* temps, *temps2; /* int_set* */
@@ -38,19 +38,19 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     current_re = 0;
     which_re = 0;
     sets =0;
-    Dstates = new_int_vector(vector_used(firstpos));
+    Dstates = new_int_vector(vector_used(programIO->lexfile.fpos));
     if(Dstates == NULL){
 	   printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
 	   return NULL;
     }
-    Dtran = malloc(sizeof(int*)*set_used(alphabet));
+    Dtran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree));
     if(!Dtran){
 	   printf("Couldnt' allocate memory for Dtran in dfa gen\n");
 	   delete_vector(Dstates);
 	   Dstates = NULL;
 	   return NULL;
     }
-    DUTran = malloc(sizeof(int_set**)*set_used(alphabet));
+    DUTran = malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree));
 	if(!DUTran){
 	    printf("Couldnt' allocate memory for DUTran in dfa gen\n");
 	    delete_vector(Dstates);
@@ -61,25 +61,25 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
 	}
 	{
 		int we;
-		for(we=0;we<set_used(alphabet);we++){
-	   	Dtran[we] = malloc(sizeof(int)*vector_used(firstpos));
-		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(firstpos));
+		for(we=0;we<set_used(programIO->lexfile.tree);we++){
+	   	Dtran[we] = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
+		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(programIO->lexfile.fpos));
     	}
 	}
 {
 	int i;
-    for(i=0;i<set_used(alphabet);i++){
+    for(i=0;i<set_used(programIO->lexfile.tree);i++){
 		int j;
-	   for(j=0;j<vector_used(firstpos);j++){
+	   for(j=0;j<vector_used(programIO->lexfile.fpos);j++){
 		  Dtran[i][j] = -1;
-		  DUTran[i][j] = new_int_set(vector_used(firstpos));
+		  DUTran[i][j] = new_int_set(vector_used(programIO->lexfile.fpos));
 	   }
     }
 }
 {
 	int bb;
-    for(bb=0;bb<vector_used(firstpos);bb++){
-	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(firstpos)));
+    for(bb=0;bb<vector_used(programIO->lexfile.fpos);bb++){
+	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(programIO->lexfile.fpos)));
 	   if(*(int**)get_by_index_in_vector(Dstates,bb) == NULL){
 		  printf("couldn't create new Dstates state\n");
 		  return NULL;
@@ -87,9 +87,9 @@ struct _DFA* generate_dfa(struct _ta *tree,/*int* */base_vector * firstpos,/*cha
     }
 }
     set_vector_used(Dstates,0);
-    marked = malloc(sizeof(int)*vector_used(firstpos));
-    unmarked = malloc(sizeof(int)*vector_used(firstpos));
-    for(a=0;a<vector_used(firstpos);a++){
+    marked = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
+    unmarked = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
+    for(a=0;a<vector_used(programIO->lexfile.fpos);a++){
 	   marked[a]= -1;
 	   unmarked[a] = -1;
     }

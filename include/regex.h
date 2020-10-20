@@ -9,7 +9,7 @@
 #include "baseset.h"
 #include "chrset.h"
 
-struct _node* regexp(struct _ta ** ta,buffer* mbuf, char *c, struct _lfile* lfile);
-struct _node* fullexpr(base_set ** ta,buffer *mbuf,char* c, struct _lfile* lfile);
+struct _node* regexp(struct _ta ** ta,Buffer* mbuf, char *c, struct _lfile* lfile);
+struct _node* fullexpr(base_set ** ta,Buffer *mbuf,char* c, struct _lfile* lfile);
 /* base_set ** ta is a char_set ** */
 #endif

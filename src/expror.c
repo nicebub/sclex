@@ -13,7 +13,7 @@ of the input stream.
 #include "baseset.h"
 #include "chrset.h"
 
-struct _node* expror(/*char** */base_set ** ta,buffer *mbuf, char* c, struct _lfile* lfile){
+struct _node* expror(/*char** */base_set ** ta,Buffer *mbuf, char* c, struct _lfile* lfile){
     /*
 	1 or more expressions OR'ed expr|expr|expr
 	*/

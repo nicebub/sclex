@@ -32,7 +32,7 @@ Results: A tree structure type pointer _ta* is returned after being
 
 */
 
-struct _ta* regexpset(buffer* mbuf, char* c, struct _lfile* lfile){
+struct _ta* regexpset(Buffer* mbuf, char* c, struct _lfile* lfile){
 	/* temporary node pointers used to construct new nodes of the parse tree
 	during parsing */
     struct _node * temp;

@@ -27,6 +27,6 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-struct _node* escape_char(base_set **ta,buffer* mbuf,char* c); /* char_set** */
+struct _node* escape_char(base_set **ta,Buffer* inputBuffer,char* c); /* char_set** */
 
 #endif

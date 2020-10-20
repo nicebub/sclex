@@ -26,7 +26,7 @@ Results: a parse tree of nodes is constructed to represent the character
 	classes/sets found in the input stream
 
 */
-struct _node* charset(/* char***/base_set ** ta,buffer *mbuf, char *c){
+struct _node* charset(/* char***/base_set ** ta,Buffer *mbuf, char *c){
 	/* a few temporary node pointers declared for later */
     struct _node *temp;
     struct _node *temp2;

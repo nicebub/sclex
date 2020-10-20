@@ -13,7 +13,7 @@
 #include "baseset.h"
 #include "chrset.h"
 
-struct _node* expr(base_set ** ta,buffer* mbuf, char *c,struct _lfile* lfile); /* char_set** */
-struct _node* apply_def(base_set** ta,buffer* mbuf,char* c, struct _lfile* lfile); /* char_set** */
+struct _node* expr(base_set ** ta,Buffer* mbuf, char *c,struct _lfile* lfile); /* char_set** */
+struct _node* apply_def(base_set** ta,Buffer* mbuf,char* c, struct _lfile* lfile); /* char_set** */
 
 #endif

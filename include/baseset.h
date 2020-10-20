@@ -40,7 +40,7 @@ struct _base_set_vtable{
 	
 };
 
-static base_set_vtable vtable_base_set;
+/*static base_set_vtable vtable_base_set;*/
 
 base_set* new_set(int size);
 /* standard set funtions that are used to call set functions
@@ -65,7 +65,7 @@ base_set * msmerge_sets(base_set **left,base_set **right);
 
 /* sets standard functions declared above to point to base set
  * stub functions below */
-void init_base_set_vtable(void);
+/*void init_base_set_vtable(void);*/
 
 base_set* new_base_set(int size);
 

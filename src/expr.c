@@ -1,6 +1,6 @@
 #include "../include/expr.h"
 #include <string.h>
-struct _node* expr(/*char** */base_set ** ta,buffer* mbuf, char *c, struct _lfile* lfile){
+struct _node* expr(/*char** */base_set ** ta,Buffer* mbuf, char *c, struct _lfile* lfile){
     struct _node *temp;
     struct _node *temp2;
     struct _node *temp3;
@@ -185,9 +185,9 @@ struct _node* expr(/*char** */base_set ** ta,buffer* mbuf, char *c, struct _lfil
     return temp;
 }
 
-struct _node* apply_def(/*char** */base_set** ta,buffer* mbuf,char* c, struct _lfile* lfile){
+struct _node* apply_def(/*char** */base_set** ta,Buffer* mbuf,char* c, struct _lfile* lfile){
 /*    struct _node* rnode;*/
-    buffer * tempbuf;
+    Buffer * tempbuf;
     char str[200];
     int e;
     char v;

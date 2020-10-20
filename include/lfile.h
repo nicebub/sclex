@@ -42,8 +42,10 @@ and accumulate other data to make a final output source file.
 
 
 */
+
+typedef struct _lfile Output;
 struct _lfile {
-    buffer **defbuf;
+    Buffer **defbuf;
     char ** defs;
     struct _ta *tree;
     base_vector *fpos; /* int_vector* */
@@ -52,5 +54,14 @@ struct _lfile {
     int num_defs;
 };
 
+typedef struct _io Io;
+struct _io {
+	Output lexfile;
+	Buffer inputBuffer;
+	char c; /* current character in input */
+};
 
+void initIO(Io* inIO);
+int ASTExists(Io* inIO);
+int firstPositionSetExists(Io* inIO);
 #endif

@@ -32,7 +32,7 @@ static base_buffer_vtable vtable_base_buffer = {
 	&base_delete_buffer,
 	&base_display_buffer
 };
-
+/*
 void init_base_buffer_vtable(){
 	vtable_base_buffer.refresh_upper_buffer = &base_refresh_upper_buffer;
 	vtable_base_buffer.refresh_lower_buffer = &base_refresh_lower_buffer;
@@ -42,7 +42,7 @@ void init_base_buffer_vtable(){
 	vtable_base_buffer.delete_buffer = &base_delete_buffer;
 	vtable_base_buffer.display_buffer = &base_display_buffer;
 }
-
+*/
 inline void refresh_upper_buffer(base_buffer* inbuf){
 	inbuf->vtable->refresh_upper_buffer(inbuf);
 }
@@ -68,6 +68,17 @@ inline int bgetchar(base_buffer* inbuf){
 inline int ungetchar(base_buffer* mbuf){
 	return mbuf->vtable->ungetchar(mbuf);
 }
+
+void init_base_buffer(base_buffer* buf){
+	buf->vtable= &vtable_base_buffer;
+    buf->buf=NULL;
+    buf->forward=NULL;
+    buf->back=NULL;
+    buf->work=NULL;
+    buf->len=0;
+    buf->type=0;
+}
+
 base_buffer* new_base_buffer(size_t size){
     base_buffer *mbuf;
     mbuf = NULL;

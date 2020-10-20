@@ -14,7 +14,7 @@
 
 typedef struct _base_buffer base_buffer;
 typedef struct _base_buffer_vtable base_buffer_vtable;
-typedef struct _base_buffer buffer;
+typedef struct _base_buffer Buffer;
 
 struct _base_buffer_vtable {
 
@@ -39,11 +39,12 @@ struct _base_buffer{
     char *forward;
     char *back;
     FILE* work;
-    int type;
     size_t len;
-
-
+    int type;
 };
+
+void init_base_buffer(base_buffer* buf);
+
 base_buffer* new_base_buffer(size_t size);
 
 base_buffer* base_buffer_from_file(FILE*);
@@ -52,7 +53,7 @@ base_buffer* base_buffer_from_filename(const char * name);
 
 base_buffer* base_buffer_from_string(char* instring);
 
-void init_base_buffer_vtable(void);
+/*void init_base_buffer_vtable(void);*/
 
 void refresh_upper_buffer(base_buffer* inbuf);
 

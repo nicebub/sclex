@@ -34,7 +34,7 @@ Results: The input stream is parsed for definitions and code and the parse
 	tree is constructed, the source code is read and held to be associated
 	later, and it is finally returned in a struct _ta.
 */
-struct _ta* translations(buffer* mbuf, char*c, struct _lfile *);
+struct _ta* translations(Buffer* mbuf, char*c, struct _lfile *);
 
 
 

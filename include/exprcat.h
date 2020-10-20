@@ -32,7 +32,7 @@ Results: A parse tree is constructed to represent a list of expressions that are
 
 
 */
-struct _node* exprlist(base_set ** ta,buffer *mbuf, char* c,struct _lfile* lfile);/* char_set** */
+struct _node* exprlist(base_set ** ta,Buffer *mbuf, char* c,struct _lfile* lfile);/* char_set** */
 
 
 #endif

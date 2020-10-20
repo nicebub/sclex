@@ -5,7 +5,7 @@
 #include "funcs.h"
 #include "lfile.h"
 
-char* declarations(buffer* mbuf, char*c,struct _lfile* file );
-void read_definitions(buffer* mbuf,char* c,struct _lfile * file);
+char* declarations(Buffer* mbuf, char*c,struct _lfile* file );
+void read_definitions(Buffer* mbuf,char* c,struct _lfile * file);
 
 #endif
