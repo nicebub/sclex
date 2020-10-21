@@ -1,5 +1,5 @@
 %{
-#include "stdio.h"
+#include <stdio.h>
 	/* declarations */
 	int a;
 #define IDENT 0
