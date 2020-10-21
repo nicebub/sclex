@@ -38,10 +38,18 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 	if((outfile = fopen("sclex.yy.c","w"))!=NULL){
 #if defined(__linux__)
 		extern uint8_t _blob[];
+		extern uint8_t _bufferh[];
+		extern uint8_t _bufferc[];
 		extern int _blob_size;
+		extern int _bufferh_size;
+		extern int _bufferc_size;
 #else
 		extern uint8_t blob[];
+		extern uint8_t bufferh[];
+		extern uint8_t bufferc[];
 		extern int blob_size;
+		extern int bufferh_size;
+		extern int bufferc_size;
 #endif
 		FILE* temp_file = NULL;
 		if((temp_file = fopen("outfile.in","w"))!=NULL){
@@ -172,63 +180,84 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 			   farra[acnt] = '\0';
 			    printf("%s",farra);
 		   infstring = malloc(sizeof(char)*len);
-		   temp = malloc(sizeof(char)*(len+20000));
+#if defined(__linux__)
+		   temp = malloc(_bufferh_size+_bufferc_size+sizeof(char)*(len+20000));
+#else
+		   temp = malloc(bufferh_size+bufferc_size+sizeof(char)*(len+20000));
+#endif
+
+
 		   tp = temp;
 		   fread(infstring,1,len,infile);
 		   for(i=0;i<len;i++){
 			  if(i < len-3 && infstring[i] == '#' && infstring[i+1] == '0' && infstring[i+2] == '#'){
 				 i += 2;
 				 switch(count){
-					case 0:
+					 case BUFFER_PAR:
+						#if defined(__linux__)
+						snprintf(tp,_bufferh_size,"%s",_bufferh);
+						tp += _bufferh_size-1;
+					    snprintf(tp,_bufferc_size,"%s",_bufferc);
+					    tp += _bufferc_size-1;
+						#else
+						snprintf(tp,bufferh_size,"%s",bufferh);
+						tp += bufferh_size-1;/*bufferh_size;*/
+					    snprintf(tp,bufferc_size,"%s",bufferc);
+					    tp += bufferc_size-1;
+						#endif
+
+						count++;
+						break;
+					case DECL_PAR:
 					    	sprintf(tp,"%s",lexfile.decs);
 					    tp += strlen(lexfile.decs);
 					    count++;
 					    break;
-					case 1:
+					case ALPH_SZ_PAR:
 					    sprintf(alen,"%d",set_used(dfa->alphabet));
 					    sprintf(tp,"%d",set_used(dfa->alphabet));
 					    tp += strlen(alen);
 					    count++;
 					    break;
-					case 2:
+					case STATE_SZ_PAR:
 					    sprintf(alen,"%d",dfa->num_states);
 					    sprintf(tp,"%d",dfa->num_states);
 					    tp += strlen(alen);
 					    count++;
 					    break;
-					case 3:
+					case ACCEPT_STATE_SZ_PAR:
 					    sprintf(alen,"%d",set_used(dfa->FFstates));
 					    sprintf(tp,"%d",set_used(dfa->FFstates));
 						tp += strlen(alen);
 						count++;
 						break;
-					case 4:
+					case NUM_REGEX_PAR:
 						sprintf(alen,"%d",dfa->num_re);
 						sprintf(tp,"%d",dfa->num_re);
 						tp += strlen(alen);
 						count++;
 						break;
-					case 5:
+					case ALPH_PAR:
 					    sprintf(tp,"%s",ala);
 					    tp += strlen(ala);
 					    count++;
 					    break;
-					case 6:
+					case MOVEMENT_PAR:
 					    sprintf(tp,"%s",dara);
 					    tp += strlen(dara);
 					    count++;
 					    break;
-					case 7:
+					case ACCEPT_STATE_PAR:
 						sprintf(tp,"%s",farra);
 						tp += strlen(farra);
 						count++;
 						break;
-					case 8:
+					case ACCEPT_TABLE_PAR:
 						sprintf(tp,"%s",ffarra);
 						tp += strlen(ffarra);
 						count++;
 						break;
-					case 9:
+					case USER_CODE_PAR:
 					   sprintf(tp,"switch(n){\n");
 					   tp += 11;
 					   {

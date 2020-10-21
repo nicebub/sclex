@@ -13,9 +13,9 @@ _bufferh:
 	.incbin "basebuffer.h"
 2:
 _bufferh_size:
-	.int 1b- _bufferh
+	.int 2b- _bufferh
 _bufferc:
 	.incbin "basebuffer.c"
 3:
 _bufferc_size:
-	.int 1b- _bufferc
+	.int 3b- _bufferc

@@ -3,7 +3,8 @@
 	-- TO MAKE CHANGES TO THIS FILE PLEASE SEE THE DEVELOPER DOCUMENTATION AND SOURCE CODE --
 
 	Lexer Generated from the Lexical Analyzer Generator - sclex */
-#include "basebuffer.h"
+#define AS_INCLUDE
+#0#
 #include <stdlib.h>
 #include <stdio.h>
 /*/extern FILE* scin;*/

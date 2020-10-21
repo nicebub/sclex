@@ -118,7 +118,7 @@ run: $(EXEC)
 
 lex_driver: $(EXEC) $(PATHB)lex_driver
 
-$(PATHB)lex_driver: $(EXAMPLES)lex_test.c $(PATHB)sclex.yy.c $(PATHO)basebuffer.o
+$(PATHB)lex_driver: $(EXAMPLES)lex_test.c $(PATHB)sclex.yy.c
 	$(CC) $(CFLAGS) $(DEBUG) $^ -o $@
 
 #regen:

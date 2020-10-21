@@ -15,8 +15,10 @@ characters.
 #endif
 #include <string.h>
 #include <stdlib.h>
-#include "../include/basebuffer.h"
 
+#ifndef AS_INCLUDE
+#include "basebuffer.h"
+#endif
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
