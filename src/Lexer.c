@@ -17,11 +17,38 @@
     return NULL;                                                               \
   }
 
+void initTokenStack(LStack* stack){
+	int counter;
+	stack->top = stack->stack;
+	for(counter=0;counter<STACK_SIZE;counter++)
+		stack->stack[counter].lexeme = NULL;
+	
+}
+void pushTokenStack(LStack* stack, LexerToken token){
+	*stack->top = token;
+	stack->top++;
+}
+LexerToken peekTokenStack(LStack* stack){
+	return *(stack->top-1);
+}
+LexerToken popTokenStack(LStack* stack){
+	LexerToken temp;
+	stack->top--;
+	temp = *stack->top;
+	stack->top->lexeme=NULL;
+	return temp;
+}
+
+
+
+
+
 void initLexer(Lexer* lex){
 	init_base_buffer(&lex->inputBuffer);
-	lex->current_char = '\0';
-	lex->previous_char = '\0';
+	initTokenStack(&lex->tokenStack);
 	lex->file = NULL;
+	lex->previous_char = '\0';
+	lex->current_char =  '\0';
 }
 inline int isWhitespace(Lexer* lex){
 	return is_ws(lex->current_char);
@@ -52,16 +79,20 @@ inline void pushBackChar(Lexer* lex){
 	ungetchar(&lex->inputBuffer);
 }
 
-char* matchedNextToken(Lexer* lex,char* token){
+LexerToken matchedNextToken(Lexer* lex,char* token){
+	LexerToken temp;
+	temp.lexeme=NULL;
 	if(lex->current_char == token[0]){
 		getNextChar(lex);
 		if(lex->current_char == token[1]){
 			getNextChar(lex);
-			return token;
+			temp.lexeme = token;
+			pushTokenStack(&lex->tokenStack,temp);
+			return temp;
 		}
 		pushBackChar(lex);
 	}
-	return NULL;
+	return temp;
 }
 
 char* readRawStringUntilToken(Lexer* lex, char* token){
@@ -70,7 +101,7 @@ char* readRawStringUntilToken(Lexer* lex, char* token){
     int stringLength =0;
     readString = NULL;
 /*	getNextChar(lex);*/
-	while(!matchedNextToken(lex,token)){
+	while(!(matchedNextToken(lex,token).lexeme)){
 		if( isEOF(lex) || isEOS(lex))
 			return NULL;
 		stringBuffer[stringLength] = lex->current_char;
@@ -81,6 +112,9 @@ char* readRawStringUntilToken(Lexer* lex, char* token){
 	readString = malloc(sizeof(char)*strlen(stringBuffer)+1);
 	strncpy(readString,stringBuffer,strlen(stringBuffer)+1);
 	return readString;
+}
+void pushBackLastToken(Lexer* lex){
+	
 }
 /*#undef pass_ws*/
 #undef check_for

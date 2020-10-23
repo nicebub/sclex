@@ -2,9 +2,28 @@
 #define _MLEXER_H
 
 #include "basebuffer.h"
+#define STACK_SIZE 50
+typedef struct _lexerToken LexerToken;
+struct _lexerToken {
+	char* lexeme;
+};
+
+typedef struct _lexerTokenStack LStack;
+struct _lexerTokenStack {
+	LexerToken stack[STACK_SIZE];
+	LexerToken* top;
+};
+
+
+void initTokenStack(LStack* stack);
+void pushTokenStack(LStack* stack, LexerToken token);
+LexerToken peekTokenStack(LStack* stack);
+LexerToken popTokenStack(LStack* stack);
+
 typedef struct _lexer Lexer;
 struct _lexer {
 	Buffer inputBuffer;
+	LStack tokenStack;
 	char* file;
 	char previous_char;
 	char current_char;
@@ -30,7 +49,10 @@ void initLexer(Lexer* lex);
  void getNextChar(Lexer* lex);
  void pushBackChar(Lexer* lex);
 
-char* matchedNextToken(Lexer* lex,char* token);
+
+
+
+LexerToken matchedNextToken(Lexer* lex,char* token);
 char* readRawStringUntilToken(Lexer* lex, char* token);
 void pushBackLastToken(Lexer* lex);
 

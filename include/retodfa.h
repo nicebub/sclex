@@ -1,8 +1,8 @@
 #ifndef RETODFA_H
 #define RETODFA_H
-/*
+
 #include "tree.h"
-#include "funcs.h"
+/*#include "funcs.h"
 #include "baseset.h"
 #include "intset.h"
 #include "chrset.h"*/

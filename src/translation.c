@@ -4,11 +4,14 @@
 	stream through the buffer and creates a parse tree of all the regular 
 	expressions it finds until the end of the definitions section.
 */
-#include "../include/translation.h"
+#include "Parser.h"
+#include "lex_error.h"
+#include "retodfa.h"
+/*
 #include "basevector.h"
 #include "intvector.h"
 #include "chrvector.h"
-
+*/
 /**  
 
 	struct _ta* translations(buffer* mbuf, char*c, struct _lfile *file)
@@ -29,16 +32,16 @@ Results: The input stream is parsed for definitions and code and the parse
 	tree is constructed, the source code is read and held to be associated
 	later, and it is finally returned in a struct _ta.
 */
-RegularExpressionTreeArray* parseTranslations(Buffer* mbuf, char*c, struct _lfile *){
+RegularExpressionTreeArray* parseTranslations(Io* programIO){
 	/* call the rexexpset() function that parses the input for more than
 		one regular expression definition any their associated code sections
 	*/
-    file->tree = regexpset(mbuf,c,file);
+    programIO->lexfile.tree = parseRegularExpressionSet(programIO);
 	/* create the initial firpos set for a set amount of  regular expressions */
-    file->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
+    programIO->lexfile.fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
 	/* if memory error or something else thing print an error to standard
 		output and return NULL */
-    if(file->fpos == NULL){
+    if(programIO->lexfile.fpos == NULL){
 	   lex_error(4);
 	   return NULL;
     }
@@ -57,36 +60,36 @@ RegularExpressionTreeArray* parseTranslations(Buffer* mbuf, char*c, struct _lfil
 	/* still initializing more of the firstpos sets */
 {
 	int r;
-    for(r=vector_size(file->fpos);r<SETSIZE;r++){
+    for(r=vector_size(programIO->lexfile.fpos);r<SETSIZE;r++){
 	/*   printf("setting extra to NULL\n");*/
-	   *(int_vector**)get_by_index_in_vector(file->fpos,r) = NULL;
+	   *(int_vector**)get_by_index_in_vector(programIO->lexfile.fpos,r) = NULL;
     }
 }
 /*    printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
-    set_vector_used(file->fpos,vector_size(file->fpos));
+    set_vector_used(programIO->lexfile.fpos,vector_size(programIO->lexfile.fpos));
 /*	printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
 	/* Currently just some debugging information and construction statistics */
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
 	{
 		int h;
-    for(h=0;h<file->tree->used;h++){
+    for(h=0;h<programIO->lexfile.tree->used;h++){
 		  printf("REGEX\n");
-		  display_tree(file->tree->t[h]);
+		  display_tree(programIO->lexfile.tree->t[h]);
 		  printf("\n");
     }
 }
     printf("\n");
 
 	/* create the entire followpos set on the entire tree of regular expressions */
-    followpos(&file->fpos,&file->tree->atop);
+    followpos(&programIO->lexfile.fpos,&programIO->lexfile.tree->atop);
 
     printf("\n");
     printf("ITS ALPHABET\n");
-    display_set(file->tree->alphabet);
+    display_set(programIO->lexfile.tree->alphabet);
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
 
 	/* return the entire constructed parse tree structure or potentially NULL if 
 		we found some error along the way */
-    return file->tree;
+    return programIO->lexfile.tree;
 
 }

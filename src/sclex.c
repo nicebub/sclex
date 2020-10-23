@@ -1,6 +1,7 @@
 #include "sclex.h"
 #include "Parser.h"
-
+#include "lex_error.h"
+#include "gen.h"
 int main(int argc, const char **argv) {
 	static Io programIO;
 	static struct _DFA *dfa;		/* DFA structure pointer to point to DFA record created with this lexer */
@@ -12,12 +13,12 @@ int main(int argc, const char **argv) {
     lex_error(SCERR_NEED_ARGUMENT);
     exit(EXIT_FAILURE);
   }  
-  initializeParserWithArgument(&programIO,argv[FILENAME_ARG]);
+  initializeParserWithArgument(&programIO,(char*)argv[FILENAME_ARG]);
   parseInputFile(&programIO); /* parse input file, name given as argument to executable*/
   
   if(canGenerateDFA(&programIO)){
 	dfa = generate_dfa(&programIO);
-	generate_output(&programIO, dfa);
+	generate_output(programIO.lexfile, dfa);
   }
 
   return CleanupMemory(&programIO,&dfa); /* return success on memory cleanup success or warning otherwise */
@@ -35,8 +36,8 @@ void initIO(Io* programIO){
     programIO->lexfile.aux = NULL;
 	
 }
-inline void initializeEnvironmentWithArgument(Io* programIO,char* arg){
-	programIO->own_lexer->inputBuffer = *buffer_from_filename(arg);/* initialize buffer from filename given */	
+inline void initializeParserWithArgument(Io* programIO,char* arg){
+	programIO->own_lexer.inputBuffer = *buffer_from_filename(arg);/* initialize buffer from filename given */	
 }
 inline int canGenerateDFA(Io* programIO){
   return regularExpressionTreeArrayExists(&programIO) && firstPositionSetExists(&programIO);
@@ -51,29 +52,29 @@ int CleanupMemory(Io* programIO, struct _DFA** dfa){
 
     int count;
   /* release memory buffer */
-  delete_buffer(programIO->inputBuffer);
+  delete_buffer(&programIO->inputBuffer);
   /* release declarations portion of spec file */
-  free(programIO->lexfile->decs);
-  programIO->lexfile->decs = NULL;
+  free(programIO->lexfile.decs);
+  programIO->lexfile.decs = NULL;
   /* release included C code attached to each regular expression definition */
-  for (count = 0; count < programIO->lexfile->num_defs; count++) {
-	 if(programIO->lexfile->defbuf[count]){
-		delete_buffer(programIO->lexfile->defbuf[y]);
-		programIO->lexfile->defbuf[count] = NULL;
+  for (count = 0; count < programIO->lexfile.num_defs; count++) {
+	 if(programIO->lexfile.defbuf[count]){
+		delete_buffer(programIO->lexfile.defbuf[count]);
+		programIO->lexfile.defbuf[count] = NULL;
 	 }
   }
-  free(programIO->lexfile->defbuf);
-  programIO->lexfile->defbuf = NULL;
+  free(programIO->lexfile.defbuf);
+  programIO->lexfile.defbuf = NULL;
   /* release parse tree */
-  delete_ta(programIO->lexfile->tree);
+  delete_ta(programIO->lexfile.tree);
   /* release firstpos sets */
-  delete_vector(programIO->lexfile->fpos);
+  delete_vector(programIO->lexfile.fpos);
   /* release DFA table constructed */
   delete_dfa(*dfa);
   *dfa = NULL;
-  programIO->lexfile->fpos = NULL;
-  programIO->lexfile->tree = NULL;
-  programIO->inputBuffer = NULL;
+  programIO->lexfile.fpos = NULL;
+  programIO->lexfile.tree = NULL;
+/*  programIO->inputBuffer = NULL;*/
   return EXIT_SUCCESS;
 }
 #undef ARGUMENTS_NEEDED

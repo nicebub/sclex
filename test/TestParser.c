@@ -11,7 +11,6 @@
 /*Parser parser;*/
 
 void setUp(void){
-	initLexer(&lexer);
 }
 void tearDown(void){
 }

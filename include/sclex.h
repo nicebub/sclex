@@ -2,6 +2,7 @@
 #define SCLEXDRIVER_H
 
 #include "lfile.h"
+#include "dfa.h"
 
 #ifdef __STRICT_ANSI__
 #define inline
@@ -12,7 +13,7 @@
 
 
 void initIO(Io* programIO);
-inline int ASTExists(Io* inIO);
+inline int regularExpressionTreeArrayExists(Io* inIO);
 inline int firstPositionSetExists(Io* inIO);
 inline int canGenerateDFA(Io* programIO);
 inline void initializeParserWithArgument(Io* programIO,char* argumentFileName);
