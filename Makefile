@@ -167,6 +167,9 @@ $(PATHO)%.o:: $(PATHT)%.c
 $(PATHO)%.o:: $(PATHS)%.c $(PATHI)%.h
 	$(COMPILE) $(TFLAGS) $< -o $@
 
+$(PATHO)%.o:: $(PATHS)%.c
+	$(COMPILE) $(TFLAGS) $< -o $@
+
 $(PATHO)%.o:: $(PATHU)%.c $(PATHU)%.h
 	$(COMPILE) $(TFLAGS) $< -o $@
 

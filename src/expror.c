@@ -9,10 +9,13 @@ input stream during lexing.
 of the input stream.
 
 */
-#include "../include/expror.h"
+#include "Parser.h"
+#include "retodfa.h"
+#include "lex_error.h"
+/*
 #include "baseset.h"
 #include "chrset.h"
-
+*/
 RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Io* programIO){/* char_set** */
     /*
 	1 or more expressions OR'ed expr|expr|expr
@@ -29,11 +32,11 @@ RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Io* programIO){/* c
     
 /* At this point in the input stream, a few tokens tell us we aren't seeing
 	an expression and we should skip the loops ahead */
-    if(*c != '\n' && *c != ')' && *c != '\0' && *c != EOF ){
+    if(programIO->own_lexer.current_char != '\n' && programIO->own_lexer.current_char != ')' && programIO->own_lexer.current_char != '\0' && programIO->own_lexer.current_char != EOF ){
 		/* Call the exprlist() function to further process each list of expressions
 			found
 		*/
-	   temp = exprlist(ta,mbuf,c,lfile);
+	   temp = parseExpressionList(set,programIO);
 	   /* Call the firstpos and lastpos function to help create the sets for this
    		new parse tree
    		*/
@@ -42,26 +45,26 @@ RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Io* programIO){/* c
 	   /* either we're done or continue searching because we found whitespace
    		in our regular expression where we shouldn't have
    		*/
-	   if(is_ws(*c)==0){
-		  while(is_ws(*c)==0)
-			 *c = getchar(mbuf);
+	   if(is_ws(programIO->own_lexer.current_char)==0){
+		  while(is_ws(programIO->own_lexer.current_char)==0)
+			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 		  return temp;
 	   }
     }
 	/* have we vound a '|' symbol OR, and more expression lists?? */
-    if(*c == '|'){
-	   *c = getchar(mbuf);
+    if(programIO->own_lexer.current_char == '|'){
+	   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
     }
 	
 	/* Just like before, att this point in the input stream, a few tokens tell
 	us we aren't seeing an expression list and we should skip the loops ahead 
 	*/
-    while(*c != '\n' && *c != ')' && *c != '\0' && *c != EOF ){
+    while(programIO->own_lexer.current_char != '\n' && programIO->own_lexer.current_char != ')' && programIO->own_lexer.current_char != '\0' && programIO->own_lexer.current_char != EOF ){
 		/* Call the exprlist() function to further process another expression list or 
 		more depending on the iteration of the while loop and OR them
 		with any previously read and recognized expression list from the input stream
 		*/
-	   temp2 = exprlist(ta,mbuf,c,lfile);
+	   temp2 = parseExpressionList(set,programIO);
 	   temp3 = create_node((char)OR);
 
 	   /* memory issues, then report and error and return NULL */
@@ -79,14 +82,14 @@ RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Io* programIO){/* c
 	   pos(&temp,0);
 	   
 	   /* If we find any unexpected whitespace then return the parse tree */
-	   if(is_ws(*c)==0){
-		  while(is_ws(*c)==0)
-			 *c = getchar(mbuf);
+	   if(is_ws(programIO->own_lexer.current_char)==0){
+		  while(is_ws(programIO->own_lexer.current_char)==0)
+			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 		  return temp;
 	   }
 	   /* we may still want to stay in the while loop as we've seen another '|' OR symbol */
-	   if(*c == '|'){
-		  *c = getchar(mbuf);
+	   if(programIO->own_lexer.current_char == '|'){
+		  programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 	   }
     }
 	/* return NULL or any parse tree we've constucted from recognized input */

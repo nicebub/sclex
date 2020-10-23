@@ -8,10 +8,13 @@ of the input stream.
 
 */
 
-#include "../include/exprcat.h"
+#include "Parser.h"
+#include "retodfa.h"
+#include "lex_error.h"
+/*
 #include "baseset.h"
 #include "chrset.h"
-
+*/
 /**  
 
 	struct _node* exprlist(struct _cset ** ta,Buffer * mbuf, char* c, struct _lfile* lfile)
@@ -49,10 +52,10 @@ RegularExpressionTreeNode* parseExpressionList(base_set ** set,Io* programIO){/*
     temp = temp2 = temp3 = NULL;
 	/* At this point in the input stream, a few tokens tell us we aren't seeing
 		an expression and we should skip the loops ahead */
-    if(*c != '\n' && *c != ')' && *c != '|' && *c != '\0' && *c != EOF ){
+    if(programIO->own_lexer.current_char != '\n' && programIO->own_lexer.current_char != ')' && programIO->own_lexer.current_char != '|' && programIO->own_lexer.current_char != '\0' && programIO->own_lexer.current_char != EOF ){
 		/* Call the expr() function to further process each individual expression
 		*/
-	   temp = expr(ta,mbuf,c,lfile);
+	   temp = parseExpression(set,programIO);
 	   /* Call the firstpos and lastpos function to help create the sets for this
 	   	new parse tree
 	   */
@@ -61,18 +64,18 @@ RegularExpressionTreeNode* parseExpressionList(base_set ** set,Io* programIO){/*
 	   /* either we're done or continue searching because we found whitespace
 	   	in our regular expression where we shouldn't have
 	   */
-	   if(is_ws(*c) == 0)
+	   if(is_ws(programIO->own_lexer.current_char) == 0)
 		  return temp;
     }
 	/* Just like before, att this point in the input stream, a few tokens tell
 	us we aren't seeing an expression and we should skip the loops ahead 
 	*/
-    while(*c != '\n' && *c != ')' && *c != '|' && *c != '\0' && *c != EOF ){
+    while(programIO->own_lexer.current_char != '\n' && programIO->own_lexer.current_char != ')' && programIO->own_lexer.current_char != '|' && programIO->own_lexer.current_char != '\0' && programIO->own_lexer.current_char != EOF ){
 		/* Call the expr() function to further process another expression or 
 		more depending on the iteration of the while loop and concatenate it
 		with any previously read and recognized expression from the input stream
 		*/
-	   temp2 = expr(ta,mbuf,c,lfile);
+	   temp2 = parseExpression(set,programIO);
 	   temp3 = create_node((char)CONCAT);
 	   /* memory issues, then report and error and return NULL */
 	   if(temp3 == NULL){
@@ -90,7 +93,7 @@ RegularExpressionTreeNode* parseExpressionList(base_set ** set,Io* programIO){/*
 	   pos(&temp,1);
 	   pos(&temp,0);
 	   /* If we find any unexpected whitespace then return the parse tree */
-	   if(is_ws(*c) == 0)
+	   if(is_ws(programIO->own_lexer.current_char) == 0)
 		 return temp;
     }
 	/* Either we've skipped all the loops above and we are returning NULL or

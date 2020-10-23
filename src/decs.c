@@ -7,32 +7,34 @@ char* parseDeclarations(Io* programIO){
 
 	declarations = NULL;
 
-	declarations = readRawStringUntilToken(programIO->own_lexer, CLOSE_STARTER);
+	declarations = readRawStringUntilToken(&programIO->own_lexer, CLOSE_STARTER);
 
-	pushBackLastToken(programIO->own_lexer);
+	pushBackLastToken(&programIO->own_lexer);
 	return declarations;
 }
 
 
 char* oldparseDeclarations(Io* programIO){
+	char* c;
     char sbuf[8000];
     char *decs;
     int scount =0;
     char d;
   char **t;
+c = &programIO->own_lexer.current_char;
     t = NULL;
     decs = NULL;
-    while((*c = getchar(mbuf))!= EOF && *c !='\0'){
+    while((*c = getchar(&programIO->own_lexer.inputBuffer))!= EOF && *c !='\0'){
 	   if(*c == '%'){
 		  d = *c;
-		  *c = getchar(mbuf);
+		  *c = getchar(&programIO->own_lexer.inputBuffer);
 		  if(*c == '}'){
 			 sbuf[scount]='\0';
 			 decs = malloc(sizeof(char)*strlen(sbuf)+1);
 			 strncpy(decs,sbuf,strlen(sbuf)+1);
-			 *c = getchar(mbuf);
+			 *c = getchar(&programIO->own_lexer.inputBuffer);
 			 while(is_ws(*c) == 0)
-				*c = getchar(mbuf);
+				*c = getchar(&programIO->own_lexer.inputBuffer);
 			 /* return decs; */
 			 break;
 		  }
@@ -40,7 +42,7 @@ char* oldparseDeclarations(Io* programIO){
 			 sbuf[scount] = d;
 			 sbuf[scount+1] = *c;
 			 scount += 2;
-			 *c = getchar(mbuf);
+			 *c = getchar(&programIO->own_lexer.inputBuffer);
 		  }
 	   }
 	   else{
@@ -49,19 +51,19 @@ char* oldparseDeclarations(Io* programIO){
 	   }
     }
     if(decs){
-	   parseDefinitions(mbuf,c,file);
-	   if(*file->defs != NULL){
+	   parseDefinitions(programIO);
+	   if(*programIO->lexfile.defs != NULL){
 		  printf("found definitions, they are as follows\n");
-		  t = file->defs;
+		  t = programIO->lexfile.defs;
 		  while(*t != NULL){
 			 printf("Definition Name: %s Definition Value %s\n",t[0],t[1]);
 			 t += 2;
 		  }
-		  file->defbuf = malloc(sizeof(Buffer*)*file->num_defs);
+		  programIO->lexfile.defbuf = malloc(sizeof(Buffer*)*programIO->lexfile.num_defs);
 		  {
 			  int y;
-			  for(y=0;y<file->num_defs;y++)
-			 	 file->defbuf[y] = buffer_from_string(file->defs[(2*y)+1]);
+			  for(y=0;y<programIO->lexfile.num_defs;y++)
+			 	 programIO->lexfile.defbuf[y] = buffer_from_string(programIO->lexfile.defs[(2*y)+1]);
 		  }
 	   }
 	   return decs;
@@ -71,12 +73,14 @@ char* oldparseDeclarations(Io* programIO){
 }
 
 void parseDefinitions(Io* programIO){
-    char *** defbuf = &file->defs;
+	char* c;
+    char *** defbuf = &programIO->lexfile.defs;
     int count;
     int num_def,curlen;
    int olast;
     int a;
-	    file->num_defs = 0;
+	c = &programIO->own_lexer.current_char;
+	    programIO->lexfile.num_defs = 0;
     *defbuf = malloc(sizeof(char*)*50);
 	{
 		int a;
@@ -90,14 +94,14 @@ void parseDefinitions(Io* programIO){
 		  ;
    
 defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
-		  *c = getchar(mbuf);
+		  *c = getchar(&programIO->own_lexer.inputBuffer);
 	   if(*c == '%'){
-		  *c = getchar(mbuf);
+		  *c = getchar(&programIO->own_lexer.inputBuffer);
 		  if(*c == '%'){
-			 ungetchar(mbuf);
-			 ungetchar(mbuf);
-			 *c = getchar(mbuf);
-			 file->num_defs = num_def;
+			 ungetchar(&programIO->own_lexer.inputBuffer);
+			 ungetchar(&programIO->own_lexer.inputBuffer);
+			 *c = getchar(&programIO->own_lexer.inputBuffer);
+			 programIO->lexfile.num_defs = num_def;
 			 return;
 			 /*			 break; */
 		  }
@@ -120,7 +124,7 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 	   while(is_ws(*c) !=0){
 		  (*defbuf)[a][count] = *c;
 		  count++;
-		  *c = getchar(mbuf);
+		  *c = getchar(&programIO->own_lexer.inputBuffer);
 	   }
 	   (*defbuf)[a][count] = '\0';
 	   num_def++;
@@ -134,8 +138,8 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 			 (*defbuf)[a+1] = NULL;
 			 printf("definition already exists or name already taken\n");
 			 while(*c != '\n')
-				  *c = getchar(mbuf);
-			 *c = getchar(mbuf);
+				  *c = getchar(&programIO->own_lexer.inputBuffer);
+			 *c = getchar(&programIO->own_lexer.inputBuffer);
 			 num_def--;
 			 goto defbegin;
 		  }
@@ -144,33 +148,33 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 	   count = 0;
 	   curlen = 25;
 	   while(is_ws(*c) == 0)
-		  *c = getchar(mbuf);
+		  *c = getchar(&programIO->own_lexer.inputBuffer);
 		   olast = -1;
 	   while(*c != '\n'){
 		  switch(*c){
 			 case '{':
 				if((olast != -1)){
 				    if(olast != '\\'){
-					   	*c = getchar(mbuf);
-					   	*c = getchar(mbuf);
+					   	*c = getchar(&programIO->own_lexer.inputBuffer);
+					   	*c = getchar(&programIO->own_lexer.inputBuffer);
 					   	if(*c == ','){
 						    /* found a range so put characters back and keep reading*/
-						    ungetchar(mbuf);
-						    ungetchar(mbuf);
-						    ungetchar(mbuf);
-						    *c = getchar(mbuf);
+						    ungetchar(&programIO->own_lexer.inputBuffer);
+						    ungetchar(&programIO->own_lexer.inputBuffer);
+						    ungetchar(&programIO->own_lexer.inputBuffer);
+						    *c = getchar(&programIO->own_lexer.inputBuffer);
 						    /* continue to default section of switch statement*/
 				    		}
 				    		else{
 						    /* found a definition use*/
 						    char defname[25];
 						    int dnlen = 0;
-						    ungetchar(mbuf);
-						    ungetchar(mbuf);
-						    *c = getchar(mbuf);
+						    ungetchar(&programIO->own_lexer.inputBuffer);
+						    ungetchar(&programIO->own_lexer.inputBuffer);
+						    *c = getchar(&programIO->own_lexer.inputBuffer);
 						    while(*c != '}'){
 							   defname[dnlen] = *c;
-							   *c = getchar(mbuf);
+							   *c = getchar(&programIO->own_lexer.inputBuffer);
 							   dnlen++;
 						    }
 						    defname[dnlen] = '\0';
@@ -195,12 +199,12 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 								  count++;
 								  break;
 								/*  olast = *c;*/
-								 /* *c = getchar(mbuf);*/
+								 /* *c = getchar(&programIO->own_lexer.inputBuffer);*/
 							   }
 						    }
 						}
 						    olast = *c;
-						    *c = getchar(mbuf);
+						    *c = getchar(&programIO->own_lexer.inputBuffer);
 						    continue;
 				    		}
 				    	}
@@ -214,10 +218,10 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 				    /* found a definition use*/
 				    char defname[25];
 				    int dnlen = 0;
-				    *c = getchar(mbuf);
+				    *c = getchar(&programIO->own_lexer.inputBuffer);
 				    while(*c != '}'){
 					   defname[dnlen] = *c;
-					   *c = getchar(mbuf);
+					   *c = getchar(&programIO->own_lexer.inputBuffer);
 					   dnlen++;
 				    }
 				    defname[dnlen] = '\0';
@@ -242,28 +246,28 @@ defbegin:	   while((is_ws(*c) ==0) || *c == '\n')
 						  count++;
 						  break;
 						  /*  olast = *c;*/
-						  /* *c = getchar(mbuf);*/
+						  /* *c = getchar(&programIO->own_lexer.inputBuffer);*/
 					   }
 				    }
 				}
 				    olast = *c;
-				    *c = getchar(mbuf);
+				    *c = getchar(&programIO->own_lexer.inputBuffer);
 				    continue;
 				}
 			 default:
 				(*defbuf)[a+1][count] = *c;
 				count++;
 				olast = *c;
-				*c = getchar(mbuf);
+				*c = getchar(&programIO->own_lexer.inputBuffer);
 				break;
 		  }
 	   }
-	   *c = getchar(mbuf);
+	   *c = getchar(&programIO->own_lexer.inputBuffer);
 	   (*defbuf)[a+1] = realloc((*defbuf)[a+1],curlen+4);
 	   (*defbuf)[a+1][count] = '\0';
 	   curlen = 25;
     }
 	}
-    file->num_defs = num_def;
+    programIO->lexfile.num_defs = num_def;
     return;
 }

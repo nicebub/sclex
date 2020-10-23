@@ -9,17 +9,17 @@ regexp()mfunction, which continues to parse individual regular expressions.
 */
 #include "Parser.h"
 #include "lex_error.h"
-
+#include "retodfa.h"
 /**  
 
-	struct _ta* regexpset(buffer* mbuf,char * c, struct _lfile* lfile)
+	struct _ta* regexpset(buffer* programIO->own_lexer.inputBuffer,char * c, struct _lfile* lfile)
 
 Functionality: This function as part of the predicive parser recognizes
 	the whole section of regular expressions and processes over the
 	input as well as calling other functions to process their respective
 	 parts.
 
-Parameters: buffer* mbuf: an initialized buffer with input data
+Parameters: buffer* programIO->own_lexer.inputBuffer: an initialized buffer with input data
 			char* c: the current input character
 			_lfile* lfile: pointer to internal file data structures
 				and other structures shared around the program.
@@ -61,10 +61,10 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Io* programIO){
 	the end of the definition section, then don't start further
 	parsing for regular expressions. Otherwise DO.
 	*/
-    if(*c != EOF  && *c != '%' && (*c = getchar(mbuf))!= EOF){
+    if(programIO->own_lexer.current_char != EOF  && programIO->own_lexer.current_char != '%' && (programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer))!= EOF){
 		/* call regexp to further parse the input stream as a regular
 		expression, and store the parse tree returned in temp */
-	   temp = regexp(&ta,mbuf,c,lfile);
+	   temp = parseRegularExpression(&ta,programIO);
 	   /*  if NULL we have a problem, so print an error and keep
 	   	returning NULL */
 	   if(temp == NULL){
@@ -109,21 +109,21 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Io* programIO){
     ta->num_re++;
     ct++;
     /* skip certain whitespace tokens */
-    while((is_ws(*c) ==0) || *c == '\n')
-	   *c = getchar(mbuf);
+    while((is_ws(programIO->own_lexer.current_char) ==0) || programIO->own_lexer.current_char == '\n')
+	   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 	/* end of definiton section if finding '%' token now so exit with
 		current parse tree returned */
-    if(*c == '%')
+    if(programIO->own_lexer.current_char == '%')
 	  return ta;
 	/* otherwise if we haven't found the end of the file or the end of
 	the defnition section, loop around parsing each regular expression
 	defnition 
 		Inside the loop repeats the process above */
-    while(*c != EOF && *c != '%'){
+    while(programIO->own_lexer.current_char != EOF && programIO->own_lexer.current_char != '%'){
 
-	   temp2 = regexp(&ta,mbuf,c,lfile);
+	   temp2 = parseRegularExpression(&ta,programIO);
 	   if(temp2 == NULL){
-		  *c = getchar(mbuf);
+		  programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 		  continue;
 	   }
 	   temp3 = create_node((char)CONCAT);
@@ -166,11 +166,11 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Io* programIO){
 	   temp = temp4;
 	   ta->atop = temp;
 	   /* Get rid of any whitespace characters left in the input stream */
-	   while((is_ws(*c) ==0) || *c == '\n')
-		  *c = getchar(mbuf);
+	   while((is_ws(programIO->own_lexer.current_char) ==0) || programIO->own_lexer.current_char == '\n')
+		  programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
 	   /* if we found the end of the definitions symbol '%' then return
 	   	a pointer to the current parse tree structure */
-	   if(*c == '%'){
+	   if(programIO->own_lexer.current_char == '%'){
 		  return ta;
 	   }
     }
