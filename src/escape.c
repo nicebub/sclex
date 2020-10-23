@@ -14,7 +14,7 @@ Examples of escqpe character sequences:
 #include "chrset.h"
 /**
 
-	struct _node* escape_char(struct _cset **ta,buffer* programIO->own_lexer.inputBuffer,char* c)
+	struct _node* escape_char(struct _cset **ta,buffer* parser->lexer.inputBuffer,char* c)
 
 Functionality: This runs the part of the parser that recognizes escape
 	character sequences and constructs nodes for the parse tree to reprsent
@@ -22,7 +22,7 @@ Functionality: This runs the part of the parser that recognizes escape
 	is returned.
 
 Parameters: a memory location of a pointer to a character set _cset **ta
-			an already existing and initialized buffer pointer buffer* programIO->own_lexer.inputBuffer
+			an already existing and initialized buffer pointer buffer* parser->lexer.inputBuffer
 			a character pointer char* c that is points to the current input
 			character
 
@@ -33,18 +33,18 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-RegularExpressionTreeNode* parseEscapeChars(base_set** set, Io* programIO){/* char_set** */
+RegularExpressionTreeNode* parseEscapeChars(base_set** set, Parser* parser){/* char_set** */
 	/* temporary node help create new nodes and add them to a tree */
     struct _node* temp;
 
     temp = NULL;
 
-    programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 
 	/* create the node and return it,
 		switch statement for later use
 	*/
-    switch(programIO->own_lexer.current_char){
+    switch(parser->lexer.current_char){
 	   case 'n':
 		  temp = create_node('\n');
 		  return temp;
@@ -68,12 +68,12 @@ RegularExpressionTreeNode* parseEscapeChars(base_set** set, Io* programIO){/* ch
 	   case '.':
 	   case ':':
 	   case '|':
-		  temp = create_node(programIO->own_lexer.current_char);
+		  temp = create_node(parser->lexer.current_char);
 		  return temp;
 		  /* If all else fails, then report an error and return NULL */
 	   default:
 		  printf("doesn't support that kind of escape character\n");
-		  printf("%c\n",programIO->own_lexer.current_char);
+		  printf("%c\n",parser->lexer.current_char);
 		  return NULL;
     }
     

@@ -17,35 +17,8 @@
     return NULL;                                                               \
   }
 
-void initTokenStack(LStack* stack){
-	int counter;
-	stack->top = stack->stack;
-	for(counter=0;counter<STACK_SIZE;counter++)
-		stack->stack[counter].lexeme = NULL;
-	
-}
-void pushTokenStack(LStack* stack, LexerToken token){
-	*stack->top = token;
-	stack->top++;
-}
-LexerToken peekTokenStack(LStack* stack){
-	return *(stack->top-1);
-}
-LexerToken popTokenStack(LStack* stack){
-	LexerToken temp;
-	stack->top--;
-	temp = *stack->top;
-	stack->top->lexeme=NULL;
-	return temp;
-}
-
-
-
-
-
 void initLexer(Lexer* lex){
 	init_base_buffer(&lex->inputBuffer);
-	initTokenStack(&lex->tokenStack);
 	lex->file = NULL;
 	lex->previous_char = '\0';
 	lex->current_char =  '\0';
@@ -87,10 +60,9 @@ LexerToken matchedNextToken(Lexer* lex,char* token){
 		if(lex->current_char == token[1]){
 			getNextChar(lex);
 			temp.lexeme = token;
-			pushTokenStack(&lex->tokenStack,temp);
-			return temp;
 		}
-		pushBackChar(lex);
+		else
+			pushBackChar(lex);
 	}
 	return temp;
 }
@@ -112,9 +84,6 @@ char* readRawStringUntilToken(Lexer* lex, char* token){
 	readString = malloc(sizeof(char)*strlen(stringBuffer)+1);
 	strncpy(readString,stringBuffer,strlen(stringBuffer)+1);
 	return readString;
-}
-void pushBackLastToken(Lexer* lex){
-	
 }
 /*#undef pass_ws*/
 #undef check_for

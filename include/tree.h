@@ -158,6 +158,7 @@ struct _ta {
     int id;
 };
 
+void initTreeArray(TreeArray* treeArray);
 /** Function Prototype
 A constructor for a node, with an input value
 

@@ -5,27 +5,27 @@
 #include "baseset.h"
 #include "chrset.h"
 */
-RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** ta,Io* programIO){
+RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** ta,Parser* parser){
     struct _node * temp;
     temp = NULL;
     /*
 	represents a regular expression on one line
 	*/
-    temp = parseFullExpression(&(*ta)->alphabet,programIO);
+    temp = parseFullExpression(&(*ta)->alphabet,parser);
 
-    if(programIO->own_lexer.current_char == '{'){
+    if(parser->lexer.current_char == '{'){
 	   char sbuf[8000];
 	   int scount =0;
 	   int extrafrontbrackets = 0;
 	   sbuf[0] = '{';
 	   scount++;
-	   while((programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer))!= EOF && programIO->own_lexer.current_char !='\0'){
-		  if(programIO->own_lexer.current_char == '}'){
+	   while((parser->lexer.current_char = getchar(&parser->lexer.inputBuffer))!= EOF && parser->lexer.current_char !='\0'){
+		  if(parser->lexer.current_char == '}'){
 			 if(extrafrontbrackets != 0){
 				extrafrontbrackets--;
-				sbuf[scount] = programIO->own_lexer.current_char;
+				sbuf[scount] = parser->lexer.current_char;
 				scount++;
-				/* programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer); */
+				/* parser->lexer.current_char = getchar(&parser->lexer.inputBuffer); */
 			 }
 			 else{
 				sbuf[scount] = '}';
@@ -33,22 +33,22 @@ RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** 
 				sbuf[scount]='\0';
 				(*ta)->action_array[(*ta)->used] = malloc(sizeof(char)*strlen(sbuf)+1);
 				strncpy((*ta)->action_array[(*ta)->used],sbuf,strlen(sbuf)+1);
-				programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-				while(is_ws(programIO->own_lexer.current_char) == 0)
-				    programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-				if(programIO->own_lexer.current_char == '\n' || programIO->own_lexer.current_char == EOF || programIO->own_lexer.current_char == '\0')
+				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+				while(is_ws(parser->lexer.current_char) == 0)
+				    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+				if(parser->lexer.current_char == '\n' || parser->lexer.current_char == EOF || parser->lexer.current_char == '\0')
 				    return temp;
 				else{
-				    printf("error expecting a newline character but found %c\n",programIO->own_lexer.current_char);
+				    printf("error expecting a newline character but found %c\n",parser->lexer.current_char);
 				    exit(-1);
 				}
 			 }
 		  }
 		  else{
-			 if(programIO->own_lexer.current_char == '{'){
+			 if(parser->lexer.current_char == '{'){
 				extrafrontbrackets++;
 			 }
-			 sbuf[scount] = programIO->own_lexer.current_char;
+			 sbuf[scount] = parser->lexer.current_char;
 			 scount++;
 
 		  }
@@ -57,16 +57,16 @@ RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** 
     }
     else{
 	   lex_error(11);
-	   printf("error expecting a '{' character but found %c\n",programIO->own_lexer.current_char);
+	   printf("error expecting a '{' character but found %c\n",parser->lexer.current_char);
 	   exit(-1);
     }
 }
 
-RegularExpressionTreeNode* parseFullExpression(base_set ** set,Io* programIO){
+RegularExpressionTreeNode* parseFullExpression(base_set ** set,Parser* parser){
 /*
  represents a full expression on a line minus the newline character
  (expr) OR expr.op OR expr|expr OR [range] OR exprlist
 
  */
-    return parseExpressionOR(set,programIO);
+    return parseExpressionOR(set,parser);
  }

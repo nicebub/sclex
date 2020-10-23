@@ -11,7 +11,7 @@ may have only 1 child. 1 _node is the root of the tree.
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
-#include "../include/tree.h"
+#include "tree.h"
 /** Function Prototype 
 
 	void delete_node(struct _node*);
@@ -80,6 +80,22 @@ inline int atnum_created(void){
 inline int missingh(void){
     return missinghelp;
 }
+
+
+void initTreeArray(TreeArray* treeArray){
+	treeArray->t =NULL;
+	treeArray->atop = NULL;
+	treeArray->alphabet = NULL;
+	treeArray-> action_array = NULL;
+	treeArray->Fstates = NULL;
+	treeArray->finalpos = NULL;
+	treeArray->size = 0;
+	treeArray->used = 0;
+	treeArray->num_re = 0;
+	treeArray->id = 0;
+}
+
+
 
 /** END OF DEUBBGING FUNCTIONS AND VARIABLES */
 struct _node * create_node(char value){

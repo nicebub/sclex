@@ -2,7 +2,7 @@
 #include "Parser.h"
 #include "lex_error.h"
 #include "retodfa.h"
-RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* char_set** */
+RegularExpressionTreeNode* parseExpression(base_set ** set,Parser* parser){ /* char_set** */
     struct _node *temp;
     struct _node *temp2;
     struct _node *temp3;
@@ -12,9 +12,9 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
     /*
 	can be an (expr) OR [range] OR expr OR expr* OR expr+ OR expr? OR expr{a,b} OR expr|expr
 	*/
-    if((isalphanum(programIO->own_lexer.current_char) || isprintable(programIO->own_lexer.current_char)) && (programIO->own_lexer.current_char != '\\') ){
-	   m = programIO->own_lexer.current_char;
-	   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+    if((isalphanum(parser->lexer.current_char) || isprintable(parser->lexer.current_char)) && (parser->lexer.current_char != '\\') ){
+	   m = parser->lexer.current_char;
+	   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 	   
 	   temp = create_node(m);\
 	   if(temp == NULL){
@@ -24,21 +24,21 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 	   add_to_set(set,temp->value);
     }
     else{
-	   	switch(programIO->own_lexer.current_char){
+	   	switch(parser->lexer.current_char){
 		    case '\\':
-			   temp = parseEscapeChars(set,programIO);
+			   temp = parseEscapeChars(set,parser);
 			   if(temp == NULL){
 				  lex_error(27);
 				  return NULL;
 			   }
 			   add_to_set(set,temp->value);
-			   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			   break;
 		  case '[':
-			   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   temp = parseCharSet(set,programIO);
-			   if(programIO->own_lexer.current_char == ']'){
-			    	programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   temp = parseCharSet(set,parser);
+			   if(parser->lexer.current_char == ']'){
+			    	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			   	}
 			   	else{
 				    lex_error(13);
@@ -47,14 +47,14 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 	   			}
 			   break;
 		  case '(':
-			   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   while(is_ws(programIO->own_lexer.current_char) ==0)
-			    	programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   temp = parseExpressionOR(set,programIO);
-			   while(is_ws(programIO->own_lexer.current_char) ==0)
-			    	programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   if(programIO->own_lexer.current_char == ')'){
-			    	programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   while(is_ws(parser->lexer.current_char) ==0)
+			    	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   temp = parseExpressionOR(set,parser);
+			   while(is_ws(parser->lexer.current_char) ==0)
+			    	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   if(parser->lexer.current_char == ')'){
+			    	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			   	}
 			   else{
 			    	lex_error(14);
@@ -62,11 +62,11 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 			   	}
 			   break;
 		    case '{':
-			   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   temp = apply_def(set,programIO);
-			   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			   if(programIO->own_lexer.current_char == '}'){
-				  programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   temp = apply_def(set,parser);
+			   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			   if(parser->lexer.current_char == '}'){
+				  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			   }
 			   else{
 				  lex_error(13);
@@ -76,7 +76,7 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 			   break;
     		}
     }
-	   switch(programIO->own_lexer.current_char){
+	   switch(parser->lexer.current_char){
 		  case '\n':
 			 pos(&temp,1);
 			 pos(&temp,0);
@@ -89,7 +89,7 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 				return NULL;
 			 }
 			 temp2->left = temp;
-			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			 pos(&temp2,1);
 			 pos(&temp2,0);
 			 return temp2;
@@ -101,7 +101,7 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 				return NULL;
 			 }
 			 temp2->left = temp;
-			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			 pos(&temp2,1);
 			 pos(&temp2,0);
 			 return temp2;
@@ -113,32 +113,32 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 				return NULL;
 			 }
 			 temp2->left = temp;
-			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 			 pos(&temp2,1);
 			 pos(&temp2,0);
 			 return temp2;
 			 break;
 		  case '{':
-			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			 programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-			 if(programIO->own_lexer.current_char == ','){
-					ungetchar(&programIO->own_lexer.inputBuffer);
-					ungetchar(&programIO->own_lexer.inputBuffer);
-					programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-					temp2 = create_node(programIO->own_lexer.current_char);
+			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+			 if(parser->lexer.current_char == ','){
+					ungetchar(&parser->lexer.inputBuffer);
+					ungetchar(&parser->lexer.inputBuffer);
+					parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+					temp2 = create_node(parser->lexer.current_char);
 					if(temp2 == NULL){
 					    lex_error(18);
 					    return NULL;
 					}
-					programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-				    	programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-					temp3 = create_node(programIO->own_lexer.current_char);
+					parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+				    	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+					temp3 = create_node(parser->lexer.current_char);
 					if(temp3 == NULL){
 					    lex_error(18);
 					    return NULL;
 					}
-					programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-					if(programIO->own_lexer.current_char == '}'){
+					parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+					if(parser->lexer.current_char == '}'){
 					   temp4 = create_node((char)COMMA);
 					    if(temp4 == NULL){
 						   lex_error(19);
@@ -153,7 +153,7 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 					    }
 					    temp3->left = temp;
 					    temp3->right = temp4;
-					    programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+					    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 					    pos(&temp3,1);
 					    pos(&temp3,0);
 					    return temp3;
@@ -168,11 +168,11 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
 			 else{
  				 /* found another expression definition?? */
  				printf("shouldn't be here in scyak.l perhaps\n");
- 				ungetchar(&programIO->own_lexer.inputBuffer);
- 				ungetchar(&programIO->own_lexer.inputBuffer);
- 				ungetchar(&programIO->own_lexer.inputBuffer);
- 				programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
- 				printf("back to char %c\n", programIO->own_lexer.current_char);
+ 				ungetchar(&parser->lexer.inputBuffer);
+ 				ungetchar(&parser->lexer.inputBuffer);
+ 				ungetchar(&parser->lexer.inputBuffer);
+ 				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+ 				printf("back to char %c\n", parser->lexer.current_char);
     			 pos(&temp,1);
     			 pos(&temp,0);
     			 return temp;
@@ -187,7 +187,7 @@ RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* ch
     return temp;
 }
 
-RegularExpressionTreeNode* apply_def(base_set** set,Io* programIO){ /* char_set** */
+RegularExpressionTreeNode* apply_def(base_set** set,Parser* parser){ /* char_set** */
 /*    struct _node* rnode;*/
     Buffer * tempbuf;
     char str[200];
@@ -195,23 +195,23 @@ RegularExpressionTreeNode* apply_def(base_set** set,Io* programIO){ /* char_set*
     char v;
     tempbuf = NULL;
 /*    rnode = NULL;*/
-    for(e=0;programIO->own_lexer.current_char != '}';e++){
-	   str[e] = programIO->own_lexer.current_char;
-	   programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
+    for(e=0;parser->lexer.current_char != '}';e++){
+	   str[e] = parser->lexer.current_char;
+	   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
     }
     str[e] = '\0';
-    ungetchar(&programIO->own_lexer.inputBuffer);
-    ungetchar(&programIO->own_lexer.inputBuffer);
-    programIO->own_lexer.current_char = getchar(&programIO->own_lexer.inputBuffer);
-    for(e=0;e<2*programIO->lexfile.num_defs;e+=2){
-	   if(strcmp(programIO->lexfile.defs[e],str)==0){
-		  tempbuf = programIO->lexfile.defbuf[e/2];
+    ungetchar(&parser->lexer.inputBuffer);
+    ungetchar(&parser->lexer.inputBuffer);
+    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+    for(e=0;e<2*parser->num_defs;e+=2){
+	   if(strcmp(parser->defs[e],str)==0){
+		  tempbuf = parser->defbuf[e/2];
 		  break;
 	   }
     }
     if(tempbuf != NULL){
 	   v = getchar(tempbuf);
-	   return parseExpressionOR(set,programIO);
+	   return parseExpressionOR(set,parser);
     }
     return NULL;
 }
