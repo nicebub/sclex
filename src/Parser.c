@@ -1,6 +1,10 @@
 #include "Parser.h"
 #include "Lexer.h"
+#include "lex_error.h"
 
+#ifdef __STRICT_ANSI__
+#define inline
+#endif
 
 void initTokenStack(LStack* stack){
 	int counter;
@@ -40,6 +44,11 @@ void initParser(Parser* parser){
 	parser->num_defs=0;
 	
 }
+inline void initParserWithFilename(Parser* parser,char* arg){
+	initParser(parser);
+	parser->lexer.inputBuffer = *buffer_from_filename(arg);/* initialize buffer from filename given */
+    getNextChar(&parser->lexer);
+}
 
 RegularExpressionTreeArray* parseInputFile(Parser* parser){
   /* If not at End Of File already, look for spec file section delimiters.
@@ -47,26 +56,33 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
   */
 	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){
 		/*fail*/
+		lex_error(SCERR_DECL_UNDECLARED);
 		return NULL;
 	}
 	parser->decs = parseDeclarations(parser);
 
 	if(!matchedNextToken(&parser->lexer,CLOSE_STARTER).lexeme){
 		/*fail*/
+		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
 	parseDefinitions(parser);
 	
 	if(!matchedNextToken(&parser->lexer,SECTION_STARTER).lexeme){
 		/* fail */
+		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
     parser->parseTree = parseTranslations(parser);
 
-	if(matchedNextToken(&parser->lexer,SECTION_STARTER).lexeme){
-		/* optional aux */
-		aux(parser);
+	if(!matchedNextToken(&parser->lexer,SECTION_STARTER).lexeme){
+		/* fail */
+		lex_error(SCERR_SEPR_AFTER_TRANS);
+		return NULL;
+		
 	}
+	/* optional aux */
+	aux(parser);
 	
 	return NULL;
 }

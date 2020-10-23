@@ -16,7 +16,6 @@ void initIO(Io* programIO);
 inline int regularExpressionTreeArrayExists(Io* inIO);
 inline int firstPositionSetExists(Io* inIO);
 inline int canGenerateDFA(Io* programIO);
-inline void initializeParserWithArgument(Io* programIO,char* argumentFileName);
 
 int CleanupMemory(Io* programIO, struct _DFA** dfa);
 

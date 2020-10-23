@@ -39,6 +39,7 @@ LexerToken popTokenStack(LStack* stack);
 
 
 void initParser(Parser* parser);
+void initParserWithFilename(Parser* parser,char* arg);
 
 RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser);
 RegularExpressionTreeArray* parseInputFile(Parser* parser);

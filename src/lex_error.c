@@ -12,7 +12,7 @@ void lex_error(int en){
     const static char * err_strings[] = {
 /*0*/	   "Can't open file for writing: sclex.yy.c",
 /*1*/	   "Declarations sections must be declared",
-/*2*/	   "Must use %% separator and have defintions written",
+/*2*/	   "Must use %% separator and have definitions written",
 /*3*/	   "Must use %% separator after the translations are done",
 /*4*/	   "Couldn't create new file->fpos",
 /*5*/	   "Couldn't create new set",

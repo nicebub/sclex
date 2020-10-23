@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BUILD="build"
+TEST="test/sclex"
+EXEC="sclex"
+FILES="err1 plus1 err2 plus2 err3 plus3"
+
+echo "noarg:"
+./$BUILD/$EXEC  > $TEST/noarg.out 2>&1
+diff $TEST/noarg.out $TEST/noarg.txt
+
+for FILE in $FILES; do
+	echo "$FILE:"
+./$BUILD/$EXEC $TEST/$FILE.l > $TEST/$FILE.out 2>&1
+diff $TEST/$FILE.out $TEST/$FILE.txt
+done

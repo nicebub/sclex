@@ -139,6 +139,19 @@ test: $(BUILD_PATHS) $(BASE_RESULTS) $(RESULTS)
 	@echo "\nDONE"
 
 
+SCLEXPASSED = `grep -s PASS $(PATHR)*.txt`
+SCLEXFAIL = `grep -s FAIL $(PATHR)*.txt`
+SCLEXIGNORE = `grep -s IGNORE $(PATHR)*.txt`
+
+testsclex: $(BUILD_PATHS) $(SCLEX_RESULTS)
+	@echo "-----------------------\nIGNORES:\n-----------------------"
+	@echo "$(IGNORE)"
+	@echo "-----------------------\nFAILURES:\n-----------------------"
+	@echo "$(FAIL)"
+	@echo "-----------------------\nPASSED:\n-----------------------"
+	@echo "$(PASSED)"
+	@echo "\nDONE"
+
 $(PATHR)%.txt: $(PATHB)%$(TARGET_EXTENSION)
 	-./$< > $@ 2>&1
 
