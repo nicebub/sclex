@@ -5,7 +5,7 @@ then it returns the structure to be incorporate with the rest of the
 parse tree.
 
 */
-#include "../include/charset.h"
+#include "Parser.h"
 #include "baseset.h"
 #include "chrset.h"
 /* Function Prototype
@@ -26,7 +26,7 @@ Results: a parse tree of nodes is constructed to represent the character
 	classes/sets found in the input stream
 
 */
-struct _node* charset(/* char***/base_set ** ta,Buffer *mbuf, char *c){
+RegularExpressionTreeNode* parseCharSet(base_set ** set, Io* programIO){
 	/* a few temporary node pointers declared for later */
     struct _node *temp;
     struct _node *temp2;

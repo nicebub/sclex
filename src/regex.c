@@ -3,7 +3,7 @@
 #include "baseset.h"
 #include "chrset.h"
 
-struct _node* regexp(struct _ta ** ta,Buffer * mbuf, char *c, struct _lfile* lfile){
+RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** ta,Io* programIO){
     struct _node * temp;
     temp = NULL;
     /*
@@ -60,7 +60,7 @@ struct _node* regexp(struct _ta ** ta,Buffer * mbuf, char *c, struct _lfile* lfi
     }
 }
 
-struct _node* fullexpr(/*char** */base_set ** ta,Buffer *mbuf, char *c, struct _lfile* lfile){
+RegularExpressionTreeNode* parseFullExpression(base_set ** set,Io* programIO){
 /*
  represents a full expression on a line minus the newline character
  (expr) OR expr.op OR expr|expr OR [range] OR exprlist

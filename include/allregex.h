@@ -32,7 +32,6 @@ Results: A tree structure type pointer _ta* is returned after being
 */
 /*struct _ta* regexpset(buffer* mbuf,char * c, struct _lfile* lfile);*/
 
-struct AST* parseRegularExpressionSet();
 
 
 #endif

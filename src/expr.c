@@ -1,6 +1,7 @@
-#include "../include/expr.h"
+#include "Parser.h"
 #include <string.h>
-struct _node* expr(/*char** */base_set ** ta,Buffer* mbuf, char *c, struct _lfile* lfile){
+
+RegularExpressionTreeNode* parseExpression(base_set ** set,Io* programIO){ /* char_set** */
     struct _node *temp;
     struct _node *temp2;
     struct _node *temp3;
@@ -185,7 +186,7 @@ struct _node* expr(/*char** */base_set ** ta,Buffer* mbuf, char *c, struct _lfil
     return temp;
 }
 
-struct _node* apply_def(/*char** */base_set** ta,Buffer* mbuf,char* c, struct _lfile* lfile){
+RegularExpressionTreeNode* apply_def(base_set** set,Io* programIO){ /* char_set** */
 /*    struct _node* rnode;*/
     Buffer * tempbuf;
     char str[200];

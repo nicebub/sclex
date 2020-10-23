@@ -43,14 +43,14 @@ struct _DFA* generate_dfa(Io* programIO){
 	   printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
 	   return NULL;
     }
-    Dtran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree));
+    Dtran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree->alphabet));
     if(!Dtran){
 	   printf("Couldnt' allocate memory for Dtran in dfa gen\n");
 	   delete_vector(Dstates);
 	   Dstates = NULL;
 	   return NULL;
     }
-    DUTran = malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree));
+    DUTran = malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree->alphabet));
 	if(!DUTran){
 	    printf("Couldnt' allocate memory for DUTran in dfa gen\n");
 	    delete_vector(Dstates);
@@ -61,14 +61,14 @@ struct _DFA* generate_dfa(Io* programIO){
 	}
 	{
 		int we;
-		for(we=0;we<set_used(programIO->lexfile.tree);we++){
+		for(we=0;we<set_used(programIO->lexfile.tree->alphabet);we++){
 	   	Dtran[we] = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
 		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(programIO->lexfile.fpos));
     	}
 	}
 {
 	int i;
-    for(i=0;i<set_used(programIO->lexfile.tree);i++){
+    for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
 		int j;
 	   for(j=0;j<vector_used(programIO->lexfile.fpos);j++){
 		  Dtran[i][j] = -1;
@@ -94,7 +94,7 @@ struct _DFA* generate_dfa(Io* programIO){
 	   unmarked[a] = -1;
     }
     temps = *get_by_index_in_vector(Dstates,sets);
-	fpt = firstpos(&tree->atop);
+	fpt = firstpos(&(programIO->lexfile.tree->atop));
     temps2 = merge_sets(temps,fpt);
     delete_set(temps);
 /*    set_by_index_in_vector(Dstates,sets,temps2);*/
@@ -118,9 +118,9 @@ struct _DFA* generate_dfa(Io* programIO){
  	   int j;
 	   unmarked[a] =0;
 	   marked[a] = 1;
-	   for(j=0;j<set_used(alphabet);j++){
+	   for(j=0;j<set_used(programIO->lexfile.tree->alphabet);j++){
 /*		  printf("creating new U set to use\n");*/
-		  U = new_int_set(vector_used(firstpos));
+		  U = new_int_set(vector_used(programIO->lexfile.fpos));
 		  if(U == NULL){
 			 printf("couldn't create new U\n");
 			 return NULL;
@@ -130,14 +130,14 @@ struct _DFA* generate_dfa(Io* programIO){
 		  for(g=0;
 		  	g<set_used(*get_by_index_in_vector(Dstates,a));
 		  	g++){
-			 tn = get_node_for_uniq(tree->atop,
+			 tn = get_node_for_uniq(programIO->lexfile.tree->atop,
 			 	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
-			 if(tn->value == *(char*)get_value_by_index_set(alphabet,j)){
+			 if(tn->value == *(char*)get_value_by_index_set(programIO->lexfile.tree->alphabet,j)){
 /*				printf("alphabet symbol %c from state %d for position %d\n", \
 					  alphabet->s[j],a+1,Dstates->iset[a]->s[g]);*/
 				temps = U;
 				U = merge_sets(U,
-					*get_by_index_in_vector(firstpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
+					*get_by_index_in_vector(programIO->lexfile.fpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
 				((int_set*)U)->super.uniq = sets;
 /*				printf("U created: displaying ");*/
 /*				display_set(U,0);*/
@@ -194,18 +194,18 @@ struct _DFA* generate_dfa(Io* programIO){
 /*    printf("THEY ARE AS FOLLOWS\n");*/
 /*    for(int j=0;j<vector_used(Dstates);j++)*/
 /*	   display_set(Dstates->iset[j],0);*/
-	tTran = malloc(sizeof(int*)*set_used(alphabet));
-	tDUTran= malloc(sizeof(int_set**)*set_used(alphabet));
+	tTran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree->alphabet));
+	tDUTran= malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree->alphabet));
 	{
 	int we;
-    	for(we=0;we<set_used(alphabet);we++){
+    	for(we=0;we<set_used(programIO->lexfile.tree->alphabet);we++){
 			tTran[we] = malloc(sizeof(int)*vector_used(Dstates));
 	   		tDUTran[we] = malloc(sizeof(int_set*)*vector_used(Dstates));
 		}
 }
 {
 	int i;
-    for(i=0;i<set_used(alphabet);i++){
+    for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
 		int j;
 	   for(j=0;j<vector_used(Dstates);j++){
 		  tTran[i][j] = Dtran[i][j];
@@ -227,8 +227,8 @@ struct _DFA* generate_dfa(Io* programIO){
     printf("S|");
 	{
 		int i;
-		for(i=0;i<set_used(alphabet);i++){
-		   printf("|%c",*(char*)get_value_by_index_set(alphabet,i));
+		for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
+		   printf("|%c",*(char*)get_value_by_index_set(programIO->lexfile.tree->alphabet,i));
 		}
 	}
     printf("|\n");
@@ -238,7 +238,7 @@ struct _DFA* generate_dfa(Io* programIO){
 		for(r=0;r<vector_used(Dstates);r++){
 			int i;
 			printf("%d|",r+1);
-	   	 	for(i=0;i<set_used(alphabet);i++){
+	   	 	for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
 		 	   if(tTran[i][r] != -1)
 				   printf("|%d", tTran[i][r]);
 			   else
@@ -267,10 +267,10 @@ struct _DFA* generate_dfa(Io* programIO){
 /*	printf("number of regular expressions found %d\n",tree->num_re);*/
 	{
 	int k;
-    for(k=0;k<tree->num_re;k++){
+    for(k=0;k<programIO->lexfile.tree->num_re;k++){
 		int y;
 	   	Fstates = NULL;
-	   	lastpos = tree->finalpos[k];
+	   	lastpos = programIO->lexfile.tree->finalpos[k];
 /*    printf("Finish States for the whole file RE: \n");*/
 	   	fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
@@ -295,21 +295,21 @@ struct _DFA* generate_dfa(Io* programIO){
 		   		 	}
 				}
 			}
-	   tree->Fstates[k] = Fstates;
+	   programIO->lexfile.tree->Fstates[k] = Fstates;
     }
 }
   /*  printf("final finish state set for the whole file RE\n");*/
 /*    display_set(FFstates,0);*/
 
     dfa->FFstates = FFstates;
-    dfa->Fstates = tree->Fstates;
+    dfa->Fstates = programIO->lexfile.tree->Fstates;
     dfa->start = (*(int_set**)get_by_index_in_vector(Dstates,0))->super.uniq;
     dfa->num_states = vector_used(Dstates);
     dfa->Dstates = Dstates;
-    dfa->alphabet = copy_sets(alphabet);
+    dfa->alphabet = copy_sets(programIO->lexfile.tree->alphabet);
     dfa->DUTran = tDUTran;
-    dfa->action_array = tree->action_array;
-    dfa->num_re = tree->num_re;
+    dfa->action_array = programIO->lexfile.tree->action_array;
+    dfa->num_re = programIO->lexfile.tree->num_re;
     return dfa;
 }
 

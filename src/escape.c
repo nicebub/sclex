@@ -9,7 +9,7 @@ Examples of escqpe character sequences:
 	\0
 
 */
-#include "../include/escape.h"
+#include "Parser.h"
 #include "baseset.h"
 #include "chrset.h"
 /**
@@ -33,7 +33,7 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-struct _node* escape_char(/*char** */base_set **ta,Buffer* mbuf,char* c){
+RegularExpressionTreeNode* parseEscapeChars(base_set** set, Io* programIO){/* char_set** */
 	/* temporary node help create new nodes and add them to a tree */
     struct _node* temp;
 

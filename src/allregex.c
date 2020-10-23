@@ -7,8 +7,8 @@ by pointer.
 regexp()mfunction, which continues to parse individual regular expressions.
 
 */
-#include "../include/allregex.h"
-
+#include "Parser.h"
+#include "lex_error.h"
 
 /**  
 
@@ -32,7 +32,7 @@ Results: A tree structure type pointer _ta* is returned after being
 
 */
 
-struct _ta* regexpset(Buffer* mbuf, char* c, struct _lfile* lfile){
+RegularExpressionTreeArray* parseRegularExpressionSet(Io* programIO){
 	/* temporary node pointers used to construct new nodes of the parse tree
 	during parsing */
     struct _node * temp;

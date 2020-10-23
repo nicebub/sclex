@@ -13,7 +13,7 @@ of the input stream.
 #include "baseset.h"
 #include "chrset.h"
 
-struct _node* expror(/*char** */base_set ** ta,Buffer *mbuf, char* c, struct _lfile* lfile){
+RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Io* programIO){/* char_set** */
     /*
 	1 or more expressions OR'ed expr|expr|expr
 	*/

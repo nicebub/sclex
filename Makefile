@@ -89,6 +89,7 @@ test_clean:
 .PRECIOUS: $(PATHB)Testbase%_Runner$(TARGET_EXTENSION)
 .PRECIOUS: $(PATHB)Test%set_Runner$(TARGET_EXTENSION)
 .PRECIOUS: $(PATHB)Test%vector_Runner$(TARGET_EXTENSION)
+.PRECIOUS: $(PATHB)Test%_Runner$(TARGET_EXTENSION)
 .PRECIOUS: $(PATHD)%.d
 .PRECIOUS: $(PATHO)%.o
 .PRECIOUS: $(PATHR)%.txt
@@ -150,6 +151,8 @@ $(PATHB)Test%set_Runner$(TARGET_EXTENSION): $(PATHO)Test%set_Runner.o $(PATHO)ba
 $(PATHB)Test%vector_Runner$(TARGET_EXTENSION): $(PATHO)Test%vector_Runner.o $(PATHO)Test%vector.o $(PATHO)baseset.o $(PATHO)basevector.o $(PATHO)%set.o $(PATHO)%vector.o $(PATHO)unity.o #$(PATHD)Test%.d
 	$(LINK) -o $@ $^
 
+$(PATHB)TestLexer_Runner$(TARGET_EXTENSION): $(PATHO)TestLexer_Runner.o $(PATHO)TestLexer.o $(PATHO)Lexer.o $(PATHO)basebuffer.o $(PATHO)funcs.o $(PATHO)unity.o #$(PATHD)Test%.d
+	$(LINK) -o $@ $^
 
 #$(PATHB)Test%_Runner$(TARGET_EXTENSION): $(PATHO)Test%_Runner.o $(PATHO)Test%.o $(PATHO)%.o $(PATHO)unity.o #$(PATHD)Test%.d
 #	$(LINK) -o $@ $^ $(PATHO)base*.o

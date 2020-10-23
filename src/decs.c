@@ -1,6 +1,20 @@
-#include "../include/decs.h"
 #include <string.h>
-char* declarations(Buffer* mbuf, char*c,struct _lfile* file){
+#include "Parser.h"
+#include "Lexer.h"
+
+char* parseDeclarations(Io* programIO){
+	char* declarations;
+
+	declarations = NULL;
+
+	declarations = readRawStringUntilToken(programIO->own_lexer, CLOSE_STARTER);
+
+	pushBackLastToken(programIO->own_lexer);
+	return declarations;
+}
+
+
+char* oldparseDeclarations(Io* programIO){
     char sbuf[8000];
     char *decs;
     int scount =0;
@@ -35,7 +49,7 @@ char* declarations(Buffer* mbuf, char*c,struct _lfile* file){
 	   }
     }
     if(decs){
-	   read_definitions(mbuf,c,file);
+	   parseDefinitions(mbuf,c,file);
 	   if(*file->defs != NULL){
 		  printf("found definitions, they are as follows\n");
 		  t = file->defs;
@@ -56,7 +70,7 @@ char* declarations(Buffer* mbuf, char*c,struct _lfile* file){
 
 }
 
-void read_definitions(Buffer* mbuf,char* c,struct _lfile* file ){
+void parseDefinitions(Io* programIO){
     char *** defbuf = &file->defs;
     int count;
     int num_def,curlen;

@@ -66,6 +66,7 @@ struct _node
     char value: The value the _node holds, for semantic, numerical, or other use.
 
 */
+typedef struct _node TreeNode;
 struct _node {
     struct _node *left;
     struct _node *right;
@@ -77,7 +78,6 @@ struct _node {
     int nullable;
     char value;
 };
-
 /** Structure Definition
 
 The tree _tree structure is used to wrap the tree of _node's
@@ -95,6 +95,7 @@ struct _tree
     int size: The total amount of _nodes in the tree.
 
 */
+typedef struct _tree Tree;
 struct _tree {
     struct _node *root;
     int depth;
@@ -143,6 +144,7 @@ struct _ta
 				will have an 'id' from its constructor.
 
 */
+typedef struct _ta TreeArray;
 struct _ta {
     struct _node **t;
     struct _node *atop;

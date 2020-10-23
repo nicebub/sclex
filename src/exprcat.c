@@ -35,7 +35,7 @@ Results: A parse tree is constructed to represent a list of expressions that are
 
 */
 
-struct _node* exprlist(/*char** */base_set ** ta,Buffer * mbuf, char* c, struct _lfile* lfile){
+RegularExpressionTreeNode* parseExpressionList(base_set ** set,Io* programIO){/* char_set** */
     /*
 	1 or more expressions concatenated expr.expr.expr
 	*/

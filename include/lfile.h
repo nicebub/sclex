@@ -17,7 +17,7 @@ and accumulate other data to make a final output source file.
 #include "chrset.h"
 #include "basevector.h"
 #include "intvector.h"
-
+#include "Lexer.h"
 /** Structure Definition
 
     buffer **defbuf: Store a memory address to a pointer to a buffer used in buffering
@@ -56,6 +56,7 @@ struct _lfile {
 
 typedef struct _io Io;
 struct _io {
+	Lexer own_lexer;
 	Output lexfile;
 	Buffer inputBuffer;
 	char c; /* current character in input */
