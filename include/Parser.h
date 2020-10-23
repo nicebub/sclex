@@ -2,12 +2,19 @@
 #define _MPARSER_H
 #include "lfile.h"
 #include "tree.h"
+#include "Lexer.h"
 
 #define PTS_STACK_SIZE 50
 
-static char OPEN_STARTER[] = "%{";
-static char CLOSE_STARTER[] = "%}";
-static char SECTION_STARTER[] = "%%";
+
+const static LexerToken  defaultTokens[] = {
+	{NULL,-1,-1}, {"%{",0,0},{"%}",1,1},{"%%",2,2}
+};
+
+const static LexerToken*  const OPEN_STARTER = &defaultTokens[1];
+const static LexerToken*  const CLOSE_STARTER = &defaultTokens[2];
+const static LexerToken*  const SECTION_STARTER = &defaultTokens[3];
+
 
 typedef TreeNode RegularExpressionTreeNode;
 typedef TreeArray RegularExpressionTreeArray;
@@ -17,12 +24,16 @@ struct _parserTokenStack {
 	LexerToken stack[PTS_STACK_SIZE];
 	LexerToken* top;
 };
+typedef struct _parserTokenStream TokenStream;
+struct _parserTokenStream {
+	LStack stack;
+};
 
 typedef struct _parser Parser;
 struct _parser {
 	Lexer lexer;
+	TokenStream tokens;
 	RegularExpressionTreeArray* parseTree;
-	LStack tokenStack;
     Buffer **defbuf;
     base_vector *fpos; /* int_vector* */
 	char** defs;
@@ -37,6 +48,8 @@ void pushTokenStack(LStack* stack, LexerToken token);
 LexerToken peekTokenStack(LStack* stack);
 LexerToken popTokenStack(LStack* stack);
 
+void initTokenStream(TokenStream* stream);
+LexerToken matchToken(Parser* parser,LexerToken token);
 
 void initParser(Parser* parser);
 void initParserWithFilename(Parser* parser,char* arg);

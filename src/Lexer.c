@@ -19,7 +19,6 @@
 
 void initLexer(Lexer* lex){
 	init_base_buffer(&lex->inputBuffer);
-	lex->file = NULL;
 	lex->previous_char = '\0';
 	lex->current_char =  '\0';
 }
@@ -52,14 +51,18 @@ inline void pushBackChar(Lexer* lex){
 	ungetchar(&lex->inputBuffer);
 }
 
-LexerToken matchedNextToken(Lexer* lex,char* token){
+LexerToken matchedNextToken(Lexer* lex,const LexerToken token){
 	LexerToken temp;
 	temp.lexeme=NULL;
-	if(lex->current_char == token[0]){
+	temp.type = -1;
+	temp.id = -1;
+	if(lex->current_char == token.lexeme[0]){
 		getNextChar(lex);
-		if(lex->current_char == token[1]){
+		if(lex->current_char == token.lexeme[1]){
 			getNextChar(lex);
-			temp.lexeme = token;
+			temp.lexeme = token.lexeme;
+			temp.id = token.id;
+			temp.type = token.type;
 		}
 		else
 			pushBackChar(lex);
@@ -67,7 +70,7 @@ LexerToken matchedNextToken(Lexer* lex,char* token){
 	return temp;
 }
 
-char* readRawStringUntilToken(Lexer* lex, char* token){
+char* readRawStringUntilToken(Lexer* lex, const LexerToken token){
     char stringBuffer[8000];
     char *readString;
     int stringLength =0;

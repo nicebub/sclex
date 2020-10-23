@@ -6,7 +6,7 @@ char* parseDeclarations(Parser* parser){
 	char* declarations;
 	declarations = NULL;
 
-	declarations = readRawStringUntilToken(&parser->lexer, CLOSE_STARTER);
+	declarations = readRawStringUntilToken(&parser->lexer, *CLOSE_STARTER);
 
 	pushBackLastToken(&parser->lexer);
 	return declarations;

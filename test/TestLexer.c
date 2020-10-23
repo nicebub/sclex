@@ -9,7 +9,7 @@
 /* for the test */
 
 Lexer lexer;
-
+LexerToken token;
 void setUp(void){
 	initLexer(&lexer);
 }
@@ -21,7 +21,6 @@ void test_initLexer(void){
 	initLexer(&lex);
 	TEST_ASSERT_EQUAL_CHAR('\0',lex.current_char);
 	TEST_ASSERT_EQUAL_CHAR('\0',lex.previous_char);
-	TEST_ASSERT_NULL(lex.file);
 	TEST_ASSERT_NULL(lex.inputBuffer.buf);
 	TEST_ASSERT_EQUAL(0,lex.inputBuffer.len);
 }
@@ -63,7 +62,6 @@ void test_pass_ws(void){
 void test_getNextChar(void){
 	TEST_ASSERT_EQUAL_CHAR('\0',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('\0',lexer.previous_char);
-	TEST_ASSERT_NULL(lexer.file);
 	TEST_ASSERT_EQUAL(0,lexer.inputBuffer.len);
 	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
 	getNextChar(&lexer);
@@ -96,16 +94,22 @@ void test_matchedNextToken(void){
 	getNextChar(&lexer);
 	pass_ws(&lexer);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
-
-	TEST_ASSERT_NULL(matchedNextToken(&lexer,"hi").lexeme);
+	token.lexeme = "hi";
+	token.id = 3;
+	token.type = 3;
+	TEST_ASSERT_NULL(matchedNextToken(&lexer,token).lexeme);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('\n',lexer.previous_char);
+	token.lexeme = "#n";
+	token.id = 4;
 
-	TEST_ASSERT_NULL(matchedNextToken(&lexer,"#n").lexeme);
+	TEST_ASSERT_NULL(matchedNextToken(&lexer,token).lexeme);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.previous_char);
+	token.lexeme = "#i";
+	token.id = 5;
 	
-	TEST_ASSERT_EQUAL_STRING("#i",matchedNextToken(&lexer,"#i").lexeme);
+	TEST_ASSERT_EQUAL_STRING("#i",matchedNextToken(&lexer,token).lexeme);
 	TEST_ASSERT_EQUAL_CHAR('n',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('i',lexer.previous_char);
 	
@@ -116,9 +120,15 @@ void test_readRawStringUntilToken(void){
 	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
 	getNextChar(&lexer);
 	pass_ws(&lexer);
-	while(!(matchedNextToken(&lexer,"/*").lexeme))
+	token.lexeme = "/*";
+	token.id = 3;
+	token.type = 3;
+	while(!(matchedNextToken(&lexer,token).lexeme))
 		getNextChar(&lexer);
-	decs = readRawStringUntilToken(&lexer,"*/");
+	token.lexeme = "*/";
+	token.id = 3;
+	token.type = 3;
+	decs = readRawStringUntilToken(&lexer,token);
 	TEST_ASSERT_EQUAL_CHAR('\n',lexer.current_char);
 	TEST_ASSERT_EQUAL_STRING(" for the test ",decs);
 }

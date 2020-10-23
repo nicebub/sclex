@@ -6,6 +6,7 @@
 #define inline
 #endif
 
+
 void initTokenStack(LStack* stack){
 	int counter;
 	stack->top = stack->stack;
@@ -22,21 +23,37 @@ LexerToken peekTokenStack(LStack* stack){
 }
 LexerToken popTokenStack(LStack* stack){
 	LexerToken temp;
-	stack->top--;
-	temp = *stack->top;
-	stack->top->lexeme=NULL;
+	temp.lexeme = NULL;
+	if(stack->top != stack->stack){
+		stack->top--;
+		temp = *stack->top;
+		stack->top->lexeme=NULL;
+	}
 	return temp;
 }
 
 
 
+inline void initTokenStream(TokenStream* stream){
+	initTokenStack(&stream->stack);
+}
 
+LexerToken matchToken(Parser* parser,LexerToken token){
+	LexerToken temp;
+	temp = peekTokenStack(&parser->tokens.stack);
+	if(!temp.lexeme)
+		return matchedNextToken(&parser->lexer,token);
 
+	if(token.id == temp.id)
+		return popTokenStack(&parser->tokens.stack);
+	
+	return defaultTokens[0];
+}
 
 
 void initParser(Parser* parser){
 	initLexer(&parser->lexer);
-	initTokenStack(&parser->tokenStack);
+	initTokenStream(&parser->tokens);
 	parser->parseTree=NULL;
 	parser->defs=NULL;
 	parser->decs=NULL;
@@ -54,28 +71,29 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
   /* If not at End Of File already, look for spec file section delimiters.
           if they aren't there then return an error and exit
   */
-	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){
+/*	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){*/
+	if(!matchToken(&parser,*OPEN_STARTER).lexeme){
 		/*fail*/
 		lex_error(SCERR_DECL_UNDECLARED);
 		return NULL;
 	}
 	parser->decs = parseDeclarations(parser);
 
-	if(!matchedNextToken(&parser->lexer,CLOSE_STARTER).lexeme){
+	if(!matchToken(&parser,*CLOSE_STARTER).lexeme){
 		/*fail*/
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
 	parseDefinitions(parser);
 	
-	if(!matchedNextToken(&parser->lexer,SECTION_STARTER).lexeme){
+	if(!matchToken(&parser,*SECTION_STARTER).lexeme){
 		/* fail */
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
     parser->parseTree = parseTranslations(parser);
 
-	if(!matchedNextToken(&parser->lexer,SECTION_STARTER).lexeme){
+	if(!matchToken(&parser,*SECTION_STARTER).lexeme){
 		/* fail */
 		lex_error(SCERR_SEPR_AFTER_TRANS);
 		return NULL;

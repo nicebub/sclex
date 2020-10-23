@@ -6,12 +6,13 @@
 typedef struct _lexerToken LexerToken;
 struct _lexerToken {
 	char* lexeme;
+	int id;
+	int type;
 };
 
 typedef struct _lexer Lexer;
 struct _lexer {
 	Buffer inputBuffer;
-	char* file;
 	char previous_char;
 	char current_char;
 
@@ -39,8 +40,8 @@ void initLexer(Lexer* lex);
 
 
 
-LexerToken matchedNextToken(Lexer* lex,char* token);
-char* readRawStringUntilToken(Lexer* lex, char* token);
+LexerToken matchedNextToken(Lexer* lex,const LexerToken token);
+char* readRawStringUntilToken(Lexer* lex, const LexerToken token);
 void pushBackLastToken(Lexer* lex);
 
 #endif
