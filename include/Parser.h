@@ -6,15 +6,84 @@
 
 #define PTS_STACK_SIZE 50
 
+enum _tokenType {
+	OPEN_STARTER,
+	CLOSE_STARTER,
+	SECTION_STARTER,
+	IDENTIFIER,
+	NUMBER,
+	LPAREN,
+	RPAREN,
+	LBRACKET,
+	RBRACKET,
+	LCURLY,
+	RCURLY,
+	COMMATOKEN,
+	DOT,
+	STARTOKEN,
+	PLUSTOKEN,
+	MINUSTOKEN,
+	EQUALS,
+	SEMICOLON,
+	LESS,
+	LTE,
+	GREAT,
+	GTE,
+	NOTEQUAL,
+	EQUIV,
+	ADDRESS,
+	ELIPSE,
+	FSLASH,
+	RPS,
+	CHRSET,
+	EPSLN,
+	CNCAT,
+	ORTOKEN,
+	QUESTION,
+	EMPTYTOKEN
+	
+} tokenTypes;
 
 const static LexerToken  defaultTokens[] = {
-	{NULL,-1,-1}, {"%{",0,0},{"%}",1,1},{"%%",2,2}
+	{NULL,-1,-1},
+	 {"%{",0,OPEN_STARTER}, 
+	 {"%}",1,CLOSE_STARTER}, 
+	 {"%%",2,SECTION_STARTER},
+	 {NULL,3,IDENTIFIER},
+	 {NULL,4,NUMBER},
+	 {"(",5,LPAREN},
+	 {")",6,RPAREN},
+	 {"[",7,LBRACKET},
+	 {"]",8,RBRACKET},
+	 {"{",9,LCURLY},
+	 {"}",10,RCURLY},
+	 {",",11,COMMATOKEN},
+	 {".",12,DOT},
+	 {"*",13,STARTOKEN},
+	 {"+",14,PLUSTOKEN},
+	 {"-",15,MINUSTOKEN},
+	 {"=",16,EQUALS},
+	 {";",17,SEMICOLON},
+	 {"<",18,LESS},
+	 {"<=",19,LTE},
+	 {">",20,GREAT},
+	 {">=",21,GTE},
+	 {"!=",22,NOTEQUAL},
+	 {"==",23,EQUIV},
+	 {"&",24,ADDRESS},
+	 {"...",25,ELIPSE},
+	 {"/",26,FSLASH},
+	 {NULL,27,RPS},
+	 {NULL,28,CHRSET},
+	 {NULL,29,EPSLN},
+	 {NULL,30,CNCAT},
+	 {"|",31,ORTOKEN},
+	 {"?",32,QUESTION},
+	 {"",33,EMPTYTOKEN},
+	 
 };
 
-const static LexerToken*  const OPEN_STARTER = &defaultTokens[1];
-const static LexerToken*  const CLOSE_STARTER = &defaultTokens[2];
-const static LexerToken*  const SECTION_STARTER = &defaultTokens[3];
-
+LexerToken tokenForType(enum _tokenType type);
 
 typedef TreeNode RegularExpressionTreeNode;
 typedef TreeArray RegularExpressionTreeArray;
@@ -50,6 +119,7 @@ LexerToken popTokenStack(LStack* stack);
 
 void initTokenStream(TokenStream* stream);
 LexerToken matchToken(Parser* parser,LexerToken token);
+void pushBackLastToken(Parser* parser, LexerToken token);
 
 void initParser(Parser* parser);
 void initParserWithFilename(Parser* parser,char* arg);

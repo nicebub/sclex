@@ -42,6 +42,5 @@ void initLexer(Lexer* lex);
 
 LexerToken matchedNextToken(Lexer* lex,const LexerToken token);
 char* readRawStringUntilToken(Lexer* lex, const LexerToken token);
-void pushBackLastToken(Lexer* lex);
 
 #endif

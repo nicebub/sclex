@@ -18,8 +18,10 @@ void pushTokenStack(LStack* stack, LexerToken token){
 	*stack->top = token;
 	stack->top++;
 }
-LexerToken peekTokenStack(LStack* stack){
-	return *(stack->top-1);
+LexerToken peekTokenStack(LStack* astack){
+    if(astack->top == astack->stack)
+	   return defaultTokens[0];
+    return *(astack->top-1);
 }
 LexerToken popTokenStack(LStack* stack){
 	LexerToken temp;
@@ -33,6 +35,9 @@ LexerToken popTokenStack(LStack* stack){
 }
 
 
+LexerToken tokenForType(enum _tokenType type){
+	return defaultTokens[type];
+}
 
 inline void initTokenStream(TokenStream* stream){
 	initTokenStack(&stream->stack);
@@ -72,28 +77,28 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
           if they aren't there then return an error and exit
   */
 /*	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){*/
-	if(!matchToken(&parser,*OPEN_STARTER).lexeme){
+	if(!matchToken(parser,tokenForType(OPEN_STARTER)).lexeme){
 		/*fail*/
 		lex_error(SCERR_DECL_UNDECLARED);
 		return NULL;
 	}
 	parser->decs = parseDeclarations(parser);
 
-	if(!matchToken(&parser,*CLOSE_STARTER).lexeme){
+	if(!matchToken(parser,tokenForType(CLOSE_STARTER)).lexeme){
 		/*fail*/
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
 	parseDefinitions(parser);
 	
-	if(!matchToken(&parser,*SECTION_STARTER).lexeme){
+	if(!matchToken(parser,tokenForType(SECTION_STARTER)).lexeme){
 		/* fail */
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
     parser->parseTree = parseTranslations(parser);
 
-	if(!matchToken(&parser,*SECTION_STARTER).lexeme){
+	if(!matchToken(parser,tokenForType(SECTION_STARTER)).lexeme){
 		/* fail */
 		lex_error(SCERR_SEPR_AFTER_TRANS);
 		return NULL;
@@ -104,8 +109,8 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
 	
 	return NULL;
 }
-void pushBackLastToken(Lexer* lex){
-	
+void pushBackLastToken(Parser* parser,LexerToken token){
+	pushTokenStack(&parser->tokens.stack,token);
 }
 
 char* aux(Parser* parser){
