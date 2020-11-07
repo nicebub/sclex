@@ -33,7 +33,7 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-RegularExpressionTreeNode* parseEscapeChars(base_set** set, Parser* parser){/* char_set** */
+RegularExpressionTreeNode* parseEscapeChars(Parser* parser){/* char_set** */
 	/* temporary node help create new nodes and add them to a tree */
     struct _node* temp;
 

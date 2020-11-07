@@ -5,13 +5,13 @@
 #include "baseset.h"
 #include "chrset.h"
 */
-RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** ta,Parser* parser){
+RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
     struct _node * temp;
     temp = NULL;
     /*
 	represents a regular expression on one line
 	*/
-    temp = parseFullExpression(&(*ta)->alphabet,parser);
+    temp = parseFullExpression(parser);
 
     if(parser->lexer.current_char == '{'){
 	   char sbuf[8000];
@@ -31,8 +31,8 @@ RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** 
 				sbuf[scount] = '}';
 				scount++;
 				sbuf[scount]='\0';
-				(*ta)->action_array[(*ta)->used] = malloc(sizeof(char)*strlen(sbuf)+1);
-				strncpy((*ta)->action_array[(*ta)->used],sbuf,strlen(sbuf)+1);
+				parser->parseTree->action_array[parser->parseTree->used] = malloc(sizeof(char)*strlen(sbuf)+1);
+				strncpy(parser->parseTree->action_array[parser->parseTree->used],sbuf,strlen(sbuf)+1);
 				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
 				while(is_ws(parser->lexer.current_char) == 0)
 				    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
@@ -62,11 +62,11 @@ RegularExpressionTreeNode* parseRegularExpression(RegularExpressionTreeArray ** 
     }
 }
 
-RegularExpressionTreeNode* parseFullExpression(base_set ** set,Parser* parser){
+RegularExpressionTreeNode* parseFullExpression(Parser* parser){
 /*
  represents a full expression on a line minus the newline character
  (expr) OR expr.op OR expr|expr OR [range] OR exprlist
 
  */
-    return parseExpressionOR(set,parser);
+    return parseExpressionOR(parser);
  }

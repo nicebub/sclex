@@ -2,269 +2,119 @@
 #include "Parser.h"
 #include "Lexer.h"
 
+#define NUM_DEFINITIONS 50
+#define NAMELENGTH 25
+#define EXPRESSIONLENGTH 300
+
 char* parseDeclarations(Parser* parser){
 	char* declarations;
 	declarations = NULL;
 	declarations = readRawStringUntilToken(&parser->lexer, tokenForType(CLOSE_STARTER));
-	pushBackLastToken(parser,tokenForType(CLOSE_STARTER));
+	pushBackLastToken(&parser->lexer,tokenForType(CLOSE_STARTER));
 	return declarations;
 }
-
-/*
-char* oldparseDeclarations(Parser* parser){
-	char* c;
-    char sbuf[8000];
-    char *decs;
-    int scount =0;
-    char d;
-  char **t;
-c = &parser->lexer.current_char;
-    t = NULL;
-    decs = NULL;
-    while((parser->lexer.current_char = getchar(&parser->lexer.inputBuffer))!= EOF && parser->lexer.current_char !='\0'){
-	   if(parser->lexer.current_char == '%'){
-		  d = parser->lexer.current_char;
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-		  if(parser->lexer.current_char == '}'){
-			 sbuf[scount]='\0';
-			 decs = malloc(sizeof(char)*strlen(sbuf)+1);
-			 strncpy(decs,sbuf,strlen(sbuf)+1);
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			 while(is_ws(parser->lexer.current_char) == 0)
-				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			break;
-		  }
-		  else{
-			 sbuf[scount] = d;
-			 sbuf[scount+1] = parser->lexer.current_char;
-			 scount += 2;
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-		  }
-	   }
-	   else{
-		  sbuf[scount] = parser->lexer.current_char;
-		  scount++;
-	   }
-    }
-    if(decs){
-	   parseDefinitions(parser);
-	   if(*parser->defs != NULL){
-		  printf("found definitions, they are as follows\n");
-		  t = parser->defs;
-		  while(*t != NULL){
-			 printf("Definition Name: %s Definition Value %s\n",t[0],t[1]);
-			 t += 2;
-		  }
-		  parser->defbuf = malloc(sizeof(Buffer*)*parser->num_defs);
-		  {
-			  int y;
-			  for(y=0;y<parser->num_defs;y++)
-			 	 parser->defbuf[y] = buffer_from_string(parser->defs[(2*y)+1]);
-		  }
-	   }
-	   return decs;
-    }
-    return NULL;
-
+Definition* definitionExists(Parser* parser,LexerToken name){
+	int counter;
+	for(counter=0;counter<parser->num_defs;counter++)
+		if(strcmp(name.lexeme,parser->definitionList[counter].name.lexeme)==0)
+			return &parser->definitionList[counter];
+	return NULL;
 }
-*/
 void parseDefinitions(Parser* parser){
-	
-}
-void oldParseDefinitions(Parser* parser){
-    char *** defbuf = &parser->defs;
-    int count;
-    int num_def,curlen;
-   int olast;
-    int a;
-	    parser->num_defs = 0;
-    *defbuf = malloc(sizeof(char*)*50);
-	{
-		int a;
-    	for(a=0;a<50;a++)
-	   	 (*defbuf)[a] = NULL;
-	}
-    num_def = 0;
-	{
-    for(a=0;a<50;a+=2){
-	   if(a == 12)
-		  ;
-   
-defbegin:	   while((is_ws(parser->lexer.current_char) ==0) || parser->lexer.current_char == '\n')
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-	   if(parser->lexer.current_char == '%'){
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-		  if(parser->lexer.current_char == '%'){
-			 ungetchar(&parser->lexer.inputBuffer);
-			 ungetchar(&parser->lexer.inputBuffer);
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			 parser->num_defs = num_def;
-			 return;
-			 /*			 break; */
-		  }
-	   }
-	   (*defbuf)[a] = malloc(sizeof(char)*25);
-	   (*defbuf)[a+1] = malloc(sizeof(char)*60);
-	   {
-		   int b;
-	   	for(b=0;b<24;b++)
-			  (*defbuf)[a][b] = ' ';
-	   }
-	   (*defbuf)[a][24] = '\0';
-	   {
-		   int b;
-			for(b=0;b<59;b++)
-			  (*defbuf)[a+1][b] = ' ';
-	   }
-	   (*defbuf)[a+1][59] = '\0';
-	   count =0;
-	   while(is_ws(parser->lexer.current_char) !=0){
-		  (*defbuf)[a][count] = parser->lexer.current_char;
-		  count++;
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-	   }
-	   (*defbuf)[a][count] = '\0';
-	   num_def++;
-	   {
-	   int g;
-	   for(g=0;g<(num_def*2)-2;g+=2){
-		  if(strcmp((*defbuf)[g],(*defbuf)[a])==0){
-			 free((*defbuf)[a]);
-			 free((*defbuf)[a+1]);
-			 (*defbuf)[a] = NULL;
-			 (*defbuf)[a+1] = NULL;
-			 printf("definition already exists or name already taken\n");
-			 while(parser->lexer.current_char != '\n')
-				  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			 num_def--;
-			 goto defbegin;
-		  }
-	   }
-   }
-	   count = 0;
-	   curlen = 25;
-	   while(is_ws(parser->lexer.current_char) == 0)
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-		   olast = -1;
-	   while(parser->lexer.current_char != '\n'){
-		  switch(parser->lexer.current_char){
-			 case '{':
-				if((olast != -1)){
-				    if(olast != '\\'){
-					   	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-					   	parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-					   	if(parser->lexer.current_char == ','){
-						    /* found a range so put characters back and keep reading*/
-						    ungetchar(&parser->lexer.inputBuffer);
-						    ungetchar(&parser->lexer.inputBuffer);
-						    ungetchar(&parser->lexer.inputBuffer);
-						    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-						    /* continue to default section of switch statement*/
-				    		}
-				    		else{
-						    /* found a definition use*/
-						    char defname[25];
-						    int dnlen = 0;
-						    ungetchar(&parser->lexer.inputBuffer);
-						    ungetchar(&parser->lexer.inputBuffer);
-						    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-						    while(parser->lexer.current_char != '}'){
-							   defname[dnlen] = parser->lexer.current_char;
-							   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-							   dnlen++;
-						    }
-						    defname[dnlen] = '\0';
-							{
-							int g;
-						    for(g=0;g<(num_def*2)-2;g+=2){
-							   if(strcmp((*defbuf)[g],defname)==0){
-/*								  printf("definition already exists and is earlier\n");*/
-								  char *ty;
-/*								  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));*/
-								  curlen += strlen((*defbuf)[g+1]);
-								  (*defbuf)[a+1] = realloc((*defbuf)[a+1],sizeof(char)*(curlen+3));
-								  ty = (*defbuf)[g+1];
-								  (*defbuf)[a+1][count] = '(';
-								  count++;
-								  while(*ty != '\0'){
-									 (*defbuf)[a+1][count] = *ty;
-									 count++;
-									 ty++;
-								  }
-								  (*defbuf)[a+1][count] = ')';
-								  count++;
-								  break;
-								/*  olast = parser->lexer.current_char;*/
-								 /* parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);*/
-							   }
-						    }
-						}
-						    olast = parser->lexer.current_char;
-						    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-						    continue;
-				    		}
-				    	}
-				    	else{
-					    /* found previous escape so keep reading*/
-					    /* continue to default section of switch statement*/
+	LexerToken name;
+	setupdefinitionList(parser);
 
-				    	}
-				}
-				else{
-				    /* found a definition use*/
-				    char defname[25];
-				    int dnlen = 0;
-				    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-				    while(parser->lexer.current_char != '}'){
-					   defname[dnlen] = parser->lexer.current_char;
-					   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-					   dnlen++;
-				    }
-				    defname[dnlen] = '\0';
-					{
-					int g;
-				    for(g=0;g<(num_def*2)-2;g+=2){
-					   if(strcmp((*defbuf)[g],defname)==0){
-/*						  printf("definition already exists and is earlier\n");*/
-						  char *ty;
-/*						  printf("size of current %d and size of one searching in loop %d\n",sizeof(char)*strlen((*defbuf)[a+1]),sizeof(char)*strlen((*defbuf)[g+1]));*/
-						  curlen += strlen((*defbuf)[g+1]);
-						  (*defbuf)[a+1] = realloc((*defbuf)[a+1],sizeof(char)*(curlen+3));
-						  ty = (*defbuf)[g+1];
-						  (*defbuf)[a+1][count] = '(';
-						  count++;
-						  while(*ty != '\0'){
-							 (*defbuf)[a+1][count] = *ty;
-							 count++;
-							 ty++;
-						  }
-						  (*defbuf)[a+1][count] = ')';
-						  count++;
-						  break;
-						  /*  olast = parser->lexer.current_char;*/
-						  /* parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);*/
-					   }
-				    }
-				}
-				    olast = parser->lexer.current_char;
-				    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-				    continue;
-				}
-			 default:
-				(*defbuf)[a+1][count] = parser->lexer.current_char;
-				count++;
-				olast = parser->lexer.current_char;
-				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-				break;
-		  }
-	   }
-	   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-	   (*defbuf)[a+1] = realloc((*defbuf)[a+1],curlen+4);
-	   (*defbuf)[a+1][count] = '\0';
-	   curlen = 25;
-    }
+	while(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
+		initNextDefinition(parser);
+		name = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+		if(definitionExists(parser,name)){
+   			 printf("definition already exists or name already taken\n");
+				 while(!isNewline(&parser->lexer))
+					 getNextChar(&parser->lexer);
+		}
+		else{
+		    pass_ws(&parser->lexer);
+			parseDefinitionValue(parser,name);
+		}
 	}
-    parser->num_defs = num_def;
-    return;
+    pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
+/*
+	   parser->defbuf = malloc(sizeof(Buffer*)*parser->num_defs);
+  {
+	  int y;
+	  for(y=0;y<parser->num_defs;y++)
+	 	 parser->defbuf[y] = buffer_from_string(parser->defs[(2*y)+1]);
+  }
+  */
 }
+void setupdefinitionList(Parser* parser){
+	int counter;
+/*	int numDefinitions=0;*/
+	parser->definitionList = malloc(sizeof(Definition)*NUM_DEFINITIONS);
+	for(counter=0;counter<NUM_DEFINITIONS;counter++){
+		parser->definitionList[counter].name = tokenForType(IDENTIFIER);
+		parser->definitionList[counter].expression = NULL;
+	}
+}
+void initNextDefinition(Parser* parser){
+	int counter;
+	parser->definitionList[parser->num_defs].name.lexeme = malloc(sizeof(char)*NAMELENGTH);
+	parser->definitionList[parser->num_defs].expression = malloc(sizeof(char)*EXPRESSIONLENGTH);
+	for(counter=0;counter<NAMELENGTH-2;counter++)
+			parser->definitionList[parser->num_defs].name.lexeme[counter] = ' ';
+	parser->definitionList[parser->num_defs].name.lexeme[NAMELENGTH-1] = '\0';
+	for(counter=0;counter<EXPRESSIONLENGTH-2;counter++)
+			parser->definitionList[parser->num_defs].expression[counter] = ' ';
+	parser->definitionList[parser->num_defs].expression[NAMELENGTH-1] = '\0';
+}
+void parseDefinitionValue(Parser* parser, LexerToken name){
+	char accummulatedString[EXPRESSIONLENGTH];
+	LexerToken tempToken;
+	char* currentLocation;
+	currentLocation = &accummulatedString[0];
+    parser->lexer.passWS = 0;
+	do{
+		if(matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
+			pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
+			parser->lexer.passWS = 1;
+			return;
+		}
+		if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
+			if(matchToken(&parser->lexer,tokenForType(NUMBER)).lexeme){
+			}
+			else{
+				LexerToken name;
+				Definition* def;
+				name = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+				def = NULL;
+				if(name.lexeme){
+					if((def=definitionExists(parser,name))){
+						*currentLocation = '(';
+						currentLocation++;
+						strncpy(currentLocation,def->expression,strlen(def->expression));
+						currentLocation += strlen(def->expression);
+						*currentLocation = ')';
+						currentLocation++;
+						getNextChar(&parser->lexer);
+						
+					}
+				}
+			}
+		}
+		else{
+			/*keep storing string for later. */
+			tempToken = getNextToken(&parser->lexer);
+			/*add token to buffer to store*/
+			strncpy(currentLocation,tempToken.lexeme,strlen(tempToken.lexeme));
+			currentLocation += strlen(tempToken.lexeme);
+		}
+	}while(!isNewline(&parser->lexer));
+    *currentLocation = '\0';
+	 parser->definitionList[parser->num_defs].name = name;
+	 strncpy(parser->definitionList[parser->num_defs].expression,accummulatedString,strlen((const char*)&accummulatedString)+1);
+	 parser->num_defs++;
+    parser->lexer.passWS = 1;
+ }
+#undef NUM_DEFINITIONS
+#undef NAMELENGTH
+#undef EXPRESSIONLENGTH

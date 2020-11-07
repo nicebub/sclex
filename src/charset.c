@@ -144,7 +144,7 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 		   */
 		  if(parser->lexer.current_char == '\\'){
 			 
-			 temp = parseEscapeChars(set,parser);
+			 temp = parseEscapeChars(parser);
 			 if(temp == NULL){
 				lex_error(27);
 				return NULL;
@@ -175,7 +175,7 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 				/* again we may have found another esacpe character */
 				if(parser->lexer.current_char == '\\'){
 				    
-				    temp = parseEscapeChars(set,parser);
+				    temp = parseEscapeChars(parser);
 				    if(temp == NULL){
 					   delete_root(temp2);
 					   temp2 = NULL;

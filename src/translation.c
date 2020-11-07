@@ -33,10 +33,11 @@ Results: The input stream is parsed for definitions and code and the parse
 	later, and it is finally returned in a struct _ta.
 */
 RegularExpressionTreeArray* parseTranslations(Parser* parser){
+    int counter;
 	/* call the rexexpset() function that parses the input for more than
 		one regular expression definition any their associated code sections
 	*/
-    parser->parseTree = parseRegularExpressionSet(parser);
+    parseRegularExpressionSet(parser);
 	/* create the initial firpos set for a set amount of  regular expressions */
     parser->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
 	/* if memory error or something else thing print an error to standard
@@ -58,17 +59,15 @@ RegularExpressionTreeArray* parseTranslations(Parser* parser){
     }
 }*/
 	/* still initializing more of the firstpos sets */
-{
-	int r;
-    for(r=vector_size(parser->fpos);r<SETSIZE;r++){
+    for(counter=vector_size(parser->fpos);counter<SETSIZE;counter++){
 	/*   printf("setting extra to NULL\n");*/
-	   *(int_vector**)get_by_index_in_vector(parser->fpos,r) = NULL;
+	   *(int_vector**)get_by_index_in_vector(parser->fpos,counter) = NULL;
     }
-}
 /*    printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
     set_vector_used(parser->fpos,vector_size(parser->fpos));
 /*	printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
 	/* Currently just some debugging information and construction statistics */
+#ifdef DEBUG
     printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
 	{
 		int h;
@@ -79,10 +78,10 @@ RegularExpressionTreeArray* parseTranslations(Parser* parser){
     }
 }
     printf("\n");
-
+#endif
 	/* create the entire followpos set on the entire tree of regular expressions */
     followpos(&parser->fpos,&parser->parseTree->atop);
-
+#ifdef DEBUG
     printf("\n");
     printf("ITS ALPHABET\n");
     display_set(parser->parseTree->alphabet);
@@ -90,6 +89,7 @@ RegularExpressionTreeArray* parseTranslations(Parser* parser){
 
 	/* return the entire constructed parse tree structure or potentially NULL if 
 		we found some error along the way */
+#endif
     return parser->parseTree;
 
 }

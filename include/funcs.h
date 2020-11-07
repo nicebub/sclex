@@ -63,5 +63,6 @@ Results: an integer of either 1 or 0 is a return value
 */
 int is_ws(char c);
 
-
+int isalphaC(char c);
+int isdigitC(char c);
 #endif

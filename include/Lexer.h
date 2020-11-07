@@ -2,28 +2,27 @@
 #define _MLEXER_H
 
 #include "basebuffer.h"
-
-typedef struct _lexerToken LexerToken;
-struct _lexerToken {
-	char* lexeme;
-	int id;
-	int type;
-};
+#include "token.h"
 
 typedef struct _lexer Lexer;
 struct _lexer {
-	Buffer inputBuffer;
-	char previous_char;
-	char current_char;
+    Buffer inputBuffer;
+    TokenStream tokens;
+    char previous_char;
+    char current_char;
+    int passWS;
+    int individualTokens;
 
 };
 
+/*
 void* getLexerByFilename();
 void* getLexerByFile();
 void* getLexerByString();
 void* getLexerByBuffer();
 void* getNextToken();
 void* consumeWhiteSpace();
+*/
 
 void initLexer(Lexer* lex);
 
@@ -36,11 +35,15 @@ void initLexer(Lexer* lex);
 
  void getNextChar(Lexer* lex);
  void pushBackChar(Lexer* lex);
+void pushNextTokenOnStack(Lexer* lexer);
 
-
-
+LexerToken getNextToken(Lexer* lex);
+LexerToken matchToken(Lexer* lexer,LexerToken token);
+void pushBackLastToken(Lexer* lexer,LexerToken token);
 
 LexerToken matchedNextToken(Lexer* lex,const LexerToken token);
 char* readRawStringUntilToken(Lexer* lex, const LexerToken token);
+LexerToken readNextToken(Lexer* lex);
+void setIndividualTokens(Lexer* lexer, int status);
 
 #endif

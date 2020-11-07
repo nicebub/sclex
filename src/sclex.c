@@ -41,7 +41,7 @@ void initIO(Io* programIO){
 	
 }
 inline int canGenerateDFA(Io* programIO){
-  return regularExpressionTreeArrayExists(&programIO) && firstPositionSetExists(&programIO);
+    return regularExpressionTreeArrayExists(programIO) && firstPositionSetExists(programIO);
 }	
 inline int regularExpressionTreeArrayExists(Io* inIO){
 	return inIO->lexfile.tree != NULL;

@@ -3,6 +3,12 @@
  int isalphanum(char c){
     return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'));
 }
+int isalphaC(char c){
+	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+int isdigitC(char c){
+	return (c >= '0' && c <= '9');
+}
  int is_ws(char c){
     return (c == ' ' || c == '\t' || c == '\r' || c == '\f');
 }

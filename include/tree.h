@@ -105,7 +105,7 @@ struct _tree {
 /** Structure Definition
 
 The _ta structure is an Array of Tree's. This struct has additional
-	memmbers that could be broken out, as they may not have much meaning
+	members that could be broken out, as they may not have much meaning
 	in the context of a Tree Array. But in the use of the existing program,
 	I didn't want to make certain functions take too many parameters, and
 	instead, stuffed certain shared data structures into others.

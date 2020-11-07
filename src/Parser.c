@@ -7,68 +7,28 @@
 #endif
 
 
-void initTokenStack(LStack* stack){
-	int counter;
-	stack->top = stack->stack;
-	for(counter=0;counter<PTS_STACK_SIZE;counter++)
-		stack->stack[counter].lexeme = NULL;
-	
-}
-void pushTokenStack(LStack* stack, LexerToken token){
-	*stack->top = token;
-	stack->top++;
-}
-LexerToken peekTokenStack(LStack* astack){
-    if(astack->top == astack->stack)
-	   return defaultTokens[0];
-    return *(astack->top-1);
-}
-LexerToken popTokenStack(LStack* stack){
-	LexerToken temp;
-	temp.lexeme = NULL;
-	if(stack->top != stack->stack){
-		stack->top--;
-		temp = *stack->top;
-		stack->top->lexeme=NULL;
-	}
-	return temp;
-}
-
-
-LexerToken tokenForType(enum _tokenType type){
-	return defaultTokens[type];
-}
-
-inline void initTokenStream(TokenStream* stream){
-	initTokenStack(&stream->stack);
-}
-
-LexerToken matchToken(Parser* parser,LexerToken token){
-	LexerToken temp;
-	temp = peekTokenStack(&parser->tokens.stack);
-	if(!temp.lexeme)
-		return matchedNextToken(&parser->lexer,token);
-
-	if(token.id == temp.id)
-		return popTokenStack(&parser->tokens.stack);
-	
-	return defaultTokens[0];
-}
-
-
 void initParser(Parser* parser){
 	initLexer(&parser->lexer);
-	initTokenStream(&parser->tokens);
+/*	initTokenStream(&parser->tokens);*/
 	parser->parseTree=NULL;
 	parser->defs=NULL;
 	parser->decs=NULL;
+    parser->fpos = NULL;
+    parser->definitionList = NULL;
+    parser->definitionBuffer = NULL;
 	parser->aux=NULL;
 	parser->num_defs=0;
 	
 }
 inline void initParserWithFilename(Parser* parser,char* arg){
+    Buffer* buf;
 	initParser(parser);
-	parser->lexer.inputBuffer = *buffer_from_filename(arg);/* initialize buffer from filename given */
+	buf = buffer_from_filename(arg);/* initialize buffer from filename given */
+	if(!buf){
+		perror("\033[0;31merror\033[0m");
+		exit(EXIT_FAILURE);
+	}
+    parser->lexer.inputBuffer = *buf;
     getNextChar(&parser->lexer);
 }
 
@@ -77,28 +37,29 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
           if they aren't there then return an error and exit
   */
 /*	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){*/
-	if(!matchToken(parser,tokenForType(OPEN_STARTER)).lexeme){
+	if(!matchToken(&parser->lexer,tokenForType(OPEN_STARTER)).lexeme){
 		/*fail*/
 		lex_error(SCERR_DECL_UNDECLARED);
 		return NULL;
 	}
 	parser->decs = parseDeclarations(parser);
 
-	if(!matchToken(parser,tokenForType(CLOSE_STARTER)).lexeme){
+	if(!matchToken(&parser->lexer,tokenForType(CLOSE_STARTER)).lexeme){
 		/*fail*/
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
+    pass_ws(&parser->lexer);
 	parseDefinitions(parser);
 	
-	if(!matchToken(parser,tokenForType(SECTION_STARTER)).lexeme){
+	if(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
 		/* fail */
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
     parser->parseTree = parseTranslations(parser);
 
-	if(!matchToken(parser,tokenForType(SECTION_STARTER)).lexeme){
+	if(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
 		/* fail */
 		lex_error(SCERR_SEPR_AFTER_TRANS);
 		return NULL;
@@ -108,9 +69,6 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
 	aux(parser);
 	
 	return NULL;
-}
-void pushBackLastToken(Parser* parser,LexerToken token){
-	pushTokenStack(&parser->tokens.stack,token);
 }
 
 char* aux(Parser* parser){

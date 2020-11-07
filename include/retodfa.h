@@ -18,8 +18,8 @@ struct _set {
 };
 
 int nullable(struct _node **);
-/*returns int_set* */ base_set* pos(struct _node **,int);
-/*returns int_set* */ base_set* followpos(base_vector**,struct _node **); /*base_vector* is an int_vector* */
+base_set* pos(struct _node **,int);/*returns int_set* */
+base_set* followpos(base_vector**,struct _node **); /*base_vector* is an int_vector* *//*returns int_set* */
 char gcfprint(char c);
 
 #endif

@@ -49,13 +49,11 @@ base_vector* new_int_vector_with_init_sets(int vec_size, int data_size){
 	base_vector * vec;
 	int r;
 	vec = new_int_vector(vec_size);
-	if(!vec){
 		if(!vec){
 			NEWVECERROR(vec);
 			return NULL;
 		}
-	}
-	if(data_size <= 0){
+		if(data_size <= 0){
 		NEWVECERROR(vec);
 		int_delete_vector(vec);
 		return NULL;

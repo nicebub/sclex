@@ -16,11 +16,11 @@ of the input stream.
 #include "baseset.h"
 #include "chrset.h"
 */
-RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Parser* parser){/* char_set** */
+RegularExpressionTreeNode* parseExpressionOR(Parser* parser){/* char_set** */
     /*
 	1 or more expressions OR'ed expr|expr|expr
 	*/
-
+    int firstrun;
 	/* temporary node pointers to use to construct the parse tree while reading the input
 	stream
 	*/
@@ -32,66 +32,46 @@ RegularExpressionTreeNode* parseExpressionOR(base_set ** set,Parser* parser){/* 
     
 /* At this point in the input stream, a few tokens tell us we aren't seeing
 	an expression and we should skip the loops ahead */
-    if(parser->lexer.current_char != '\n' && parser->lexer.current_char != ')' && parser->lexer.current_char != '\0' && parser->lexer.current_char != EOF ){
-		/* Call the exprlist() function to further process each list of expressions
-			found
-		*/
-	   temp = parseExpressionList(set,parser);
-	   /* Call the firstpos and lastpos function to help create the sets for this
-   		new parse tree
-   		*/
-	   pos(&temp,1);
-	   pos(&temp,0);
-	   /* either we're done or continue searching because we found whitespace
-   		in our regular expression where we shouldn't have
-   		*/
-	   if(is_ws(parser->lexer.current_char)==0){
-		  while(is_ws(parser->lexer.current_char)==0)
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-		  return temp;
-	   }
-    }
-	/* have we vound a '|' symbol OR, and more expression lists?? */
-    if(parser->lexer.current_char == '|'){
-	   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-    }
-	
-	/* Just like before, att this point in the input stream, a few tokens tell
-	us we aren't seeing an expression list and we should skip the loops ahead 
-	*/
-    while(parser->lexer.current_char != '\n' && parser->lexer.current_char != ')' && parser->lexer.current_char != '\0' && parser->lexer.current_char != EOF ){
+    firstrun = 1;
+    do{
 		/* Call the exprlist() function to further process another expression list or 
 		more depending on the iteration of the while loop and OR them
 		with any previously read and recognized expression list from the input stream
 		*/
-	   temp2 = parseExpressionList(set,parser);
-	   temp3 = create_node((char)OR);
+	   switch(firstrun){
+		  case 1:
+			 temp = parseExpressionList(parser);
+			 firstrun = 0;
+			 break;
+		  default:
+			 temp2 = parseExpressionList(parser);
+			 temp3 = create_node((char)OR);
+			 if(!temp3){
+				lex_error(10);
+				return NULL;
+			 }
+			 temp3->left = temp;
+			 temp3->right = temp2;
+			 temp = temp3;
+	   }
 
 	   /* memory issues, then report and error and return NULL */
-	   if(temp3 == NULL){
-		  lex_error(10);
-		  return NULL;
-	   }
-	   temp3->left = temp;
-	   temp3->right = temp2;
-	   temp = temp3;
 	   /* Call the firstpos and lastpos functions to generate the sets for the new
    		parse tree just constructed
    		*/
-	   pos(&temp,1);
-	   pos(&temp,0);
+	   firstpos(&temp);
+	   lastpos(&temp);
 	   
 	   /* If we find any unexpected whitespace then return the parse tree */
-	   if(is_ws(parser->lexer.current_char)==0){
-		  while(is_ws(parser->lexer.current_char)==0)
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+	   if(isWhitespace(&parser->lexer)){
+		  pass_ws(&parser->lexer);
 		  return temp;
 	   }
 	   /* we may still want to stay in the while loop as we've seen another '|' OR symbol */
 	   if(parser->lexer.current_char == '|'){
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+		  getNextChar(&parser->lexer);
 	   }
-    }
+    }while(!isNewline(&parser->lexer) && parser->lexer.current_char != ')' && parser->lexer.current_char != '\0' && !isEOF(&parser->lexer) );
 	/* return NULL or any parse tree we've constucted from recognized input */
     return temp;
 

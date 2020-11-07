@@ -159,12 +159,16 @@ base_buffer* base_buffer_from_file(FILE* infile){
 	/* 
 	Call refresh_buffer to initialize buffer for first time
 	*/
+    fseek(mbuf->work, 0, SEEK_END);
+    mbuf->len = (size_t) ftell(mbuf->work);
+    fseek(mbuf->work, 0, SEEK_SET);
     refresh_buffer(mbuf,0);
     
 	/* clear 2nd half of buffer until later */
     for(b=HALF_BUFFER;b<BUFFER_LENGTH-2;b++)
 	   mbuf->buf[b]=' ';
     
+
     return mbuf;
 }
 
@@ -179,8 +183,9 @@ base_buffer* base_buffer_from_filename(const char * name){
 		exit with an error
 	*/
     if((mbuf->work = fopen(name, "r")) == NULL ){
-		perror("\033[0;31merror\033[0m");
-		exit(-1);
+	   free(mbuf);
+	   
+		 return NULL;
 	}
 	/* initialize control characters and refresh buffer to initialize
 		the buffer with data from the input file
@@ -194,6 +199,9 @@ base_buffer* base_buffer_from_filename(const char * name){
 	mbuf->buf[BUFFER_LENGTH-2] = '\0';
     mbuf->type = 0;
 	mbuf->vtable = &vtable_base_buffer;
+    fseek(mbuf->work, 0, SEEK_END);
+    mbuf->len = (size_t) ftell(mbuf->work);
+    fseek(mbuf->work, 0, SEEK_SET);
     refresh_buffer(mbuf,0);
 
 	/* clear the lower half of the buffer */
@@ -266,7 +274,7 @@ int base_ungetchar(base_buffer* mbuf){
 		  */
 		  else
 			 mbuf->forward--;
-		  return *mbuf->forward;
+		  return *(mbuf->forward-1);
 		  break;
 		/* True EOF has been found, so we check if we can move
 		  	 the buffer by one or not */
@@ -278,7 +286,7 @@ int base_ungetchar(base_buffer* mbuf){
 		  	return the current character */
 		  else
 			 mbuf->forward--;
-		  return *mbuf->forward;
+		  return *(mbuf->forward-1);
 		  break;
     }
 	/* all else fails, return -1 */
@@ -331,8 +339,8 @@ inline void base_refresh_buffer(base_buffer* inbuf, const int start){
 	   /* if we found data then reset the control characters */
 	   if(feof(inbuf->work)!=0){
 		  if(amount >0){
-			 	inbuf->buf[start+amount]='\0';
-			 	inbuf->buf[start+amount+1]=EOF;
+			 	inbuf->buf[(unsigned long)start+amount]='\0';
+			 	inbuf->buf[(unsigned long)start+amount+1]=EOF;
 		 
 		  }
 		  else

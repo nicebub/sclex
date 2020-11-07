@@ -38,7 +38,7 @@ nonzero [1-9]
 ident {letter}({letter}|{digit})*
 ws [ \t\n]
 witho [ \t]
-singles [\(\)\{\};,<>=+-\/\*&]
+singles [\(\)\{\};,<>+=-\/\*&]
 doubles (>=)|(<=)|(!=)|(==)|(\.\.\.)
 integer (0|({nonzero}{digit}*))
 squote 	\"

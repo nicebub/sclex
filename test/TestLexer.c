@@ -49,7 +49,7 @@ void test_isNewline(void){
 	TEST_ASSERT_EQUAL(1,isNewline(&lexer));
 }
 void test_pass_ws(void){
-	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
 	TEST_ASSERT_EQUAL_CHAR(' ', lexer.current_char);
 	TEST_ASSERT_EQUAL(isWhitespace(&lexer),is_ws(' '));
@@ -63,7 +63,7 @@ void test_getNextChar(void){
 	TEST_ASSERT_EQUAL_CHAR('\0',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('\0',lexer.previous_char);
 	TEST_ASSERT_EQUAL(0,lexer.inputBuffer.len);
-	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
 	pass_ws(&lexer);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
@@ -76,21 +76,21 @@ void test_getNextChar(void){
 }
 
 void test_pushBackChar(void){
-	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
 	pass_ws(&lexer);
-	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('\n',lexer.previous_char);
+	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 	getNextChar(&lexer);
-	TEST_ASSERT_EQUAL_CHAR('i',lexer.current_char);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.previous_char);
+	TEST_ASSERT_EQUAL_CHAR('i',lexer.current_char);
 	pushBackChar(&lexer);	
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.previous_char);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 }
 
 void test_matchedNextToken(void){
-	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
 	pass_ws(&lexer);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
@@ -117,7 +117,7 @@ void test_matchedNextToken(void){
 void test_readRawStringUntilToken(void){
 	char * decs;
 	decs = NULL;
-	lexer.inputBuffer = *buffer_from_filename("test/TestLexer.c");
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
 	pass_ws(&lexer);
 	token.lexeme = "/*";
@@ -131,4 +131,18 @@ void test_readRawStringUntilToken(void){
 	decs = readRawStringUntilToken(&lexer,token);
 	TEST_ASSERT_EQUAL_CHAR('\n',lexer.current_char);
 	TEST_ASSERT_EQUAL_STRING(" for the test ",decs);
+}
+
+
+void test_getNextToken(void){
+	LexerToken tempToken;
+	lexer.inputBuffer = *buffer_from_filename("/Users/scotty/Programming/sclex/example/lex.l");
+	getNextChar(&lexer);
+	while(!isEOF(&lexer)){
+		tempToken = getNextToken(&lexer);
+		if(tempToken.lexeme){
+			printf("token found: %s\n",tempToken.lexeme);
+		}
+		getNextChar(&lexer);
+	}
 }

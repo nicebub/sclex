@@ -39,7 +39,7 @@ struct _hash *create_hash(int size){
     h->size = 0;
     h->bucket = malloc(sizeof(*(h->bucket))*size);
     h->cache = malloc(sizeof(*(h->cache))*size*cache_size);
-    for(j=0,i=0;i<size*cache_size;i++){
+    for((void)(j=0),i=0;i<size*cache_size;i++){
 	   h->cache[i].p = NULL;
 	   h->cache[i].pt = -1;
 	   h->cache[i].r = 0;
