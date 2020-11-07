@@ -54,5 +54,6 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser);
 char* aux(Parser* parser);
 char* parseDeclarations(Parser* parser);
 void parseDefinitions(Parser* parser);
+Definition* definitionExists(Parser* parser,LexerToken name);
 
 #endif

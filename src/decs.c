@@ -22,6 +22,7 @@ Definition* definitionExists(Parser* parser,LexerToken name){
 }
 void parseDefinitions(Parser* parser){
 	LexerToken name;
+    int counter;
 	setupdefinitionList(parser);
 
 	while(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
@@ -38,6 +39,9 @@ void parseDefinitions(Parser* parser){
 		}
 	}
     pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
+    parser->definitionBuffer = malloc(sizeof(Buffer*)*parser->num_defs);
+    for(counter=0;counter<parser->num_defs;counter++)
+	   parser->definitionBuffer[counter] = buffer_from_string(parser->definitionList[counter].expression);
 /*
 	   parser->defbuf = malloc(sizeof(Buffer*)*parser->num_defs);
   {

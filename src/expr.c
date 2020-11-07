@@ -236,22 +236,27 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 
 RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
 /*    struct _node* rnode;*/
+    LexerToken tempToken;
+    Definition *tempDefinition;
     Buffer * tempbuf;
     char str[200];
     int e;
     char v;
     tempbuf = NULL;
 /*    rnode = NULL;*/
-    for(e=0;parser->lexer.current_char != '}';e++){
+    tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+    if((tempDefinition = definitionExists(parser,tempToken))){
+    }
+/*    for(e=0;parser->lexer.current_char != '}';e++){
 	   str[e] = parser->lexer.current_char;
 	   getNextChar(&parser->lexer);
     }
     str[e] = '\0';
     pushBackChar(&parser->lexer);
-    pushBackChar(&parser->lexer);
+    pushBackChar(&parser->lexer);*/
 /*    ungetchar(&parser->lexer.inputBuffer);
     ungetchar(&parser->lexer.inputBuffer);*/
-    getNextChar(&parser->lexer);
+/*    getNextChar(&parser->lexer);*/
     for(e=0;e<2*parser->num_defs;e+=2){
 	   if(strcmp(parser->defs[e],str)==0){
 		  tempbuf = parser->definitionBuffer[e/2];
