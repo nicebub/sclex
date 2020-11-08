@@ -20,6 +20,7 @@ LexerToken tokenForType(enum _tokenType type){
 LexerToken tokenForLexeme(char* lexeme){
 	int counter;
 	for(counter=0;counter<TOKENSDEFINED;counter++){
+	    if(defaultTokens[counter].lexeme)
 		if(strcmp(lexeme,defaultTokens[counter].lexeme)==0)
 			return defaultTokens[counter];
 	}

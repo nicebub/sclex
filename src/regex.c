@@ -19,7 +19,7 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
 	   int extrafrontbrackets = 0;
 	   sbuf[0] = '{';
 	   scount++;
-	   while((parser->lexer.current_char = getchar(&parser->lexer.inputBuffer))!= EOF && parser->lexer.current_char !='\0'){
+	   while((parser->lexer.current_char = getchar(parser->lexer.inputBuffer))!= EOF && parser->lexer.current_char !='\0'){
 		  if(parser->lexer.current_char == '}'){
 			 if(extrafrontbrackets != 0){
 				extrafrontbrackets--;
@@ -33,9 +33,9 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
 				sbuf[scount]='\0';
 				parser->parseTree->action_array[parser->parseTree->used] = malloc(sizeof(char)*strlen(sbuf)+1);
 				strncpy(parser->parseTree->action_array[parser->parseTree->used],sbuf,strlen(sbuf)+1);
-				parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-				while(is_ws(parser->lexer.current_char) == 0)
-				    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+				getNextChar(&parser->lexer);
+				while(is_ws(parser->lexer.current_char))
+				    getNextChar(&parser->lexer);
 				if(parser->lexer.current_char == '\n' || parser->lexer.current_char == EOF || parser->lexer.current_char == '\0')
 				    return temp;
 				else{

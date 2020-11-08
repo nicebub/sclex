@@ -49,9 +49,9 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 		  return NULL;
 	   }
 	   /* get 1st character in set */
-	   parser->lexer.current_char= getchar(&parser->lexer.inputBuffer);
+	   getNextChar(&parser->lexer);
 	   /* can't be whitespace */
-	   if(is_ws(parser->lexer.current_char) ==0){
+	   if(is_ws(parser->lexer.current_char)){
 		  if(parser->lexer.current_char != ' '){
 			 lex_error(22);
 			 delete_root(temp);
@@ -63,7 +63,7 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 	   	set like a-z, b-r T-W, 1-6, etc.
 	   */
 	   if(parser->lexer.current_char == '-'){
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+		  getNextChar(&parser->lexer);
 		  if(isalphanum(parser->lexer.current_char) || isprintable(parser->lexer.current_char)){
 			 temp2 = create_node(parser->lexer.current_char);
 			 /* any problems creating the node then print an error and return
@@ -116,8 +116,8 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 				temp3 = temp2;
 
 			 }
-			 parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
-			 /* 
+			 getNextChar(&parser->lexer);
+			 /*
 			 	now get the firstpos and lastpos of the new part of the
 			 	parse tree created and add that to the nodes of the tree.
 			 	return this part of the parse tree.
@@ -133,9 +133,9 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 	   else{
 		   /* put back the first 2 characters read, reset the buffer and node
 		   	 memory used to determine the state of the character set */
-		  ungetchar(&parser->lexer.inputBuffer);
-		  ungetchar(&parser->lexer.inputBuffer);
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+		  ungetchar(parser->lexer.inputBuffer);
+		  ungetchar(parser->lexer.inputBuffer);
+		  getNextChar(&parser->lexer);
 		  delete_root(temp);
 		  temp = NULL;
 		  /* if we found a backslash then call the parser
@@ -160,8 +160,8 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 		  }
 		  /* add first character to alphabet */
 		  add_to_set(set,temp->value);
-		  parser->lexer.current_char= getchar(&parser->lexer.inputBuffer);
-		  /* now loop through the rest of the character set until we are through 
+		  getNextChar(&parser->lexer);
+		  /* now loop through the rest of the character set until we are through
 		  */
 		  while(isalphanum(parser->lexer.current_char) || isprintable(parser->lexer.current_char) || parser->lexer.current_char =='\\'){
 			 a++;
@@ -198,7 +198,7 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 				temp2->right = temp;
 				temp = temp2;
 			 }
-			 parser->lexer.current_char= getchar(&parser->lexer.inputBuffer);
+			 getNextChar(&parser->lexer);
 
 		  }
 		  /* create the CHARSET token in the parse tree and connect

@@ -39,7 +39,7 @@ RegularExpressionTreeNode* parseEscapeChars(Parser* parser){/* char_set** */
 
     temp = NULL;
 
-    parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+    getNextChar(&parser->lexer);
 
 	/* create the node and return it,
 		switch statement for later use

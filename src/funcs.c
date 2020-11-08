@@ -31,7 +31,7 @@ Results: returns an integer 0 or 1
 	 /* A string or character array of printable characters used
 	 to match against the input
 	 */
-    const static char *str = "!@#$%^&\\=-_\'\";:,<.>/`~*|?+ 	";
+    const static char *str = "!@#$%^&\\=-_\'\";:,<.>/`~*|?+{} 	";
 	/* a temporary pointer used to hold an address to point to a
 	particular character in the above 'str' array during the loop
 	process */

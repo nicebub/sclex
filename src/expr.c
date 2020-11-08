@@ -62,7 +62,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}*/
-    if((isalphanum(parser->lexer.current_char) || isprintable(parser->lexer.current_char)) && (parser->lexer.current_char != '\\') ){
+/*    if((isalphanum(parser->lexer.current_char) || isprintable(parser->lexer.current_char)) && (parser->lexer.current_char != '\\') ){
 	   m = parser->lexer.current_char;
 	   getNextChar(&parser->lexer);
 	   temp = create_node(m);\
@@ -71,8 +71,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 		  return NULL;
 	   }
 	   add_to_set(&parser->parseTree->alphabet,temp->value);
-    }
-    else{
+    }*/
+/*    else{
 	   	switch(parser->lexer.current_char){
 		    case '\\':
 			   temp = parseEscapeChars(parser);
@@ -122,7 +122,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 			   }
 			   break;
     		}
-    }
+    }*/
 	   switch(parser->lexer.current_char){
 		  case '\n':
 			 firstpos(&temp);
@@ -169,8 +169,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 			 getNextChar(&parser->lexer);
 			 getNextChar(&parser->lexer);
 			 if(parser->lexer.current_char == ','){
-					ungetchar(&parser->lexer.inputBuffer);
-					ungetchar(&parser->lexer.inputBuffer);
+				ungetchar(parser->lexer.inputBuffer);
+				ungetchar(parser->lexer.inputBuffer);
 					getNextChar(&parser->lexer);
 					temp2 = create_node(parser->lexer.current_char);
 					if(!temp2){
@@ -215,9 +215,9 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 			 else{
  				 /* found another expression definition?? */
  				printf("shouldn't be here in scyak.l perhaps\n");
- 				ungetchar(&parser->lexer.inputBuffer);
- 				ungetchar(&parser->lexer.inputBuffer);
- 				ungetchar(&parser->lexer.inputBuffer);
+				ungetchar(parser->lexer.inputBuffer);
+				ungetchar(parser->lexer.inputBuffer);
+				ungetchar(parser->lexer.inputBuffer);
 				getNextChar(&parser->lexer);
  				printf("back to char %c\n", parser->lexer.current_char);
     			 firstpos(&temp);
@@ -236,6 +236,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 
 RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
 /*    struct _node* rnode;*/
+    RegularExpressionTreeNode* tempNode;
     LexerToken tempToken;
     Definition *tempDefinition;
     Buffer * tempbuf;
@@ -246,6 +247,12 @@ RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
 /*    rnode = NULL;*/
     tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
     if((tempDefinition = definitionExists(parser,tempToken))){
+	   parser->fileBuffer = parser->lexer.inputBuffer;
+	   pushBackChar(&parser->lexer);
+	   swapBuffer(parser,tempDefinition->buffer);
+	   tempNode = parseExpressionOR(parser);
+	   swapBuffer(parser,parser->fileBuffer);
+	   return tempNode;
     }
 /*    for(e=0;parser->lexer.current_char != '}';e++){
 	   str[e] = parser->lexer.current_char;
@@ -257,15 +264,18 @@ RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
 /*    ungetchar(&parser->lexer.inputBuffer);
     ungetchar(&parser->lexer.inputBuffer);*/
 /*    getNextChar(&parser->lexer);*/
-    for(e=0;e<2*parser->num_defs;e+=2){
+/*    for(e=0;e<2*parser->num_defs;e+=2){
 	   if(strcmp(parser->defs[e],str)==0){
 		  tempbuf = parser->definitionBuffer[e/2];
 		  break;
 	   }
-    }
-    if(tempbuf != NULL){
-	   v = getchar(tempbuf);
-	   return parseExpressionOR(parser);
-    }
+    }*/
+/*    if(tempbuf != NULL){*/
+/*	   v = getchar(tempbuf);*/\
+/*	   swapBuffer(parser,tempbuf);
+	   tempNode = parseExpressionOR(parser);
+	   swapBuffer(parser,parser->fileBuffer);
+	   return tempNode;
+    }*/
     return NULL;
 }

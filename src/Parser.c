@@ -15,11 +15,18 @@ void initParser(Parser* parser){
 	parser->decs=NULL;
     parser->fpos = NULL;
     parser->definitionList = NULL;
-    parser->definitionBuffer = NULL;
+/*    parser->definitionBuffer = NULL;*/
 	parser->aux=NULL;
 	parser->num_defs=0;
+    parser->fileBuffer = NULL;
 	
 }
+
+void swapBuffer(Parser* parser, Buffer* buffer){
+    parser->lexer.inputBuffer = buffer;
+    getNextChar(&parser->lexer);
+}
+
 inline void initParserWithFilename(Parser* parser,char* arg){
     Buffer* buf;
 	initParser(parser);
@@ -28,7 +35,8 @@ inline void initParserWithFilename(Parser* parser,char* arg){
 		perror("\033[0;31merror\033[0m");
 		exit(EXIT_FAILURE);
 	}
-    parser->lexer.inputBuffer = *buf;
+    parser->lexer.inputBuffer = buf;
+    parser->fileBuffer = buf;
     getNextChar(&parser->lexer);
 }
 

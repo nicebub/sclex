@@ -116,8 +116,7 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser){
     parser->parseTree->num_re++;
     ct++;
     /* skip certain whitespace tokens */
-    while((is_ws(parser->lexer.current_char) ==0) || parser->lexer.current_char == '\n')
-	   parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+    pass_ws(&parser->lexer);
 	/* end of definiton section if finding '%' token now so exit with
 		current parse tree returned */
     if(parser->lexer.current_char == '%')
@@ -130,7 +129,7 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser){
 
 	   temp2 = parseRegularExpression(parser);
 	   if(temp2 == NULL){
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+		  getNextChar(&parser->lexer);
 		  continue;
 	   }
 	   temp3 = create_node((char)CONCAT);
@@ -173,8 +172,7 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser){
 	   temp = temp4;
 	   parser->parseTree->atop = temp;
 	   /* Get rid of any whitespace characters left in the input stream */
-	   while((is_ws(parser->lexer.current_char) ==0) || parser->lexer.current_char == '\n')
-		  parser->lexer.current_char = getchar(&parser->lexer.inputBuffer);
+	   pass_ws(&parser->lexer);
 	   /* if we found the end of the definitions symbol '%' then return
 	   	a pointer to the current parse tree structure */
 	   if(parser->lexer.current_char == '%'){

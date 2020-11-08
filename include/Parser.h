@@ -12,7 +12,7 @@ typedef TreeArray RegularExpressionTreeArray;
 
 typedef struct _definition Definition;
 struct _definition {
-/*	Buffer buffer;*/
+	Buffer *buffer;
 	LexerToken name;
 	char* expression;
 };
@@ -21,9 +21,10 @@ typedef struct _parser Parser;
 struct _parser {
 	Lexer lexer;
 	RegularExpressionTreeArray* parseTree; /* old ta */
-    Buffer **definitionBuffer;
+/*    Buffer **definitionBuffer;*/
     Definition* definitionList;
     base_vector *fpos; /* int_vector* */
+    Buffer* fileBuffer;
 	char** defs;
 	char* decs;
 	char* aux;
@@ -55,5 +56,5 @@ char* aux(Parser* parser);
 char* parseDeclarations(Parser* parser);
 void parseDefinitions(Parser* parser);
 Definition* definitionExists(Parser* parser,LexerToken name);
-
+void swapBuffer(Parser* parser, Buffer* buffer);
 #endif

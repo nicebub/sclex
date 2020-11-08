@@ -15,7 +15,8 @@
   }
   
 void initLexer(Lexer* lex){
-	init_base_buffer(&lex->inputBuffer);
+/*	init_base_buffer(lex->inputBuffer);*/
+    lex->inputBuffer = NULL;
 	initTokenStream(&lex->tokens);
 	lex->previous_char = '\0';
 	lex->current_char =  '\0';
@@ -40,11 +41,11 @@ inline void pass_ws(Lexer* lex){
 }
 inline void getNextChar(Lexer* lex){
 	lex->previous_char = lex->current_char;
-	lex->current_char = (char)getchar(&lex->inputBuffer);
+	lex->current_char = (char)getchar(lex->inputBuffer);
 }
 inline void pushBackChar(Lexer* lex){
 	lex->current_char = lex->previous_char;
-	lex->previous_char = (char)ungetchar(&lex->inputBuffer);
+	lex->previous_char = (char)ungetchar(lex->inputBuffer);
 }
 LexerToken tokenRunner(Lexer* lexer,LexerToken token,int type){
     LexerToken temp;
@@ -354,15 +355,15 @@ LexerToken matchedNextToken(Lexer* lex,const LexerToken token){
 			 return temp;
 		  }
 		  getNextChar(lex);
-	   }/*
-/*	   getNextChar(lex);*/
-/*	   temp.lexeme = token.lexeme;
+	   }
+	   getNextChar(lex);
+	   temp.lexeme = token.lexeme;
 	   temp.id = token.id;
 	   temp.type = token.type;
 
     }
-/*
-/*	else if(lex->current_char == token.lexeme[0]){
+
+	else if(lex->current_char == token.lexeme[0]){
 		getNextChar(lex);
 		if(lex->current_char == token.lexeme[1]){
 			getNextChar(lex);

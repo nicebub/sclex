@@ -22,7 +22,7 @@ Definition* definitionExists(Parser* parser,LexerToken name){
 }
 void parseDefinitions(Parser* parser){
 	LexerToken name;
-    int counter;
+/*    int counter;*/
 	setupdefinitionList(parser);
 
 	while(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
@@ -39,9 +39,9 @@ void parseDefinitions(Parser* parser){
 		}
 	}
     pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
-    parser->definitionBuffer = malloc(sizeof(Buffer*)*parser->num_defs);
-    for(counter=0;counter<parser->num_defs;counter++)
-	   parser->definitionBuffer[counter] = buffer_from_string(parser->definitionList[counter].expression);
+/*    parser->definitionBuffer = malloc(sizeof(Buffer*)*parser->num_defs);*/
+/*    for(counter=0;counter<parser->num_defs;counter++)
+	   parser->definitionBuffer[counter] = buffer_from_string(parser->definitionList[counter].expression);*/
 /*
 	   parser->defbuf = malloc(sizeof(Buffer*)*parser->num_defs);
   {
@@ -58,6 +58,7 @@ void setupdefinitionList(Parser* parser){
 	for(counter=0;counter<NUM_DEFINITIONS;counter++){
 		parser->definitionList[counter].name = tokenForType(IDENTIFIER);
 		parser->definitionList[counter].expression = NULL;
+	    parser->definitionList[counter].buffer = NULL;
 	}
 }
 void initNextDefinition(Parser* parser){
@@ -74,6 +75,7 @@ void initNextDefinition(Parser* parser){
 void parseDefinitionValue(Parser* parser, LexerToken name){
 	char accummulatedString[EXPRESSIONLENGTH];
 	LexerToken tempToken;
+	LexerToken match;
 	char* currentLocation;
 	currentLocation = &accummulatedString[0];
     parser->lexer.passWS = 0;
@@ -83,26 +85,21 @@ void parseDefinitionValue(Parser* parser, LexerToken name){
 			parser->lexer.passWS = 1;
 			return;
 		}
-		if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
-			if(matchToken(&parser->lexer,tokenForType(NUMBER)).lexeme){
+		else if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
+			if((match = matchToken(&parser->lexer,tokenForType(NUMBER))).lexeme){
 			}
-			else{
-				LexerToken name;
+			else if((match = matchToken(&parser->lexer,tokenForType(IDENTIFIER))).lexeme) {
 				Definition* def;
-				name = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
 				def = NULL;
-				if(name.lexeme){
-					if((def=definitionExists(parser,name))){
-						*currentLocation = '(';
-						currentLocation++;
-						strncpy(currentLocation,def->expression,strlen(def->expression));
-						currentLocation += strlen(def->expression);
-						*currentLocation = ')';
-						currentLocation++;
-						getNextChar(&parser->lexer);
-						
-					}
-				}
+			    if((def=definitionExists(parser,match))){
+				    *currentLocation = '(';
+				    currentLocation++;
+				    strncpy(currentLocation,def->expression,strlen(def->expression));
+				    currentLocation += strlen(def->expression);
+				    *currentLocation = ')';
+				    currentLocation++;
+				    getNextChar(&parser->lexer);				    
+			    }
 			}
 		}
 		else{
@@ -116,6 +113,7 @@ void parseDefinitionValue(Parser* parser, LexerToken name){
     *currentLocation = '\0';
 	 parser->definitionList[parser->num_defs].name = name;
 	 strncpy(parser->definitionList[parser->num_defs].expression,accummulatedString,strlen((const char*)&accummulatedString)+1);
+    parser->definitionList[parser->num_defs].buffer = buffer_from_string(parser->definitionList[parser->num_defs].expression);
 	 parser->num_defs++;
     parser->lexer.passWS = 1;
  }

@@ -6,7 +6,7 @@
 
 typedef struct _lexer Lexer;
 struct _lexer {
-    Buffer inputBuffer;
+    Buffer *inputBuffer;
     TokenStream tokens;
     char previous_char;
     char current_char;
