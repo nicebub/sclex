@@ -12,7 +12,7 @@ only after C99
 #define to_file(...) fprintf(outfile, __VA_ARGS__)
 */
 
-void generate_output(struct _lfile lexfile, struct _DFA* dfa){
+void generate_output(Parser* parser, struct _DFA* dfa){
 	char 	cb[50];
     char *	infstring;
     FILE * 	outfile, *infile;
@@ -209,8 +209,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 						count++;
 						break;
 					case DECL_PAR:
-					    	sprintf(tp,"%s",lexfile.decs);
-					    tp += strlen(lexfile.decs);
+					    	sprintf(tp,"%s",parser->decs);
+					    tp += strlen(parser->decs);
 					    count++;
 					    break;
 					case ALPH_SZ_PAR:
@@ -262,7 +262,7 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 					   tp += 11;
 					   {
 					   int i;
-					    for(i=0;i<lexfile.tree->used;i++){
+					    for(i=0;i<parser->parseTree->used;i++){
 /*						   printf("action array %d: %s\n",i,lexfile.tree->action_array[i]);*/
 						   sprintf(cb,"%d",i);
 						   {
@@ -282,8 +282,8 @@ void generate_output(struct _lfile lexfile, struct _DFA* dfa){
 							   tp++;
 						   }
 					   }
-						   sprintf(tp,"%s\n",lexfile.tree->action_array[i]);
-						   tp += strlen(lexfile.tree->action_array[i]);
+						   sprintf(tp,"%s\n",parser->parseTree->action_array[i]);
+						   tp += strlen(parser->parseTree->action_array[i]);
 						   sprintf(tp,"\n");
 						   tp++;
 						   {

@@ -76,7 +76,7 @@ int is_in_final_states(int scl_state);
 	 /* which regular expression is attached to which accepting states */
 	 const static int scl_each_re_accepted[scl_num_regex][scl_accept_size] = { #0# };
 	 /* The buffer we use to buffer the input file */
-	 static buffer * scl_dbuf; 
+	 static Buffer * scl_dbuf; 
 	 /* The temporary text buffer we use to store the matched text, lexeme
 	 	and make it available to the caller function */
 	 char sctext[100];

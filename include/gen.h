@@ -1,8 +1,9 @@
 #ifndef MGEN_H
 #define MGEN_H
 
+#include "Parser.h"
 #include "dfa.h"
-#include "lfile.h"
+/*#include "lfile.h"*/
 
 typedef enum _PARAGRAPH {
 	BUFFER_PAR,
@@ -18,7 +19,7 @@ typedef enum _PARAGRAPH {
 	USER_CODE_PAR
 }  paragraph_id;
 
-void generate_output(struct _lfile, struct _DFA*);
+void generate_output(Parser* parser, struct _DFA*);
 
 extern void lex_error(int en);
 #endif

@@ -12,6 +12,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
     /*
 	can be an (expr) OR [range] OR expr OR expr* OR expr+ OR expr? OR expr{a,b} OR expr|expr
 	*/
+    setIndividualTokens(&parser->lexer,1);
     if(matchToken(&parser->lexer,tokenForType(LPAREN)).lexeme){
 	   temp = parseExpressionOR(parser);
 	   if(!matchToken(&parser->lexer,tokenForType(RPAREN)).lexeme){
@@ -39,22 +40,24 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 	   temp = parseEscapeChars(parser);
 	   if(!temp){
 		  lex_error(27);
+		  setIndividualTokens(&parser->lexer,0);
 		  return NULL;
 	   }
 	   add_to_set(&parser->parseTree->alphabet,temp->value);
     }
     else{
-	   setIndividualTokens(&parser->lexer,1);
 	   m = *getNextToken(&parser->lexer).lexeme;
 	   temp = create_node(m);\
 	   if(!temp){
 		  lex_error(12);
+		  setIndividualTokens(&parser->lexer,0);
 		  return NULL;
 	   }
 	   add_to_set(&parser->parseTree->alphabet,temp->value);
 
     }
-    
+    setIndividualTokens(&parser->lexer,0);
+
  /*   else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}

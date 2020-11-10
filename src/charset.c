@@ -211,8 +211,8 @@ RegularExpressionTreeNode* parseCharSet(base_set ** set, Parser* parser){
 		  temp3->left = temp;
 		  /* construct the firstpos and lastpos sets of the new part of the parse 
 		  	tree and set the values in the nodes of the tree */
-		  pos(&temp3,1);
-		  pos(&temp3,0);
+		  firstpos(&temp3);
+		  lastpos(&temp3);
 
 		  return temp3;
 	   }

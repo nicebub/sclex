@@ -42,7 +42,7 @@ RegularExpressionTreeArray* parseTranslations(Parser* parser){
     parser->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
 	/* if memory error or something else thing print an error to standard
 		output and return NULL */
-    if(parser->fpos == NULL){
+    if(!parser->fpos){
 	   lex_error(4);
 	   return NULL;
     }

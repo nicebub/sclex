@@ -13,13 +13,13 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
 	*/
     temp = parseFullExpression(parser);
 
-    if(parser->lexer.current_char == '{'){
+    if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
 	   char sbuf[8000];
 	   int scount =0;
 	   int extrafrontbrackets = 0;
 	   sbuf[0] = '{';
 	   scount++;
-	   while((parser->lexer.current_char = getchar(parser->lexer.inputBuffer))!= EOF && parser->lexer.current_char !='\0'){
+	   while(parser->lexer.current_char != EOF && parser->lexer.current_char !='\0'){
 		  if(parser->lexer.current_char == '}'){
 			 if(extrafrontbrackets != 0){
 				extrafrontbrackets--;

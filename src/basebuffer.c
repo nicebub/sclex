@@ -286,7 +286,7 @@ int base_ungetchar(base_buffer* mbuf){
 		  	return the current character */
 		  else
 			 mbuf->forward--;
-		  return *(mbuf->forward-1);
+		  return mbuf->forward == mbuf->buf ? *mbuf->forward:*(mbuf->forward-1);
 		  break;
     }
 	/* all else fails, return -1 */

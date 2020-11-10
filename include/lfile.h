@@ -64,5 +64,5 @@ struct _io {
 
 void initIO(Io* inIO);
 int ASTExists(Io* inIO);
-int firstPositionSetExists(Io* inIO);
+/*int firstPositionSetExists(Io* inIO);*/
 #endif

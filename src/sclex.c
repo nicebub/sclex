@@ -17,9 +17,9 @@ int main(int argc, const char **argv) {
   initParserWithFilename(&parser,(char*)argv[FILENAME_ARG]);
   parseInputFile(&parser); /* parse input file, name given as argument to executable*/
   
-  if(canGenerateDFA(&programIO)){
-	dfa = generate_dfa(&programIO);
-	generate_output(programIO.lexfile, dfa);
+  if(canGenerateDFA(&parser)){
+	dfa = generate_dfa(&parser);
+	generate_output(&parser, dfa);
   }
 
   /* return success on memory cleanup success or warning otherwise */
@@ -40,14 +40,14 @@ void initIO(Io* programIO){
     programIO->lexfile.aux = NULL;
 	
 }
-inline int canGenerateDFA(Io* programIO){
-    return regularExpressionTreeArrayExists(programIO) && firstPositionSetExists(programIO);
+inline int canGenerateDFA(Parser* parser){
+    return regularExpressionTreeArrayExists(parser) && firstPositionSetExists(parser);
 }	
-inline int regularExpressionTreeArrayExists(Io* inIO){
-	return inIO->lexfile.tree != NULL;
+inline int regularExpressionTreeArrayExists(Parser* parser){
+	return parser->parseTree != NULL;
 }
-inline int firstPositionSetExists(Io* inIO){
-	return inIO->lexfile.fpos != NULL;
+inline int firstPositionSetExists(Parser* parser){
+	return parser->fpos != NULL;
 }
 int CleanupMemory(Io* programIO, struct _DFA** dfa){
 

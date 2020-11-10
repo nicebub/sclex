@@ -57,7 +57,7 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser){
 		lex_error(SCERR_MUST_USE_SEPR);
 		return NULL;
 	}
-    pass_ws(&parser->lexer);
+/*    pass_ws(&parser->lexer);*/
 	parseDefinitions(parser);
 	
 	if(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){

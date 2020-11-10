@@ -1,9 +1,9 @@
 #ifndef SCLEXDRIVER_H
 #define SCLEXDRIVER_H
 
-#include "lfile.h"
+/*#include "lfile.h"*/
 #include "dfa.h"
-
+#include "Parser.h"
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
@@ -13,9 +13,9 @@
 
 
 void initIO(Io* programIO);
-inline int regularExpressionTreeArrayExists(Io* inIO);
-inline int firstPositionSetExists(Io* inIO);
-inline int canGenerateDFA(Io* programIO);
+inline int regularExpressionTreeArrayExists(Parser* parser);
+inline int firstPositionSetExists(Parser* parser);
+inline int canGenerateDFA(Parser* parser);
 
 int CleanupMemory(Io* programIO, struct _DFA** dfa);
 

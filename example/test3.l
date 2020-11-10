@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "scy.tab.h"
+#include "scy.tab.h"*/
 	/* declarations */
 	int a;
 %}

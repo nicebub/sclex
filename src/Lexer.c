@@ -49,11 +49,11 @@ inline void pushBackChar(Lexer* lex){
 }
 LexerToken tokenRunner(Lexer* lexer,LexerToken token,int type){
     LexerToken temp;
-    if(lexer->individualTokens){
+/*    if(lexer->individualTokens){
 	   temp = tokenForLexeme(&lexer->current_char);
 	   getNextChar(lexer);
 	   return temp;
-    }
+    }*/
     temp = peekTokenStack(&lexer->tokens.stack);
     if(!temp.lexeme){
 	    pushNextTokenOnStack(lexer);
@@ -135,14 +135,17 @@ LexerToken readNextToken(Lexer* lex){
 	LexerToken tempToken;
 	initToken(&tempToken);
 	ptr = tempChar;
-	pass_ws(lex);
+    if(lex->passWS)
+	 	pass_ws(lex);
 	if(isalphaC(lex->current_char)){
 		tempToken = tokenForType(IDENTIFIER);
-		while(isalphaC(lex->current_char)){
+		do{
 			*ptr = lex->current_char;
 			ptr++;
 			getNextChar(lex);
-		}
+		    if(lex->individualTokens)
+			   break;
+		}while(isalphaC(lex->current_char));
 		*ptr = '\0';
 		tempToken.lexeme = strdup(tempChar);
 	    tempToken.allocated= 1;
@@ -150,11 +153,13 @@ LexerToken readNextToken(Lexer* lex){
 	}
 	else if(isdigitC(lex->current_char)){
 		tempToken = tokenForType(NUMBER);
-		while(isdigitC(lex->current_char)){
+		do{
 			*ptr = lex->current_char;
 			ptr++;
 			getNextChar(lex);
-		}
+		    if(lex->individualTokens)
+			   break;
+		}while(isdigitC(lex->current_char));
 		*ptr = '\0';
 		tempToken.lexeme = strdup(tempChar);
 	    tempToken.allocated = 1;
@@ -232,70 +237,92 @@ LexerToken readNextToken(Lexer* lex){
 				tempToken = tokenForType(EMPTYTOKEN);
 				break;
 			case '=':
+			   if(!lex->individualTokens){
 				getNextChar(lex);
-			   if(lex->current_char == '=')
+				  if(lex->current_char == '='){
 				    tempToken = tokenForType(EQUIV);
-			   else{
-				pushBackChar(lex);
-				tempToken = tokenForType(EQUALS);
+					 break;
+				  }
+				  else
+				    pushBackChar(lex);
 			   }
+				tempToken = tokenForType(EQUALS);
 				break;
 			case '%':
-				getNextChar(lex);
-				if(lex->current_char == '%')
-					tempToken = tokenForType(SECTION_STARTER);
-				else if(lex->current_char == '{')
-					tempToken = tokenForType(OPEN_STARTER);
-				else if(lex->current_char == '}')
-					tempToken = tokenForType(CLOSE_STARTER);
-				else{
-				    pushBackChar(lex);
-				    tempToken = tokenForType(PERCENT);
-				}
-				break;
+			   if(!lex->individualTokens){
+				  getNextChar(lex);
+				  if(lex->current_char == '%'){
+					 tempToken = tokenForType(SECTION_STARTER);
+					 break;
+				  }
+				  else if(lex->current_char == '{'){
+					 tempToken = tokenForType(OPEN_STARTER);
+					 break;
+				  }
+				  else if(lex->current_char == '}'){
+					 tempToken = tokenForType(CLOSE_STARTER);
+					 break;
+				  }
+				  else
+					 pushBackChar(lex);
+			   }
+			 tempToken = tokenForType(PERCENT);
+			   break;
 			case '<':
+			   if(!lex->individualTokens){
 				getNextChar(lex);
-				if(lex->current_char == '=')
-					tempToken = tokenForType(LTE);
-				else{
+				if(lex->current_char == '='){
+					 tempToken = tokenForType(LTE);
+					 break;
+				  }
+				else
 				    pushBackChar(lex);
-				    tempToken = tokenForType(LESS);
-				}
+			   }
+			    tempToken = tokenForType(LESS);
 				break;
 			case '>':
-				getNextChar(lex);
-				if(lex->current_char == '=')
+			   if(!lex->individualTokens){
+				  getNextChar(lex);
+				  if(lex->current_char == '='){
 					tempToken = tokenForType(GTE);
-				else{
+					 break;
+				  }
+				else
 				    pushBackChar(lex);
-				    tempToken = tokenForType(GREAT);
-				}
+			   }
+			 tempToken = tokenForType(GREAT);
 				break;
 			case '!':
-				getNextChar(lex);
-				if(lex->current_char == '=')
+			   if(!lex->individualTokens){
+				  getNextChar(lex);
+				  if(lex->current_char == '='){
 					tempToken = tokenForType(NOTEQUAL);
-				else{
+					 break;
+				  }
+				else
 				    pushBackChar(lex);
-				    tempToken = tokenForType(NOT);
-				}
+			   }
+				tempToken = tokenForType(NOT);
 				break;
 			case '.':
-				getNextChar(lex);
-				if(lex->current_char == '.'){
+			   if(!lex->individualTokens){
+				  getNextChar(lex);
+				  if(lex->current_char == '.'){
 					getNextChar(lex);
-					if(lex->current_char == '.')
+					 if(lex->current_char == '.'){
 						tempToken = tokenForType(ELIPSE);
+						break;
+					 }
 					else{
 						pushBackChar(lex);
 					    pushBackChar(lex);
 					}
-				}
-				else{
+				  }
+				  else
 				    pushBackChar(lex);
+			   }
 				    tempToken = tokenForType(DOT);
-				}
-				break;
+				    break;
 			default:
 				tempToken =  defaultTokens[0];
 				break;

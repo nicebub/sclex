@@ -9,7 +9,8 @@
 #include "basevector.h"
 #include "intvector.h"
 #include "chrvector.h"
-#include "lfile.h"
+/*#include "lfile.h"*/
+#include "Parser.h"
 struct _DFA {
     base_vector *Dstates; /* int_vector* */
     base_set *FFstates; /* int_set* */
@@ -24,7 +25,7 @@ struct _DFA {
 };
 
 
-struct _DFA* generate_dfa(Io* programIO);
+struct _DFA* generate_dfa(Parser* parser);
 			 /* int_vector*  and char_set* */
 
 struct _DFA* create_dfa(void);

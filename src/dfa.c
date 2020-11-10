@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 
-struct _DFA* generate_dfa(Io* programIO){
+struct _DFA* generate_dfa(Parser* parser){
     base_set*** DUTran; /* int_set*** */
     base_vector * Dstates; /* int_vector* */
     base_set* temps, *temps2; /* int_set* */
@@ -38,19 +38,19 @@ struct _DFA* generate_dfa(Io* programIO){
     current_re = 0;
     which_re = 0;
     sets =0;
-    Dstates = new_int_vector(vector_used(programIO->lexfile.fpos));
+    Dstates = new_int_vector(vector_used(parser->fpos));
     if(Dstates == NULL){
 	   printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
 	   return NULL;
     }
-    Dtran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree->alphabet));
+    Dtran = malloc(sizeof(int*)*set_used(parser->parseTree->alphabet));
     if(!Dtran){
 	   printf("Couldnt' allocate memory for Dtran in dfa gen\n");
 	   delete_vector(Dstates);
 	   Dstates = NULL;
 	   return NULL;
     }
-    DUTran = malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree->alphabet));
+    DUTran = malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
 	if(!DUTran){
 	    printf("Couldnt' allocate memory for DUTran in dfa gen\n");
 	    delete_vector(Dstates);
@@ -61,25 +61,25 @@ struct _DFA* generate_dfa(Io* programIO){
 	}
 	{
 		int we;
-		for(we=0;we<set_used(programIO->lexfile.tree->alphabet);we++){
-	   	Dtran[we] = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
-		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(programIO->lexfile.fpos));
+		for(we=0;we<set_used(parser->parseTree->alphabet);we++){
+	   	Dtran[we] = malloc(sizeof(int)*vector_used(parser->fpos));
+		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(parser->fpos));
     	}
 	}
 {
 	int i;
-    for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
+    for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		int j;
-	   for(j=0;j<vector_used(programIO->lexfile.fpos);j++){
+	   for(j=0;j<vector_used(parser->fpos);j++){
 		  Dtran[i][j] = -1;
-		  DUTran[i][j] = new_int_set(vector_used(programIO->lexfile.fpos));
+		  DUTran[i][j] = new_int_set(vector_used(parser->fpos));
 	   }
     }
 }
 {
 	int bb;
-    for(bb=0;bb<vector_used(programIO->lexfile.fpos);bb++){
-	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(programIO->lexfile.fpos)));
+    for(bb=0;bb<vector_used(parser->fpos);bb++){
+	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(parser->fpos)));
 	   if(*(int**)get_by_index_in_vector(Dstates,bb) == NULL){
 		  printf("couldn't create new Dstates state\n");
 		  return NULL;
@@ -87,14 +87,14 @@ struct _DFA* generate_dfa(Io* programIO){
     }
 }
     set_vector_used(Dstates,0);
-    marked = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
-    unmarked = malloc(sizeof(int)*vector_used(programIO->lexfile.fpos));
-    for(a=0;a<vector_used(programIO->lexfile.fpos);a++){
+    marked = malloc(sizeof(int)*vector_used(parser->fpos));
+    unmarked = malloc(sizeof(int)*vector_used(parser->fpos));
+    for(a=0;a<vector_used(parser->fpos);a++){
 	   marked[a]= -1;
 	   unmarked[a] = -1;
     }
     temps = *get_by_index_in_vector(Dstates,sets);
-	fpt = firstpos(&(programIO->lexfile.tree->atop));
+	fpt = firstpos(&(parser->parseTree->atop));
     temps2 = merge_sets(temps,fpt);
     delete_set(temps);
 /*    set_by_index_in_vector(Dstates,sets,temps2);*/
@@ -118,9 +118,9 @@ struct _DFA* generate_dfa(Io* programIO){
  	   int j;
 	   unmarked[a] =0;
 	   marked[a] = 1;
-	   for(j=0;j<set_used(programIO->lexfile.tree->alphabet);j++){
+	   for(j=0;j<set_used(parser->parseTree->alphabet);j++){
 /*		  printf("creating new U set to use\n");*/
-		  U = new_int_set(vector_used(programIO->lexfile.fpos));
+		  U = new_int_set(vector_used(parser->fpos));
 		  if(U == NULL){
 			 printf("couldn't create new U\n");
 			 return NULL;
@@ -130,14 +130,14 @@ struct _DFA* generate_dfa(Io* programIO){
 		  for(g=0;
 		  	g<set_used(*get_by_index_in_vector(Dstates,a));
 		  	g++){
-			 tn = get_node_for_uniq(programIO->lexfile.tree->atop,
+			 tn = get_node_for_uniq(parser->parseTree->atop,
 			 	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
-			 if(tn->value == *(char*)get_value_by_index_set(programIO->lexfile.tree->alphabet,j)){
+			 if(tn->value == *(char*)get_value_by_index_set(parser->parseTree->alphabet,j)){
 /*				printf("alphabet symbol %c from state %d for position %d\n", \
 					  alphabet->s[j],a+1,Dstates->iset[a]->s[g]);*/
 				temps = U;
 				U = merge_sets(U,
-					*get_by_index_in_vector(programIO->lexfile.fpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
+					*get_by_index_in_vector(parser->fpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
 				((int_set*)U)->super.uniq = sets;
 /*				printf("U created: displaying ");*/
 /*				display_set(U,0);*/
@@ -194,18 +194,18 @@ struct _DFA* generate_dfa(Io* programIO){
 /*    printf("THEY ARE AS FOLLOWS\n");*/
 /*    for(int j=0;j<vector_used(Dstates);j++)*/
 /*	   display_set(Dstates->iset[j],0);*/
-	tTran = malloc(sizeof(int*)*set_used(programIO->lexfile.tree->alphabet));
-	tDUTran= malloc(sizeof(int_set**)*set_used(programIO->lexfile.tree->alphabet));
+	tTran = malloc(sizeof(int*)*set_used(parser->parseTree->alphabet));
+	tDUTran= malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
 	{
 	int we;
-    	for(we=0;we<set_used(programIO->lexfile.tree->alphabet);we++){
+    	for(we=0;we<set_used(parser->parseTree->alphabet);we++){
 			tTran[we] = malloc(sizeof(int)*vector_used(Dstates));
 	   		tDUTran[we] = malloc(sizeof(int_set*)*vector_used(Dstates));
 		}
 }
 {
 	int i;
-    for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
+    for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		int j;
 	   for(j=0;j<vector_used(Dstates);j++){
 		  tTran[i][j] = Dtran[i][j];
@@ -227,8 +227,8 @@ struct _DFA* generate_dfa(Io* programIO){
     printf("S|");
 	{
 		int i;
-		for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
-		   printf("|%c",*(char*)get_value_by_index_set(programIO->lexfile.tree->alphabet,i));
+		for(i=0;i<set_used(parser->parseTree->alphabet);i++){
+		   printf("|%c",*(char*)get_value_by_index_set(parser->parseTree->alphabet,i));
 		}
 	}
     printf("|\n");
@@ -238,7 +238,7 @@ struct _DFA* generate_dfa(Io* programIO){
 		for(r=0;r<vector_used(Dstates);r++){
 			int i;
 			printf("%d|",r+1);
-	   	 	for(i=0;i<set_used(programIO->lexfile.tree->alphabet);i++){
+	   	 	for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		 	   if(tTran[i][r] != -1)
 				   printf("|%d", tTran[i][r]);
 			   else
@@ -267,10 +267,10 @@ struct _DFA* generate_dfa(Io* programIO){
 /*	printf("number of regular expressions found %d\n",tree->num_re);*/
 	{
 	int k;
-    for(k=0;k<programIO->lexfile.tree->num_re;k++){
+    for(k=0;k<parser->parseTree->num_re;k++){
 		int y;
 	   	Fstates = NULL;
-	   	lastpos = programIO->lexfile.tree->finalpos[k];
+	   	lastpos = parser->parseTree->finalpos[k];
 /*    printf("Finish States for the whole file RE: \n");*/
 	   	fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
@@ -295,21 +295,21 @@ struct _DFA* generate_dfa(Io* programIO){
 		   		 	}
 				}
 			}
-	   programIO->lexfile.tree->Fstates[k] = Fstates;
+	   parser->parseTree->Fstates[k] = Fstates;
     }
 }
   /*  printf("final finish state set for the whole file RE\n");*/
 /*    display_set(FFstates,0);*/
 
     dfa->FFstates = FFstates;
-    dfa->Fstates = programIO->lexfile.tree->Fstates;
+    dfa->Fstates = parser->parseTree->Fstates;
     dfa->start = (*(int_set**)get_by_index_in_vector(Dstates,0))->super.uniq;
     dfa->num_states = vector_used(Dstates);
     dfa->Dstates = Dstates;
-    dfa->alphabet = copy_sets(programIO->lexfile.tree->alphabet);
+    dfa->alphabet = copy_sets(parser->parseTree->alphabet);
     dfa->DUTran = tDUTran;
-    dfa->action_array = programIO->lexfile.tree->action_array;
-    dfa->num_re = programIO->lexfile.tree->num_re;
+    dfa->action_array = parser->parseTree->action_array;
+    dfa->num_re = parser->parseTree->num_re;
     return dfa;
 }
 
