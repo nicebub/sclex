@@ -23,6 +23,14 @@ struct _DFA {
     int num_states;
 	int num_re;
 };
+typedef struct _tableCalculations TableCalculations;
+struct _tableCalculations {
+   base_set*** DUtransition; /* int_set*** */
+   base_vector * Dstates; /* int_vector* */
+   int **Dtransition;
+   int * marked;
+   int * unmarked;
+};
 
 
 struct _DFA* generate_dfa(Parser* parser);

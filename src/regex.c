@@ -52,12 +52,13 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
 			 scount++;
 
 		  }
+		  getNextChar(&parser->lexer);
 	   }
 	   return temp;
     }
     else{
 	   lex_error(11);
-	   printf("error expecting a '{' character but found %c\n",parser->lexer.current_char);
+	   printf("Either no translation given, or expected '{' but found %c\n",parser->lexer.current_char);
 	   exit(-1);
     }
 }

@@ -10,7 +10,7 @@ char* parseDeclarations(Parser* parser){
 	char* declarations;
 	declarations = NULL;
 	declarations = readRawStringUntilToken(&parser->lexer, tokenForType(CLOSE_STARTER));
-	pushBackLastToken(&parser->lexer,tokenForType(CLOSE_STARTER));
+	if(declarations) pushBackLastToken(&parser->lexer,tokenForType(CLOSE_STARTER));
 	return declarations;
 }
 Definition* definitionExists(Parser* parser,LexerToken name){
@@ -28,6 +28,10 @@ void parseDefinitions(Parser* parser){
 	while(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
 		initNextDefinition(parser);
 		name = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+	    if(!name.lexeme){
+		   printf("couldn't find next token\n");
+		   return;
+	    }
 		if(definitionExists(parser,name)){
    			 printf("definition already exists or name already taken\n");
 				 while(!isNewline(&parser->lexer))
@@ -83,7 +87,7 @@ void parseDefinitionValue(Parser* parser, LexerToken name){
 		if(matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme){
 			pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
 			parser->lexer.passWS = 1;
-			return;
+		    break;;
 		}
 		else if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
 			if((match = matchToken(&parser->lexer,tokenForType(NUMBER))).lexeme){
@@ -105,6 +109,10 @@ void parseDefinitionValue(Parser* parser, LexerToken name){
 		else{
 			/*keep storing string for later. */
 			tempToken = getNextToken(&parser->lexer);
+		    if(!tempToken.lexeme){
+			   printf("couldn't find next token\n");
+			   return;
+		    }
 			/*add token to buffer to store*/
 			strncpy(currentLocation,tempToken.lexeme,strlen(tempToken.lexeme));
 			currentLocation += strlen(tempToken.lexeme);

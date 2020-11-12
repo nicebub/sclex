@@ -237,19 +237,15 @@ LexerToken readNextToken(Lexer* lex){
 				tempToken = tokenForType(EMPTYTOKEN);
 				break;
 			case '=':
-			   if(!lex->individualTokens){
 				getNextChar(lex);
 				  if(lex->current_char == '='){
 				    tempToken = tokenForType(EQUIV);
 					 break;
 				  }
-				  else
-				    pushBackChar(lex);
-			   }
+				pushBackChar(lex);
 				tempToken = tokenForType(EQUALS);
 				break;
 			case '%':
-			   if(!lex->individualTokens){
 				  getNextChar(lex);
 				  if(lex->current_char == '%'){
 					 tempToken = tokenForType(SECTION_STARTER);
@@ -263,45 +259,34 @@ LexerToken readNextToken(Lexer* lex){
 					 tempToken = tokenForType(CLOSE_STARTER);
 					 break;
 				  }
-				  else
-					 pushBackChar(lex);
-			   }
+			 pushBackChar(lex);
 			 tempToken = tokenForType(PERCENT);
 			   break;
 			case '<':
-			   if(!lex->individualTokens){
 				getNextChar(lex);
 				if(lex->current_char == '='){
 					 tempToken = tokenForType(LTE);
 					 break;
 				  }
-				else
 				    pushBackChar(lex);
-			   }
 			    tempToken = tokenForType(LESS);
 				break;
 			case '>':
-			   if(!lex->individualTokens){
 				  getNextChar(lex);
 				  if(lex->current_char == '='){
 					tempToken = tokenForType(GTE);
 					 break;
 				  }
-				else
-				    pushBackChar(lex);
-			   }
+			    pushBackChar(lex);
 			 tempToken = tokenForType(GREAT);
 				break;
 			case '!':
-			   if(!lex->individualTokens){
 				  getNextChar(lex);
 				  if(lex->current_char == '='){
 					tempToken = tokenForType(NOTEQUAL);
 					 break;
 				  }
-				else
 				    pushBackChar(lex);
-			   }
 				tempToken = tokenForType(NOT);
 				break;
 			case '.':

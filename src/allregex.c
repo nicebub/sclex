@@ -73,7 +73,8 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser){
 		}
 /*	   pass_ws(&parser->lexer);*/
 	 /*  if(parser->lexer.current_char == '%' || parser->lexer.current_char == EOF) return parser->parseTree;*/
+	    setIndividualTokens(&parser->lexer,0);
 	}while(!matchToken(&parser->lexer,tokenForType(SECTION_STARTER)).lexeme);
-
+    pushBackLastToken(&parser->lexer,tokenForType(SECTION_STARTER));
 	return parser->parseTree;
 }

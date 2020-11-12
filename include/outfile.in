@@ -113,7 +113,7 @@ dstart:
 	 scl_accepted = 1;
 	 scl_last = scl_s;
 	 /* only call and initialize buffer once */
-	 if(scl_dbuf == NULL)
+	 if(scl_dbuf == NULL|| scin == stdin)
 		 scl_dbuf = buffer_from_file(scin);
 	 /* point to back buffer pointer to keep track of fully found lexeme during
 	 	parsing algorithm */

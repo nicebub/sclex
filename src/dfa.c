@@ -7,157 +7,124 @@
 #include "chrset.h"
 #include <stdlib.h>
 
+#define checkForUnmarked()     for(counter=0;counter<sets;counter++) \
+	   if(tCalcs.unmarked[counter] ==1) \
+		  break; 
 
-struct _DFA* generate_dfa(Parser* parser){
-    base_set*** DUTran; /* int_set*** */
-    base_vector * Dstates; /* int_vector* */
-    base_set* temps, *temps2; /* int_set* */
-    base_set* U; /* int_set* */
-    struct _DFA *dfa;
-    int **Dtran;
-    int * marked;
-    int * unmarked;
-    int a;
-    int which_re, current_re;
-    int sets;
-    base_set*fpt; /* int_set* */
-    struct _node *tn;
-    int **tTran;
-    base_set***tDUTran; /* int_set*** */
-    base_set* Fstates; /* int_set* */
-    base_set* FFstates; /* int_set* */
-    int lastpos;
-    int fcount;
-    Dstates = NULL;
-    temps = temps2 = NULL;
-    U = NULL;
-    dfa = NULL;
-    Dtran = NULL;
-    marked = NULL;
-    unmarked = NULL;
-    current_re = 0;
-    which_re = 0;
-    sets =0;
-    Dstates = new_int_vector(vector_used(parser->fpos));
-    if(Dstates == NULL){
-	   printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
-	   return NULL;
-    }
-    Dtran = malloc(sizeof(int*)*set_used(parser->parseTree->alphabet));
-    if(!Dtran){
-	   printf("Couldnt' allocate memory for Dtran in dfa gen\n");
-	   delete_vector(Dstates);
-	   Dstates = NULL;
-	   return NULL;
-    }
-    DUTran = malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
-	if(!DUTran){
-	    printf("Couldnt' allocate memory for DUTran in dfa gen\n");
-	    delete_vector(Dstates);
-	    Dstates = NULL;
-	    free(Dtran);
-	    Dtran = NULL;
-	    return NULL;
+#define INITIALSTATE 0
+#define ZERO 0
+#define TABLEERROR -1
+
+void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
+	int row,col;
+	int numFirstPositionSets;
+	int alphabetSize;
+	
+	numFirstPositionSets = vector_used(parser->fpos);
+	alphabetSize = set_used(parser->parseTree->alphabet);
+
+   tCalcs->Dstates = new_int_vector(numFirstPositionSets);
+   if(!tCalcs->Dstates){
+		printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
+		return NULL;
+   }
+
+   tCalcs->Dtransition = malloc(sizeof(int*)*alphabetSize);
+   if(!tCalcs->Dtransition){
+		printf("Couldnt' allocate memory for Dtransition in dfa gen\n");
+		delete_vector(tCalcs->Dstates);
+		tCalcs->Dstates = NULL;
+		return NULL;
+   }
+
+   tCalcs->DUtransition = malloc(sizeof(int_set**)*alphabetSize);
+	if(!tCalcs->DUtransition){
+   	printf("Couldnt' allocate memory for DUtransition in dfa gen\n");
+    	delete_vector(tCalcs->Dstates);
+   	tCalcs->Dstates = NULL;
+  	 	free(tCalcs->Dtransition);
+   	tCalcs->Dtransition = NULL;
+   	return NULL;
 	}
-	{
-		int we;
-		for(we=0;we<set_used(parser->parseTree->alphabet);we++){
-	   	Dtran[we] = malloc(sizeof(int)*vector_used(parser->fpos));
-		   DUTran[we] = malloc(sizeof(int_set*)*vector_used(parser->fpos));
-    	}
+	for(row=ZERO;row<alphabetSize;row++){
+   	tCalcs->Dtransition[row] = malloc(sizeof(int) * numFirstPositionSets);
+	   tCalcs->DUtransition[row] = malloc(sizeof(int_set*) * numFirstPositionSets);
+ 	}
+	for(row=ZERO;row<alphabetSize;row++)
+   	for(col=ZERO;col<numFirstPositionSets;col++){
+	  	 	tCalcs->Dtransition[row][col] = TABLEERROR;
+	  		tCalcs->DUtransition[row][col] = new_int_set(numFirstPositionSets);
+   	}
+
+   for(row=ZERO;row<numFirstPositionSets;row++){
+   	set_by_index_in_vector(tCalcs->Dstates,row,new_int_set(numFirstPositionSets));
+   	if(*(int**)get_by_index_in_vector(tCalcs->Dstates,row) == NULL){
+			printf("couldn't create new Dstates state\n");
+			return NULL;
+		}
 	}
-{
-	int i;
-    for(i=0;i<set_used(parser->parseTree->alphabet);i++){
-		int j;
-	   for(j=0;j<vector_used(parser->fpos);j++){
-		  Dtran[i][j] = -1;
-		  DUTran[i][j] = new_int_set(vector_used(parser->fpos));
-	   }
-    }
+   set_vector_used(tCalcs->Dstates,INITIALSTATE);
+   tCalcs->marked = malloc(sizeof(int)*numFirstPositionSets);
+   tCalcs->unmarked = malloc(sizeof(int)*numFirstPositionSets);
+   for(row=ZERO;row<numFirstPositionSets;row++){
+		tCalcs->marked[row]= TABLEERROR;
+		tCalcs->unmarked[row] = TABLEERROR;
+   }
+    return (void*)1;
 }
-{
-	int bb;
-    for(bb=0;bb<vector_used(parser->fpos);bb++){
-	   set_by_index_in_vector(Dstates,bb,new_int_set(vector_used(parser->fpos)));
-	   if(*(int**)get_by_index_in_vector(Dstates,bb) == NULL){
-		  printf("couldn't create new Dstates state\n");
-		  return NULL;
-	   }
-    }
-}
-    set_vector_used(Dstates,0);
-    marked = malloc(sizeof(int)*vector_used(parser->fpos));
-    unmarked = malloc(sizeof(int)*vector_used(parser->fpos));
-    for(a=0;a<vector_used(parser->fpos);a++){
-	   marked[a]= -1;
-	   unmarked[a] = -1;
-    }
-    temps = *get_by_index_in_vector(Dstates,sets);
-	fpt = firstpos(&(parser->parseTree->atop));
-    temps2 = merge_sets(temps,fpt);
-    delete_set(temps);
-/*    set_by_index_in_vector(Dstates,sets,temps2);*/
-    add_to_vector(temps2,Dstates);
-    temps = NULL;
-    delete_set(temps2);
-    temps2 = NULL;
-    temps = *get_by_index_in_vector(Dstates,sets);
-    ((int_set*)temps)->super.uniq = sets+1;
-    unmarked[sets]=1;
-    sets++;
-    for(a=0;a<sets;a++){
-	   if(unmarked[a] ==1)
-		  break;
-    }
-    tn = NULL;
-/*    printf("Starting State added, firstpos is\n");*/
-/*    display_set(Dstates->iset[0],0);*/
-    while(a < sets){
+
+void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculations* tCalcs,base_set** U){
+	base_set* temps;
+	struct _node *tempNode;
 		int same;
- 	   int j;
-	   unmarked[a] =0;
-	   marked[a] = 1;
-	   for(j=0;j<set_used(parser->parseTree->alphabet);j++){
+ 	   int currentLetter;
+		int currentState;
+		int alphabetSize;
+		/* mark the state */
+		 alphabetSize = set_used(parser->parseTree->alphabet);
+	   tCalcs->unmarked[*counter] =0;
+	   tCalcs->marked[*counter] = 1;
+      tempNode = NULL;
+	   for(currentLetter=0;currentLetter<alphabetSize;currentLetter++){
+			int stateSetSize;
+			int stateNode;
+			base_set* stateSet;
 /*		  printf("creating new U set to use\n");*/
-		  U = new_int_set(vector_used(parser->fpos));
-		  if(U == NULL){
+		  *U = new_int_set(vector_used(parser->fpos));
+		  if(*U == NULL){
 			 printf("couldn't create new U\n");
 			 return NULL;
 		  }
-		  {
-		  int g;
-		  for(g=0;
-		  	g<set_used(*get_by_index_in_vector(Dstates,a));
-		  	g++){
-			 tn = get_node_for_uniq(parser->parseTree->atop,
-			 	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
-			 if(tn->value == *(char*)get_value_by_index_set(parser->parseTree->alphabet,j)){
+		  stateSet = *get_by_index_in_vector(tCalcs->Dstates,*counter);
+		  stateSetSize = set_used(stateSet);
+		  for(currentState=0;currentState<stateSetSize;currentState++){
+			  stateNode = *(int*)get_value_by_index_set(stateSet,currentState);
+			  tempNode = get_node_for_uniq(parser->parseTree->atop,stateNode);
+			  /*check to see if this state has any transition for this alphabet letter*/
+			 if(tempNode->value == *(char*)get_value_by_index_set(parser->parseTree->alphabet,currentLetter)){
 /*				printf("alphabet symbol %c from state %d for position %d\n", \
 					  alphabet->s[j],a+1,Dstates->iset[a]->s[g]);*/
-				temps = U;
-				U = merge_sets(U,
-					*get_by_index_in_vector(parser->fpos,	*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g)-1));
-				((int_set*)U)->super.uniq = sets;
+				temps = *U;
+				*U = merge_sets( *U, *get_by_index_in_vector(parser->fpos,stateNode - 1));
+				((int_set*)*U)->super.uniq = *sets;
 /*				printf("U created: displaying ");*/
 /*				display_set(U,0);*/
-/*				printf("Adding to DUTran and displaying\n");*/
-				add_to_set(&DUTran[j][a],
-					*(int*)get_value_by_index_set(*get_by_index_in_vector(Dstates,a),g));
+/*				printf("Adding to DUtransition and displaying\n");*/
+				add_to_set(&tCalcs->DUtransition[currentLetter][*counter],stateNode);
 				delete_set(temps);
 				temps = NULL;
-				temps = U;
+				temps = *U;
 			 }
 		  }
-	  }
-				same  = 0;
-				if(set_used(U) != 0){
+	  		
+			same  = 0;
+			if(set_used(*U) != 0){
 /*				    printf("U is not empty\n");*/
-					int z;
-				    for(z=0;z<vector_used(Dstates);z++){
-					   	if(sets_are_same(U,*get_by_index_in_vector(Dstates,z))){
+				int z;
+				    for(z=0;z<vector_used(tCalcs->Dstates);z++){
+					   	if(sets_are_same(*U,*get_by_index_in_vector(tCalcs->Dstates,z))){
 /*						    printf("set already in Dstates\n");*/
-						    ((int_set*)U)->super.uniq = (*(int_set**)get_by_index_in_vector(Dstates,z))->super.uniq;
+						    ((int_set*)*U)->super.uniq = (*(int_set**)get_by_index_in_vector(tCalcs->Dstates,z))->super.uniq;
 						    same = 1;
 						    break;
 						}
@@ -168,61 +135,128 @@ struct _DFA* generate_dfa(Parser* parser){
 					   int_set* Fstates;
 					   Fstates = NULL;
 /*					   	printf("haven't seen this state yet\n");*/
-					   	((int_set*)U)->super.uniq = sets+1;
-					   	add_to_vector(U,Dstates);
-					   delete_set(U);
-					   U = NULL;
-					   U = *get_by_index_in_vector(Dstates,vector_used(Dstates)-1);
-					   	unmarked[sets] = 1;
-					   	marked[sets] = 0;
+					   	((int_set*)*U)->super.uniq = *sets+1;
+					   	add_to_vector(*U,tCalcs->Dstates);
+					   delete_set(*U);
+					   *U = NULL;
+					   *U = *get_by_index_in_vector(tCalcs->Dstates,vector_used(tCalcs->Dstates)-1);
+					   	tCalcs->unmarked[*sets] = 1;
+					   	tCalcs->marked[*sets] = 0;
 				    		sets++;
 				    }
-				}
-				else{
-				    ((int_set*)U)->super.uniq = -1;
-				}
-				Dtran[j][a] = ((int_set*)U)->super.uniq;
+			}
+			else{
+				    ((int_set*)*U)->super.uniq = -1;
+			}
+			tCalcs->Dtransition[currentLetter][*counter] = ((int_set*)*U)->super.uniq;
 	   }
 
-	   for(a=0;a<sets;a++){
-		  if(unmarked[a] ==1){
-			 break;
-		  }
-	   }
-    }
+
+/*	   for(counter=0;counter<sets;counter++)
+			if(unmarked[counter] ==1)
+				break;
+				*/
+    return NULL;
+}
+
+struct _DFA* generate_dfa(Parser* parser){
+    base_set*** DUtransition; /* int_set*** */
+    base_vector * Dstates; /* int_vector* */
+    base_set* temps, *temps2; /* int_set* */
+    base_set* U; /* int_set* */
+    struct _DFA *dfa;
+    int **Dtransition;
+    int * marked;
+    int * unmarked;
+    int a;
+    int which_re, current_re;
+    int sets;
+    base_set*fpt; /* int_set* */
+    int **tTran;
+    base_set***tDUtransition; /* int_set*** */
+    base_set* Fstates; /* int_set* */
+    base_set* FFstates; /* int_set* */
+    int lastpos;
+    int fcount;
+	 int counter;
+	 int row,col;
+	 int* status;
+	 int alphabetSize;
+	 TableCalculations tCalcs;
+    Dstates = NULL;
+    temps = temps2 = NULL;
+    U = NULL;
+    dfa = NULL;
+    Dtransition = NULL;
+    marked = NULL;
+    unmarked = NULL;
+    current_re = 0;
+    which_re = 0;
+    sets =0;
+	 status = NULL;
+	 alphabetSize = set_used(parser->parseTree->alphabet);
+	 
+	 if(!(status = initDFATransitionTables(parser,&tCalcs)))
+	 	return status;
+
+    temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
+	fpt = firstpos(&(parser->parseTree->atop));
+    temps2 = merge_sets(temps,fpt);
+    delete_set(temps);
+    temps = NULL;
+/*    set_by_index_in_vector(Dstates,sets,temps2);*/
+    add_to_vector(temps2,tCalcs.Dstates);
+    delete_set(temps2);
+    temps2 = NULL;
+
+    temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
+    ((int_set*)temps)->super.uniq = sets+1;
+    tCalcs.unmarked[sets]=1;
+    sets++;
+	 checkForUnmarked();
+/*    for(counter=0;counter<sets;counter++)
+	   if(unmarked[counter] ==1)
+		  break;*/
+
+/*    printf("Starting State added, firstpos is\n");*/
+/*    display_set(Dstates->iset[0],0);*/
+    while(counter < sets){
+		 processUnmarkedState(parser,&counter,&sets,&tCalcs,&U);
+	  	 checkForUnmarked();
+}
 /*    printf("DONE CREATING DFA STATES\n");*/
 /*    printf("THEY ARE AS FOLLOWS\n");*/
 /*    for(int j=0;j<vector_used(Dstates);j++)*/
 /*	   display_set(Dstates->iset[j],0);*/
 	tTran = malloc(sizeof(int*)*set_used(parser->parseTree->alphabet));
-	tDUTran= malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
+	tDUtransition= malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
 	{
 	int we;
     	for(we=0;we<set_used(parser->parseTree->alphabet);we++){
-			tTran[we] = malloc(sizeof(int)*vector_used(Dstates));
-	   		tDUTran[we] = malloc(sizeof(int_set*)*vector_used(Dstates));
+			tTran[we] = malloc(sizeof(int)*vector_used(tCalcs.Dstates));
+	   		tDUtransition[we] = malloc(sizeof(int_set*)*vector_used(tCalcs.Dstates));
 		}
 }
 {
 	int i;
     for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		int j;
-	   for(j=0;j<vector_used(Dstates);j++){
-		  tTran[i][j] = Dtran[i][j];
-		  tDUTran[i][j] = DUTran[i][j];
-		  DUTran[i][j] = NULL;
+	   for(j=0;j<vector_used(tCalcs.Dstates);j++){
+		  tTran[i][j] = tCalcs.Dtransition[i][j];
+		  tDUtransition[i][j] = tCalcs.DUtransition[i][j];
+		  tCalcs.DUtransition[i][j] = NULL;
 	   }
-	   free(Dtran[i]);
-	   free(DUTran[i]);
-	   Dtran[i] = NULL;
-	   DUTran[i] = NULL;
+	   free(tCalcs.Dtransition[i]);
+	   free(tCalcs.DUtransition[i]);
+	   tCalcs.Dtransition[i] = NULL;
+	   tCalcs.DUtransition[i] = NULL;
     }
 }
-    free(Dtran);
-    free(DUTran);
-    Dtran = NULL;
-    DUTran = NULL;
-/*    printf("Dtran table computed\n");*/
+    free(tCalcs.Dtransition);
+    free(tCalcs.DUtransition);
+    tCalcs.Dtransition = NULL;
+    tCalcs.DUtransition = NULL;
+/*    printf("Dtransition table computed\n");*/
     printf("Alphabet Symbol \n");
     printf("S|");
 	{
@@ -235,7 +269,7 @@ struct _DFA* generate_dfa(Parser* parser){
 	{
 		{
 		int r;
-		for(r=0;r<vector_used(Dstates);r++){
+		for(r=0;r<vector_used(tCalcs.Dstates);r++){
 			int i;
 			printf("%d|",r+1);
 	   	 	for(i=0;i<set_used(parser->parseTree->alphabet);i++){
@@ -248,10 +282,10 @@ struct _DFA* generate_dfa(Parser* parser){
  	   }
    }
 }
-/*    printf("DUTran table computed and going to print all sets\n");
+/*    printf("DUtransition table computed and going to print all sets\n");
     for(int r=0;r<vector_used(Dstates);r++){
 	   for(int i=0;i<set_used(alphabet);i++){
-		  display_set(tDUTran[i][r],0);
+		  display_set(tDUtransition[i][r],0);
 	   }
     }*/
 /*    printf("number of states %d\n", vector_used(Dstates));*/
@@ -274,8 +308,8 @@ struct _DFA* generate_dfa(Parser* parser){
 /*    printf("Finish States for the whole file RE: \n");*/
 	   	fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
-	   	for(y=0;y<vector_used(Dstates);y++){
-		    if(is_in_set(*get_by_index_in_vector(Dstates,y),lastpos)==0){
+	   	for(y=0;y<vector_used(tCalcs.Dstates);y++){
+		    if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0){
 /*		  	  printf("State %d is in finish states\n",y+1);*/
 			   fcount++;
 		    }
@@ -287,8 +321,8 @@ struct _DFA* generate_dfa(Parser* parser){
     		}
 			{
 				int y;
-	   			for(y=0;y<vector_used(Dstates);y++){
-		    		if(is_in_set(*get_by_index_in_vector(Dstates,y),lastpos)==0){
+	   			for(y=0;y<vector_used(tCalcs.Dstates);y++){
+		    		if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0){
 /*		  printf("Adding State %d to finish states\n",y+1);*/
 						add_to_set(&Fstates,y+1);
 						add_to_set(&FFstates,y+1);
@@ -303,11 +337,11 @@ struct _DFA* generate_dfa(Parser* parser){
 
     dfa->FFstates = FFstates;
     dfa->Fstates = parser->parseTree->Fstates;
-    dfa->start = (*(int_set**)get_by_index_in_vector(Dstates,0))->super.uniq;
-    dfa->num_states = vector_used(Dstates);
-    dfa->Dstates = Dstates;
+    dfa->start = (*(int_set**)get_by_index_in_vector(tCalcs.Dstates,0))->super.uniq;
+    dfa->num_states = vector_used(tCalcs.Dstates);
+    dfa->Dstates = tCalcs.Dstates;
     dfa->alphabet = copy_sets(parser->parseTree->alphabet);
-    dfa->DUTran = tDUTran;
+    dfa->DUTran = tDUtransition;
     dfa->action_array = parser->parseTree->action_array;
     dfa->num_re = parser->parseTree->num_re;
     return dfa;

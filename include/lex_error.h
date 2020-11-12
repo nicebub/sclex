@@ -45,6 +45,6 @@ void lex_error(int en);
 #define SCERR_MEM_CHARSET_CHAR 25
 #define SCERR_NEED_ARGUMENT 26
 #define SCERR_MEM_ESCAPE 27
-
+#define SCERR_NO_CLOSE_SECTION 28
 
 #endif
