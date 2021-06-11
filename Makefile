@@ -23,7 +23,7 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 
-COMPILER=gcc-9
+COMPILER=`which gcc`
 
 PATHU = unity/src/
 PATHS = src/
@@ -59,6 +59,7 @@ LINK=$(COMPILER)
 DEPEND=$(COMPILER) -MM -MG -MF
 CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
 CFLAGS += -g -Wno-unused-variable
+EXECFLAGS = -Wno-unused-command-line-argument
 TFLAGS = $(CFLAGS) -DTEST
 BASE_RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(BASE_SRCT) )
 RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(SRCT) )
@@ -112,7 +113,7 @@ $(PATHO)%.o:: %.s
 #	$(CC) $(CFLAGS) $(DEBUG) -c $< -o $@
 
 $(EXEC):: $(BUILD_PATHS) $(ASSEMBLYS) $(OBJECTS) $(OUTFILE) #$(DEPS)
-	$(CC) $(CFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
+	$(CC) $(CFLAGS) $(EXECFLAGS) $(DEBUG) $(ASSEMBLYS) $(OBJECTS) -o $@
 
 run: $(EXEC)
 	./$(EXEC) $(EXAMPLES)expr.l
