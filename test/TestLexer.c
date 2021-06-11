@@ -88,7 +88,7 @@ void test_pushBackChar(void){
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.previous_char);
 	TEST_ASSERT_EQUAL_CHAR('#',lexer.current_char);
 }
-
+/*
 void test_matchedNextToken(void){
 	lexer.inputBuffer = buffer_from_filename("/Users/scotty/Programming/sclex/test/TestLexer.c");
 	getNextChar(&lexer);
@@ -114,6 +114,8 @@ void test_matchedNextToken(void){
 	TEST_ASSERT_EQUAL_CHAR('i',lexer.previous_char);
 	
 }
+*/
+/*
 void test_readRawStringUntilToken(void){
 	char * decs;
 	decs = NULL;
@@ -125,14 +127,16 @@ void test_readRawStringUntilToken(void){
 	token.type = 3;
 	while(!(matchedNextToken(&lexer,token).lexeme))
 		getNextChar(&lexer);
-	token.lexeme = "*/";
+*/
+//	token.lexeme = "*/";
+/*
 	token.id = 3;
 	token.type = 3;
 	decs = readRawStringUntilToken(&lexer,token);
 	TEST_ASSERT_EQUAL_CHAR('\n',lexer.current_char);
 	TEST_ASSERT_EQUAL_STRING(" for the test ",decs);
 }
-
+*/
 
 void test_getNextToken(void){
 	LexerToken tempToken;
