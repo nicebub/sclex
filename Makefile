@@ -165,10 +165,10 @@ $(PATHB)Test%set_Runner$(TARGET_EXTENSION): $(PATHO)Test%set_Runner.o $(PATHO)ba
 $(PATHB)Test%vector_Runner$(TARGET_EXTENSION): $(PATHO)Test%vector_Runner.o $(PATHO)Test%vector.o $(PATHO)baseset.o $(PATHO)basevector.o $(PATHO)%set.o $(PATHO)%vector.o $(PATHO)unity.o #$(PATHD)Test%.d
 	$(LINK) -o $@ $^
 
-$(PATHB)TestLexer_Runner$(TARGET_EXTENSION): $(PATHO)TestLexer_Runner.o $(PATHO)TestLexer.o $(PATHO)Lexer.o $(PATHO)basebuffer.o $(PATH0)token.o $(PATHO)funcs.o $(PATHO)unity.o #$(PATHD)Test%.d
+$(PATHB)TestLexer_Runner$(TARGET_EXTENSION): $(PATHO)TestLexer_Runner.o $(PATHO)TestLexer.o $(PATHO)Lexer.o $(PATHO)basebuffer.o $(PATHO)token.o $(PATHO)funcs.o $(PATHO)unity.o #$(PATHD)Test%.d
 	$(LINK) -o $@ $^
 
-$(PATHB)TestParser_Runner$(TARGET_EXTENSION): $(PATHO)TestParser_Runner.o $(PATHO)TestParser.o $(PATHO)Lexer.o $(PATHO)Parser.o $(PATHO)decs.o $(PATHO)translation.o $(PATHO)tree.o $(PATHO)lex_error.o $(PATHO)basevector.o $(PATHO)baseset.o $(PATHO)retodfa.o $(PATHO)intset.o $(PATHO)chrset.o $(PATHO)intvector.o $(PATHO)chrvector.o $(PATHO)regex.o $(PATHO)expr.o $(PATHO)expror.o $(PATHO)exprcat.o $(PATHO)charset.o $(PATHO)escape.o $(PATHO)allregex.o $(PATHO)basebuffer.o $(PATHO)funcs.o $(PATHO)unity.o $(PATH0)token.o#$(PATHD)Test%.d
+$(PATHB)TestParser_Runner$(TARGET_EXTENSION): $(PATHO)TestParser_Runner.o $(PATHO)TestParser.o $(PATHO)Lexer.o $(PATHO)Parser.o $(PATHO)decs.o $(PATHO)translation.o $(PATHO)tree.o $(PATHO)lex_error.o $(PATHO)basevector.o $(PATHO)baseset.o $(PATHO)retodfa.o $(PATHO)intset.o $(PATHO)chrset.o $(PATHO)intvector.o $(PATHO)chrvector.o $(PATHO)regex.o $(PATHO)expr.o $(PATHO)expror.o $(PATHO)exprcat.o $(PATHO)charset.o $(PATHO)escape.o $(PATHO)allregex.o $(PATHO)basebuffer.o $(PATHO)funcs.o $(PATHO)unity.o $(PATHO)token.o#$(PATHD)Test%.d
 	$(LINK) -o $@ $^
 
 #$(PATHB)Test%_Runner$(TARGET_EXTENSION): $(PATHO)Test%_Runner.o $(PATHO)Test%.o $(PATHO)%.o $(PATHO)unity.o #$(PATHD)Test%.d
