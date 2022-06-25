@@ -1,7 +1,21 @@
+#ifndef _XOPEN_SOURCE
+# define _XOPEN_SOURCE 500
+#endif /* _XOPEN_SOURCE */
+
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif /* _BSD_SOURCE */
+
+#ifndef _DEFAULT_SOURCE
+# define _DEFAULT_SOURCE
+#endif /* _DEFAULT_SOURCE */
+
 #include "../include/gen.h"
 #include <string.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include "log.h"
+
 void use_later(void){
 	/*
 */
@@ -21,7 +35,6 @@ void generate_output(Parser* parser, struct _DFA* dfa){
     char *	tp;
     char * 	ala;
     char * 	dara;
-    char * 	arra;
 	char * 	ffarra;
 	char * 	farra;
     int count, acnt, num_tabs;
@@ -29,7 +42,6 @@ void generate_output(Parser* parser, struct _DFA* dfa){
     outfile = NULL;
     ala = NULL;
     dara = NULL;
-    arra = NULL;
 	farra = NULL;
 	ffarra = NULL;
 	count =0;
@@ -178,7 +190,7 @@ void generate_output(Parser* parser, struct _DFA* dfa){
 			   }
 		   }
 			   farra[acnt] = '\0';
-			    printf("%s",farra);
+			    LOG_0("%s",farra);
 		   infstring = malloc(sizeof(char)*len);
 #if defined(__linux__)
 		   temp = malloc(_bufferh_size+_bufferc_size+sizeof(char)*(len+20000));
@@ -337,7 +349,7 @@ void generate_output(Parser* parser, struct _DFA* dfa){
 		   outfile = NULL;
 	    }
 	    else{
-		   printf("Couldn't open template file used to create the source code for the lexical analyzer\n");
+		   LOG_ERROR("Couldn't open template file used to create the source code for the lexical analyzer%s","\n");
 	    fclose(outfile);
 	    outfile = NULL;
 	    }

@@ -1,3 +1,23 @@
+#ifndef _XOPEN_SOURCE
+# define _XOPEN_SOURCE 500
+#endif /* _XOPEN_SOURCE */
+
+#ifndef _POSIX_C_SOURCE
+# define _POSIX_C_SOURCE 200809L
+#endif /* _POSIX_C_SOURCE */
+
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif /* _GNU_SOURCE */
+
+#ifndef _DEFAULT_SOURCE
+# define _DEFAULT_SOURCE
+#endif /* _DEFAULT_SOURCE */
+
+#ifndef _BSD_SOURCE
+# define _BSD_SOURCE
+#endif /* _BSD_SOURCE */
+
 #include <stdlib.h>
 #include <string.h>
 #include "Lexer.h"
@@ -147,7 +167,7 @@ LexerToken readNextToken(Lexer* lex){
 			   break;
 		}while(isalphaC(lex->current_char));
 		*ptr = '\0';
-		tempToken.lexeme = strdup(tempChar);
+		tempToken.lexeme = strndup(tempChar, strlen(tempChar));
 	    tempToken.allocated= 1;
 		return tempToken;
 	}

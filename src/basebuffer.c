@@ -23,6 +23,8 @@ characters.
 #define inline
 #endif
 
+#include "log.h"
+
 static base_buffer_vtable vtable_base_buffer = {
 	&base_refresh_upper_buffer,
 	&base_refresh_lower_buffer,
@@ -84,7 +86,7 @@ base_buffer* new_base_buffer(size_t size){
     mbuf = NULL;
     mbuf = malloc(sizeof(*mbuf));
     if(!mbuf){
-	   printf("couldn't allocate memory for new buffer\n");
+	   LOG_0("couldn't allocate memory for new buffer%s","");
 	   return NULL;
     }
 	   mbuf->len = size;
@@ -92,7 +94,7 @@ base_buffer* new_base_buffer(size_t size){
     if(!mbuf->buf){
 	   free(mbuf);
 	   mbuf = NULL;
-	   printf("couldn't allocate memory for new buffer\n");
+	   LOG_0("couldn't allocate memory for new buffer%s","");
 	   return NULL;
     }
 
@@ -139,7 +141,7 @@ base_buffer* base_buffer_from_file(FILE* infile){
     
 	/* exit with error, nothing given to function as input */
     if(infile == NULL ){
-	   printf("\033[0;31merror\033[0m");
+	   LOG_0("\033[0;31merror\033[0m%s","");
 	   exit(-1);
     }
 
@@ -306,11 +308,11 @@ inline void base_delete_buffer(base_buffer* mbuf){
 inline void base_display_buffer(const base_buffer* inbuf){
     switch(inbuf->type){
 	   case 0:
-		  printf("--MARK UP END--\n%s\n--MARK MIDDLE--\n",(char*)inbuf->buf);
-		  printf("%s\n--MARK LOW END--\n",&inbuf->buf[HALF_BUFFER]);
+		  LOG_0("--MARK UP END--\n%s\n--MARK MIDDLE--\n",(char*)inbuf->buf);
+		  LOG_0("%s\n--MARK LOW END--\n",&inbuf->buf[HALF_BUFFER]);
 		  break;
 	   case 1:
-		  printf("--MARK UP END--\n%s\n--MARK LOW END--\n",(char*)inbuf->buf);
+		  LOG_0("--MARK UP END--\n%s\n--MARK LOW END--\n",(char*)inbuf->buf);
 		  break;
     }
 }

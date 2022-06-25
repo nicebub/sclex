@@ -2,8 +2,8 @@
 #define _MYVEC_H
 
 #include <stddef.h>
-
-#define NEWVECERROR(in) printf("couldn't create new " #in " vector\n");
+#include "log.h"
+#define NEWVECERROR(in) LOG_ERROR("couldn't create new " #in " vector%s","\n");
 
 typedef struct _base_vector base_vector;
 typedef struct _base_vector_vtable base_vector_vtable;

@@ -5,6 +5,7 @@
 */
 #include <stdio.h>
 #include "../include/lex_error.h"
+#include "log.h"
 
 void lex_error(int en){
 
@@ -43,5 +44,5 @@ void lex_error(int en){
 	/* check to see if in array bounds */
     if(en <0 || en >28)
 	   return;
-    printf("%s\n",err_strings[en]);
+    LOG_0("%s\n",err_strings[en]);
 }

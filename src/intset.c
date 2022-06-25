@@ -1,5 +1,6 @@
 #include "intset.h"
 #include <stdio.h>
+#include "log.h"
 
 #ifdef __STRICT_ANSI__
 #define inline
@@ -194,14 +195,14 @@ void int_display_set(base_set* set){
     int_set* nset;
 	if(!set) return;
 	nset = (int_set*)set;
-    printf("vtable:%p set:%p size: %d used: %d uniq%d id: %d\n", 
+    LOG_0("vtable:%p set:%p size: %d used: %d uniq%d id: %d\n", 
 		(void*)nset->super.vtable,(void*)nset->values,base_set_size(set),base_set_used(set),
 		nset->super.uniq,nset->super.id);
 	if(base_set_used(set) >0){
 		int r;
 		for(r=0;r<base_set_used(set);r++)
-			printf("%d ",*(int*)get_value_by_index_set(set,r));
-		printf("\n");
+			LOG_0("%d ",*(int*)get_value_by_index_set(set,r));
+		LOG_0("%s","\n");
 	}
 }
 

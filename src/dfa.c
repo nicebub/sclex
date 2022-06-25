@@ -6,6 +6,7 @@
 #include "intset.h"
 #include "chrset.h"
 #include <stdlib.h>
+#include "log.h"
 
 #define checkForUnmarked()     for(counter=0;counter<sets;counter++) \
 	   if(tCalcs.unmarked[counter] ==1) \
@@ -25,13 +26,13 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
 
    tCalcs->Dstates = new_int_vector(numFirstPositionSets);
    if(!tCalcs->Dstates){
-		printf("Couldn't allocate enough memory for Dstates in dfa gen\n");
+		LOG_ERROR("Couldn't allocate enough memory for Dstates in dfa gen%s","\n");
 		return NULL;
    }
 
    tCalcs->Dtransition = malloc(sizeof(int*)*alphabetSize);
    if(!tCalcs->Dtransition){
-		printf("Couldnt' allocate memory for Dtransition in dfa gen\n");
+		LOG_ERROR("Couldnt' allocate memory for Dtransition in dfa gen%s","\n");
 		delete_vector(tCalcs->Dstates);
 		tCalcs->Dstates = NULL;
 		return NULL;
@@ -39,7 +40,7 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
 
    tCalcs->DUtransition = malloc(sizeof(int_set**)*alphabetSize);
 	if(!tCalcs->DUtransition){
-   	printf("Couldnt' allocate memory for DUtransition in dfa gen\n");
+   	LOG_ERROR("Couldnt' allocate memory for DUtransition in dfa gen%s","\n");
     	delete_vector(tCalcs->Dstates);
    	tCalcs->Dstates = NULL;
   	 	free(tCalcs->Dtransition);
@@ -59,7 +60,7 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
    for(row=ZERO;row<numFirstPositionSets;row++){
    	set_by_index_in_vector(tCalcs->Dstates,row,new_int_set(numFirstPositionSets));
    	if(*(int**)get_by_index_in_vector(tCalcs->Dstates,row) == NULL){
-			printf("couldn't create new Dstates state\n");
+			LOG_ERROR("couldn't create new Dstates state%s","\n");
 			return NULL;
 		}
 	}
@@ -92,7 +93,7 @@ void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculati
 /*		  printf("creating new U set to use\n");*/
 		  *U = new_int_set(vector_used(parser->fpos));
 		  if(*U == NULL){
-			 printf("couldn't create new U\n");
+			 LOG_ERROR("couldn't create new U%s","\n");
 			 return NULL;
 		  }
 		  stateSet = *get_by_index_in_vector(tCalcs->Dstates,*counter);
@@ -132,8 +133,7 @@ void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculati
 						    ;
 				    }
 				    if(same != 1){
-					   int_set* Fstates;
-					   Fstates = NULL;
+					   int_set* Fstates = NULL;
 /*					   	printf("haven't seen this state yet\n");*/
 					   	((int_set*)*U)->super.uniq = *sets+1;
 					   	add_to_vector(*U,tCalcs->Dstates);
@@ -161,15 +161,10 @@ void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculati
 
 struct _DFA* generate_dfa(Parser* parser){
     base_set*** DUtransition; /* int_set*** */
-    base_vector * Dstates; /* int_vector* */
     base_set* temps, *temps2; /* int_set* */
     base_set* U; /* int_set* */
     struct _DFA *dfa;
-    int **Dtransition;
-    int * marked;
-    int * unmarked;
     int a;
-    int which_re, current_re;
     int sets;
     base_set*fpt; /* int_set* */
     int **tTran;
@@ -181,20 +176,12 @@ struct _DFA* generate_dfa(Parser* parser){
 	 int counter;
 	 int row,col;
 	 int* status;
-	 int alphabetSize;
 	 TableCalculations tCalcs;
-    Dstates = NULL;
     temps = temps2 = NULL;
     U = NULL;
     dfa = NULL;
-    Dtransition = NULL;
-    marked = NULL;
-    unmarked = NULL;
-    current_re = 0;
-    which_re = 0;
     sets =0;
 	 status = NULL;
-	 alphabetSize = set_used(parser->parseTree->alphabet);
 	 
 	 if(!(status = initDFATransitionTables(parser,&tCalcs)))
 	 	return status;
@@ -257,15 +244,15 @@ struct _DFA* generate_dfa(Parser* parser){
     tCalcs.Dtransition = NULL;
     tCalcs.DUtransition = NULL;
 /*    printf("Dtransition table computed\n");*/
-    printf("Alphabet Symbol \n");
-    printf("S|");
+    printf("Alphabet Symbol %s","\n");
+    printf("S|%s","");
 	{
 		int i;
 		for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		   printf("|%c",*(char*)get_value_by_index_set(parser->parseTree->alphabet,i));
 		}
 	}
-    printf("|\n");
+    printf("|%s","\n");
 	{
 		{
 		int r;
@@ -274,11 +261,15 @@ struct _DFA* generate_dfa(Parser* parser){
 			printf("%d|",r+1);
 	   	 	for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		 	   if(tTran[i][r] != -1)
+			   {
 				   printf("|%d", tTran[i][r]);
+			   }
 			   else
-				   printf("|x");
+			   {
+				   printf("|x%s","");
+			   }
 		   }
-		   printf("|\n");
+		   printf("|%s","\n");
  	   }
    }
 }
@@ -292,7 +283,7 @@ struct _DFA* generate_dfa(Parser* parser){
 /*    printf("Start State: %d\n",Dstates->iset[0]->uniq);*/
     dfa = create_dfa();
     if(dfa == NULL){
-	   printf("couldn't create new DFA\n");
+	   LOG_ERROR("couldn't create new DFA%s","\n");
 	   return NULL;
     }
     dfa->Dtran = tTran;
@@ -316,7 +307,7 @@ struct _DFA* generate_dfa(Parser* parser){
     		}
 	   	Fstates = new_int_set(fcount);
 	   	if(Fstates == NULL){
-		    printf("couldn't create new Fstates\n");
+		    LOG_ERROR("couldn't create new Fstates%s","\n");
 		    return NULL;
     		}
 			{

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "basevector.h"
+#include "log.h"
 
 #ifdef __STRICT_ANSI__
 #define inline
@@ -109,7 +110,7 @@ inline void base_add_to_vector(void* to_add, base_vector* vec){
 
 inline void base_display_vector(base_vector* vec){
     if(vec)
-	   printf("vtable: %p size: %d used: %d id: %d\n",(void*)vec->vtable,
+	   LOG_0("vtable: %p size: %d used: %d id: %d\n",(void*)vec->vtable,
 		vec->size,vec->used,vec->id);
 }
 

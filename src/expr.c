@@ -2,6 +2,8 @@
 #include "Parser.h"
 #include "lex_error.h"
 #include "retodfa.h"
+#include "log.h"
+
 RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
     struct _node *temp;
     struct _node *temp2;
@@ -24,7 +26,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 	   temp = parseCharSet(&parser->parseTree->alphabet,parser);
 	   if(!matchToken(&parser->lexer,tokenForType(RBRACKET)).lexeme){
 		    lex_error(13);
-			printf("to finish a character class\n");
+			LOG_ERROR("to finish a character class%s","\n");
 		    exit(-1);
 		}
     }
@@ -32,7 +34,7 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 	   temp = apply_def(parser);
 	   if(!matchToken(&parser->lexer,tokenForType(RCURLY)).lexeme){
 		  lex_error(13);
-		  printf("curly, to finish off a range\n");
+		  LOG_ERROR("curly, to finish off a range%s","\n");
 		  exit(-1);
 	   }
     }
@@ -217,12 +219,12 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 			 }
 			 else{
  				 /* found another expression definition?? */
- 				printf("shouldn't be here in scyak.l perhaps\n");
+ 				LOG_ERROR("shouldn't be here in scyak.l perhaps%s","\n");
 				ungetchar(parser->lexer.inputBuffer);
 				ungetchar(parser->lexer.inputBuffer);
 				ungetchar(parser->lexer.inputBuffer);
 				getNextChar(&parser->lexer);
- 				printf("back to char %c\n", parser->lexer.current_char);
+ 				LOG_ERROR("back to char %c\n", parser->lexer.current_char);
     			 firstpos(&temp);
     			 lastpos(&temp);
     			 return temp;
@@ -242,11 +244,9 @@ RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
     RegularExpressionTreeNode* tempNode;
     LexerToken tempToken;
     Definition *tempDefinition;
-    Buffer * tempbuf;
     char str[200];
     int e;
     char v;
-    tempbuf = NULL;
 /*    rnode = NULL;*/
     tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
     if((tempDefinition = definitionExists(parser,tempToken))){

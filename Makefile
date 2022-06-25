@@ -23,7 +23,7 @@ vpath %.h include
 vpath %.so lib
 vpath %.la lib
 
-COMPILER=`which gcc`
+CC=`which gcc`
 
 PATHU = unity/src/
 PATHS = src/
@@ -54,10 +54,10 @@ DEPS := $(patsubst %.c, $(PATHD)%.d,$(SRC_FILES))
 #NEWCLASSOBJS := $(patsubst $(PATHS)$(NEWSRC)/%.c, $(PATHB)%.o, $(NEWFILES))
 #NDEPS := $(patsubst %.c,, $(BUILDDIR)/%.D,$(NEWFILES))
 
-COMPILE=$(COMPILER) -c
-LINK=$(COMPILER)
-DEPEND=$(COMPILER) -MM -MG -MF
-CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -ansi -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
+COMPILE=$(CC) -c
+LINK=$(CC)
+DEPEND=$(CC) -MM -MG -MF
+CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -std=c99 -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
 CFLAGS += -g -Wno-unused-variable
 EXECFLAGS = -Wno-unused-command-line-argument
 TFLAGS = $(CFLAGS) -DTEST

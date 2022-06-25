@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "baseset.h"
+#include "log.h"
 
 #ifdef __STRICT_ANSI__
 #define inline
@@ -139,8 +140,10 @@ int base_sets_are_same(base_set* set1, base_set* set2){
 }
 void base_display_set(base_set* set){
 	if(set)
-		printf("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
+	{
+		LOG_0("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
 		(void*)set->vtable, set->size,set->used,set->uniq,set->id);
+	}
 }
 int base_set_used(base_set* set){
 	return set->used;

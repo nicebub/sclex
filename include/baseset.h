@@ -2,8 +2,8 @@
 #define _BASE_SET_CLASS_H
 #include <stdlib.h>
 #define SETSIZE 400
-
-#define NEWSETERROR(in) printf("couldn't create new " #in "set\n");
+#include "log.h"
+#define NEWSETERROR(in) LOG_ERROR("couldn't create new " #in "set%s","\n");
 
 typedef struct _base_set base_set;
 typedef struct _base_set_vtable base_set_vtable;

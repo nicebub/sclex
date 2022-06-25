@@ -11,6 +11,8 @@ forward and backward in the buffer works well.
 #include "../include/tree.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "log.h"
+
 extern void refresh_upper_buffer(buffer* inbuffer, FILE* infile);
 extern void refresh_lower_buffer(buffer* inbuffer, FILE* infile);
 /** Function Prototype
@@ -60,15 +62,15 @@ int main(int argc, const char ** argv){
 		exit(-1);
 	}
 
-	printf("opened file on my own\n");
+	LOG_0("opened file on my own");
 	fclose(work);
 	work = NULL;
     
 	/* initializing buffer from command line argument filename */
-	printf("opening file with buffer from filename\n");
+	LOG_0("opening file with buffer from filename");
 	mybuf = buffer_from_filename(argv[1]);
 
-    printf("showing full buffer\n");
+    LOG_0("showing full buffer");
 	display_buffer(mybuf);
 	/* print to standard output 102 lines */
     for(int j=0;j<102;j++)
@@ -127,7 +129,8 @@ inline void printline(buffer* mybuf){
     }
     mystring[i]='\0';
 	/* print the string */
-    printf("string founds: %s\n",mystring);
+    LOG_0("string founds: ");
+	LOG_0(mystring);
 }
 
 /**  
@@ -163,5 +166,6 @@ inline void printbackline(buffer* mybuf){
 	   duplicate[v]=mystring[t];
     duplicate[i]='\0';
 	/* print the reversed string */
-    printf("IN REVERSE \n%s\n",duplicate);
+    LOG_0("IN REVERSE ");
+	LOG_0(duplicate);
 }

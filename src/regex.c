@@ -1,6 +1,8 @@
 #include <string.h>
 #include "Parser.h"
 #include "lex_error.h"
+#include "log.h"
+
 /*
 #include "baseset.h"
 #include "chrset.h"
@@ -39,7 +41,7 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
 				if(parser->lexer.current_char == '\n' || parser->lexer.current_char == EOF || parser->lexer.current_char == '\0')
 				    return temp;
 				else{
-				    printf("error expecting a newline character but found %c\n",parser->lexer.current_char);
+				    LOG_ERROR("error expecting a newline character but found %c\n",parser->lexer.current_char);
 				    exit(-1);
 				}
 			 }
@@ -58,7 +60,7 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser){
     }
     else{
 	   lex_error(11);
-	   printf("Either no translation given, or expected '{' but found %c\n",parser->lexer.current_char);
+	   LOG_ERROR("Either no translation given, or expected '{' but found %c\n",parser->lexer.current_char);
 	   exit(-1);
     }
 }

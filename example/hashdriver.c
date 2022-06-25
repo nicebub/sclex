@@ -1,10 +1,10 @@
 #include "../include/hashdriver.h"
 #include "../include/hash.h"
-
+#include "log.h"
 extern struct _hash *create_hash(int size);
 extern void delete_hash(struct _hash*);
-extern struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt);
-extern void add_to_hash(struct _hash *, void * v, int vt, void * k, int kt);
+extern struct _hashnode *create_hashnode(void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt);
+extern void add_to_hash(struct _hash *, void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt);
 //extern void * get_value_for_key(struct _hash*, void* k, int kt);
 
 int main(int argc, const char ** argv){
@@ -17,15 +17,15 @@ int main(int argc, const char ** argv){
     add_iitoh(h,&(int){87},&(int){7});
     add_iitoh(h,&(int){91},&(int){11});
     
-    printf("%d\n", *(int*)value_from_int(h,&(int){7}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){7}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){5}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){4}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){7}));
-    printf("%p\n", (void*)value_from_int(h,&(int){0}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){7}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){11}));
-    printf("%d\n", *(int*)value_from_int(h,&(int){11}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){7}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){7}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){5}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){4}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){7}));
+    LOG_0("%p\n", (void*)value_from_int(h,&(int){0}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){7}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){11}));
+    LOG_0("%d\n", *(int*)value_from_int(h,&(int){11}));
     
     add_cctoh(h,&(char){'K'},&(char){'y'});
     add_cctoh(h,&(char){'N'},&(char){'r'});

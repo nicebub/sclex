@@ -10,23 +10,25 @@
 #define value_from_char(h,k) get_value_for_key(h,k,2)
 #define value_from_string(h,k) get_value_for_key(h,k,3)
 
-#define add_itoh(h,v,k,kt) add_to_hash(h,v,0,k,kt)
-#define add_ctoh(h,v,k,kt) add_to_hash(h,v,2,k,kt)
-#define add_stoh(h,v,k,kt) add_to_hash(h,v,3,k,kt)
+#define add_itoh(h,v,vsz,k,ksz,kt) add_to_hash(h,v,vsz,0,k,ksz,kt)
+#define add_ctoh(h,v,vsz,k,ksz,kt) add_to_hash(h,v,vsz,2,k,ksz,kt)
+#define add_stoh(h,v,vsz,k,ksz,kt) add_to_hash(h,v,vsz,3,k,ksz,kt)
 
-#define add_iitoh(h,v,k) add_to_hash(h,v,0,k,0)
-#define add_ictoh(h,v,k) add_to_hash(h,v,0,k,2)
-#define add_istoh(h,v,k) add_to_hash(h,v,0,k,3)
-#define add_citoh(h,v,k) add_to_hash(h,v,2,k,0)
-#define add_cctoh(h,v,k) add_to_hash(h,v,2,k,2)
-#define add_cstoh(h,v,k) add_to_hash(h,v,2,k,3)
-#define add_sitoh(h,v,k) add_to_hash(h,v,3,k,0)
-#define add_sctoh(h,v,k) add_to_hash(h,v,3,k,2)
-#define add_sstoh(h,v,k) add_to_hash(h,v,3,k,3)
+#define add_iitoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,0,k,ksz,0)
+#define add_ictoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,0,k,ksz,2)
+#define add_istoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,0,k,ksz,3)
+#define add_citoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,2,k,ksz,0)
+#define add_cctoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,2,k,ksz,2)
+#define add_cstoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,2,k,ksz,3)
+#define add_sitoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,3,k,ksz,0)
+#define add_sctoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,3,k,ksz,2)
+#define add_sstoh(h,v,vsz,k,ksz) add_to_hash(h,v,vsz,3,k,ksz,3)
 
 struct _hashnode {
     void * value;
     void * key;
+    size_t value_sz;
+    size_t key_sz;
     struct _hashnode *next;
     int uniq;
     int vtype;
@@ -58,7 +60,7 @@ struct _hash {
     int alpha;
 };
 struct _hash *create_hash(int size);
-void add_to_hash(struct _hash *, void * v, int vt, void * k, int kt);
+void add_to_hash(struct _hash *, void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt);
 
 struct _hash *copy_hash(struct _hash * h);
 

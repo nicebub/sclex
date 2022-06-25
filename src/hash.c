@@ -1,7 +1,8 @@
 #include "../include/hash.h"
+#include "log.h"
 
 
-struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt);
+struct _hashnode *create_hashnode(void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt);
 void delete_hashnodel(struct _hashnode* hn);
 
 void set_hnode_value(struct _hashnode*, void * v, int vt);
@@ -16,16 +17,18 @@ struct _hr compute_hash_value(struct _hash*, void * key, int kt);
 struct _hr search_cache(struct _hash * s, void * key, int kt);
 static int uniques=0;
 
-struct _hashnode *create_hashnode(void * v, int vt, void * k, int kt){
+struct _hashnode *create_hashnode(void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt){
     struct _hashnode *h;
     h = malloc(sizeof(*h));
-    h->key = malloc(sizeof(k));
-    memcpy(h->key,k,sizeof(k));
+    h->key = malloc(k_sz);
+    memcpy(h->key,k,k_sz);
+	h->key_sz = k_sz;
     h->ktype = kt;
     h->next = NULL;
-    h->value = malloc(sizeof(v));
-    memcpy(h->value,v,sizeof(v));
+    h->value = malloc(v_sz);
+    memcpy(h->value,v,v_sz);
     h->vtype = vt;
+	h->value_sz = v_sz;
     h->uniq=uniques;
     uniques++;
     return h;
@@ -184,14 +187,14 @@ void * get_value_for_key(struct _hash *h, void* k, int kt){
     }
     return NULL;
 }
-void add_to_hash(struct _hash * h, void * v, int vt, void * k, int kt){
+void add_to_hash(struct _hash * h, void * v, size_t v_sz, int vt, void * k, size_t k_sz, int kt){
     struct _hr r;
     struct _hashnode *hn;
     struct _hashnode *temp;
     if(h){
 	   if(get_value_for_key(h,k,kt)!=NULL)
 		  return;
-	   hn = create_hashnode(v,vt,k,kt);
+	   hn = create_hashnode(v,v_sz,vt,k,k_sz,kt);
 	   r = compute_hash_value(h,k,kt);
 	   if(h->bucket[r.r] == NULL){
 		  h->bucket[r.r] = hn;
@@ -215,7 +218,7 @@ struct _hashnode *remove_from_hash(struct _hash* h,void* k, int kt){
 		  return NULL;
 	   r = compute_hash_value(h,k,kt);
 	   if(h->bucket[r.r] == NULL){
-		  printf("error can't find in bucket\n");
+	      LOG_ERROR("error can't find in bucket%s","\n");
 		  return NULL;
 	   }
 	   else{
@@ -269,7 +272,7 @@ struct _hr compute_hash_value(struct _hash * s, void * key, int kt){
 			 break;
 		  case 3:
 			 string = (char*)key;
-			 printf("this is string: %s\n",string);
+			 LOG_0("this is string: %s\n",string);
 			 leng = strlen(key);
 			 {
 				 int r;
@@ -347,7 +350,7 @@ struct _hash* combine_hashes(struct _hash* h1, struct _hash* h2){
 	   	for(e=0;e<h2->size;e++){
 		    temp=h2->bucket[e];
 		    while(temp != NULL){
-			   add_to_hash(h1,temp->value,temp->vtype,temp->key,temp->ktype);
+			   add_to_hash(h1,temp->value,temp->value_sz,temp->vtype,temp->key,temp->key_sz, temp->ktype);
 			   temp = temp->next;
 		    }
     		}
@@ -370,25 +373,25 @@ void print_hnode(struct _hashnode * hn){
     if(hn){
 			 switch(hn->ktype){
 				case 0:
-				    printf("Key Type: INT Value: %d\n",*(int*)hn->key);
+				    LOG_0("Key Type: INT Value: %d\n",*(int*)hn->key);
 				    break;
 				case 2:
-				    printf("Key Type: CHAR Value: %c\n",*(char*)hn->key);
+				    LOG_0("Key Type: CHAR Value: %c\n",*(char*)hn->key);
 				    break;
 				case 3:
 				    break;
 			 }
 			 switch(hn->vtype){
 				case 0:
-				    printf("Value Type: INT Value: %d\n",*(int*)hn->value);
+				    LOG_0("Value Type: INT Value: %d\n",*(int*)hn->value);
 				    break;
 				case 2:
-				    printf("Value Type: CHAR Value: %c\n",*(char*)hn->value);
+				    LOG_0("Value Type: CHAR Value: %c\n",*(char*)hn->value);
 				    break;
 				case 3:
 				    break;
 			 }
-			 printf("\n");
+			 LOG_0("%s","\n");
     }
 }
 void print_hash(struct _hash * h){
@@ -397,10 +400,10 @@ void print_hash(struct _hash * h){
     if(h){
 		int j;
 	   for(j=0;j<h->size;j++){
-		  printf("Hash Bucket: %d\n",j);
+		  LOG_0("Hash Bucket: %d\n",j);
 		  temp=h->bucket[j];
 		  while(temp != NULL){
-			 printf("Item Number %d\n",a);
+			 LOG_0("Item Number %d\n",a);
 			 print_hnode(temp);
 			 a++;
 			 temp = temp->next;

@@ -12,6 +12,8 @@ Examples of escqpe character sequences:
 #include "Parser.h"
 #include "baseset.h"
 #include "chrset.h"
+#include "log.h"
+
 /**
 
 	struct _node* escape_char(struct _cset **ta,buffer* parser->lexer.inputBuffer,char* c)
@@ -72,8 +74,8 @@ RegularExpressionTreeNode* parseEscapeChars(Parser* parser){/* char_set** */
 		  return temp;
 		  /* If all else fails, then report an error and return NULL */
 	   default:
-		  printf("doesn't support that kind of escape character\n");
-		  printf("%c\n",parser->lexer.current_char);
+		  LOG_ERROR("doesn't support that kind of escape character%s","\n");
+		  LOG_ERROR("%c\n",parser->lexer.current_char);
 		  return NULL;
     }
     

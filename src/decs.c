@@ -1,6 +1,7 @@
 #include <string.h>
 #include "Parser.h"
 #include "Lexer.h"
+#include "log.h"
 
 #define NUM_DEFINITIONS 50
 #define NAMELENGTH 25
@@ -29,11 +30,11 @@ void parseDefinitions(Parser* parser){
 		initNextDefinition(parser);
 		name = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
 	    if(!name.lexeme){
-		   printf("couldn't find next token\n");
+		   LOG_0("couldn't find next token%s","\n");
 		   return;
 	    }
 		if(definitionExists(parser,name)){
-   			 printf("definition already exists or name already taken\n");
+   			 LOG_0("definition already exists or name already taken%s","\n");
 				 while(!isNewline(&parser->lexer))
 					 getNextChar(&parser->lexer);
 		}
@@ -110,7 +111,7 @@ void parseDefinitionValue(Parser* parser, LexerToken name){
 			/*keep storing string for later. */
 			tempToken = getNextToken(&parser->lexer);
 		    if(!tempToken.lexeme){
-			   printf("couldn't find next token\n");
+			   LOG_ERROR("couldn't find next token%s","\n");
 			   return;
 		    }
 			/*add token to buffer to store*/

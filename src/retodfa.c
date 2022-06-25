@@ -1,6 +1,7 @@
 #include "../include/retodfa.h"
 #include "baseset.h"
 #include "intset.h"
+#include "log.h"
 
 int nullable(struct _node ** n){
     if(*n){
@@ -66,7 +67,7 @@ int nullable(struct _node ** n){
 			 return 0;
 	   }
     }
-    printf("nullable error\n");
+    LOG_ERROR("nullable error%s","\n");
     return -1;
 }
 /* int_set* */base_set* pos(struct _node ** n, int ff){
@@ -216,7 +217,7 @@ int nullable(struct _node ** n){
 			 if(((*n)->ifirst)==NULL){
 				(*n)->ifirst = new_int_set(SETSIZE);
 				if((*n)->ifirst == NULL){
-				    printf("couldn't create new iset in MINUS\n");
+				    LOG_ERROR("couldn't create new iset in %s","MINUS\n");
 				    return NULL;
 				}
 /*				printf("firstpos id h1 solo: %d\n",h1->id);*/
@@ -238,7 +239,7 @@ int nullable(struct _node ** n){
 		  if((*n)->ifirst == NULL){
 			 	(*n)->ifirst = new_int_set(SETSIZE);
 			 if((*n)->ifirst == NULL){
-				printf("couldn't create new set in ALPHANUM/PRINTABLE\n");
+				LOG_ERROR("couldn't create new set in %s","ALPHANUM/PRINTABLE\n");
 				return NULL;
 			 }
 /*			 printf("firstpos id h1 solo:: %d\n",h1->id);*/
