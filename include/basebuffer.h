@@ -16,7 +16,8 @@ typedef struct _base_buffer base_buffer;
 typedef struct _base_buffer_vtable base_buffer_vtable;
 typedef struct _base_buffer Buffer;
 
-struct _base_buffer_vtable {
+struct _base_buffer_vtable
+{
 
 	void (*refresh_upper_buffer)(base_buffer* inbuf);
 
@@ -33,7 +34,8 @@ struct _base_buffer_vtable {
 	void (*display_buffer)(const base_buffer*);	
 
 };
-struct _base_buffer{
+struct _base_buffer
+{
 	base_buffer_vtable *vtable;
     char *buf;
     char *forward;

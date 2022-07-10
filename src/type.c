@@ -54,27 +54,27 @@ void delete_type(struct _type * t){
 }
 
 
-inline void set_type_name(struct _type * t, char * n){
+extern inline void set_type_name(struct _type * t, char * n){
     if(t->name){
 	   free(t->name);
 	   t->name = NULL;
 	   t->name = strdup(n);
     }
 }
-inline void set_type_value(struct _type *t, int v){
+extern inline void set_type_value(struct _type *t, int v){
     t->value = v;
 }
-inline void set_type_comp(struct _type * t, struct _type * c){
+extern inline void set_type_comp(struct _type * t, struct _type * c){
     t->components = c;
 }
 
-inline char* get_type_name(struct _type * t){
+extern inline char* get_type_name(struct _type * t){
     return t->name;
 }
-inline int get_type_value(struct _type *t){
+extern inline int get_type_value(struct _type *t){
     return t->value;
 }
-inline struct _type * get_type_comp(struct _type * t){
+extern inline struct _type * get_type_comp(struct _type * t){
     return t->components;
 }
 
@@ -99,7 +99,7 @@ void delete_tsys(struct _tsys * s){
     }
 }
 
-inline void init_tsys(struct _tsys * s, int size){
+extern inline void init_tsys(struct _tsys * s, int size){
 	int a;
     s->type = malloc(sizeof(struct _type*)*size);
     for(a=0;a<size;a++)
@@ -107,7 +107,7 @@ inline void init_tsys(struct _tsys * s, int size){
     s->size = size;
     s->used = 0;
 }
-inline void enlarge_type_array(struct _type ** array, const int add){
+extern inline void enlarge_type_array(struct _type ** array, const int add){
     struct _type ** newa;
     int zz = sizeof(*array);
     if(add >0){
@@ -180,13 +180,13 @@ void remove_type_from_tsys(struct _tsys *s, void *v, const int type){
 		  break;
     }
 }
-inline void remove_type_from_tsyst(struct _tsys *s, struct _type *t){
+extern inline void remove_type_from_tsyst(struct _tsys *s, struct _type *t){
     remove_type_from_tsys(s,t,4);
 }
-inline void remove_type_from_tsysn(struct _tsys *s, char * name){
+extern inline void remove_type_from_tsysn(struct _tsys *s, char * name){
     remove_type_from_tsys(s,name,2);
 }
-inline void remove_type_from_tsysv(struct _tsys *s,  int value){
+extern inline void remove_type_from_tsysv(struct _tsys *s,  int value){
     remove_type_from_tsys(s,&value,0);
 }
 

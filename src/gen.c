@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include "log.h"
-
+#include "lex_error.h"
 void use_later(void){
 	/*
 */
@@ -26,7 +26,8 @@ only after C99
 #define to_file(...) fprintf(outfile, __VA_ARGS__)
 */
 
-void generate_output(Parser* parser, struct _DFA* dfa){
+void generate_output(Parser* parser, struct _DFA* dfa)
+{
 	char 	cb[50];
     char *	infstring;
     FILE * 	outfile, *infile;

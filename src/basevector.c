@@ -37,39 +37,39 @@ void add_to_vector(void* to_add, base_vector* vec){
 	    vec->vtable->add_to_vector(to_add,vec);
 }
 
-inline void display_vector(base_vector* vec){
+extern inline void display_vector(base_vector* vec){
 	if(vec)
 	    vec->vtable->display_vector(vec);
 }
 
-inline int vector_used(base_vector* vec){
+extern inline int vector_used(base_vector* vec){
 	if(vec)
 	    return vec->vtable->vector_used(vec);
     return 0;
 }
 
-inline void ** get_by_index_in_vector(base_vector* vec, int index){
+extern inline void ** get_by_index_in_vector(base_vector* vec, int index){
 	if(vec)
 	    return vec->vtable->get_by_index_in_vector(vec,index);
     return NULL;
 }
 
-inline void set_by_index_in_vector(base_vector* vec, int index,void* value){
+extern inline void set_by_index_in_vector(base_vector* vec, int index,void* value){
 	if(vec && value){
 		vec->vtable->set_by_index_in_vector(vec,index,value);
 	}
 }
 
-inline int vector_size(base_vector* vec){
+extern inline int vector_size(base_vector* vec){
 	if(vec)
 	    return vec->vtable->vector_size(vec);
     return 0;
 }
-inline void set_vector_used(base_vector* vec,int used){
+extern inline void set_vector_used(base_vector* vec,int used){
 	if(vec)
 	    vec->vtable->set_vector_used(vec,used);
 }
-inline void set_vector_size(base_vector* vec,int size){
+extern inline void set_vector_size(base_vector* vec,int size){
     if(vec)
 	   vec->vtable->set_vector_size(vec,size);
 }
@@ -102,44 +102,44 @@ void base_delete_vector(base_vector* vec){
 		vec = NULL;
 	}
 }
-inline void base_add_to_vector(void* to_add, base_vector* vec){
+extern inline void base_add_to_vector(void* to_add, base_vector* vec){
     if(vec && to_add)
 	   return;
     return;
 }
 
-inline void base_display_vector(base_vector* vec){
+extern inline void base_display_vector(base_vector* vec){
     if(vec)
 	   LOG_0("vtable: %p size: %d used: %d id: %d\n",(void*)vec->vtable,
 		vec->size,vec->used,vec->id);
 }
 
-inline int base_vector_used(base_vector* vec){
+extern inline int base_vector_used(base_vector* vec){
     if(vec)
 	return vec->used;
     return 0;
 }
-inline void ** base_get_by_index_in_vector(base_vector* vec, int index){
+extern inline void ** base_get_by_index_in_vector(base_vector* vec, int index){
     if(vec)
 		;
     return NULL;
 }
-inline void base_set_by_index_in_vector(base_vector* vec, int index,void* value){
+extern inline void base_set_by_index_in_vector(base_vector* vec, int index,void* value){
 	if(vec && value)
 		;
 }
 
 
-inline int base_vector_size(base_vector* vec){
+extern inline int base_vector_size(base_vector* vec){
     if(vec)
 	return vec->size;
     return 0;
 }
-inline void base_set_vector_used(base_vector* vec,int used){
+extern inline void base_set_vector_used(base_vector* vec,int used){
     if(vec)
 	   vec->used = used;
 }
-inline void base_set_vector_size(base_vector* vec,int size){
+extern inline void base_set_vector_size(base_vector* vec,int size){
     if(vec)
 	   vec->size = size;
 }

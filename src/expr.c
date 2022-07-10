@@ -4,13 +4,15 @@
 #include "retodfa.h"
 #include "log.h"
 
-RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
-    struct _node *temp;
-    struct _node *temp2;
-    struct _node *temp3;
-    struct _node *temp4;
-    char m;
-    temp = temp2 = temp3 = temp4 = NULL;
+RegularExpressionTreeNode* parseExpression(Parser* parser)
+{
+	/* char_set** */
+    struct _node * temp = NULL;
+    struct _node *temp2 = NULL;
+    struct _node *temp3 = NULL;
+    struct _node *temp4 = NULL;
+    char m = '\0';
+
     /*
 	can be an (expr) OR [range] OR expr OR expr* OR expr+ OR expr? OR expr{a,b} OR expr|expr
 	*/
@@ -22,19 +24,24 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
 		  exit(-1);
 	   }
     }
-    else if(matchToken(&parser->lexer,tokenForType(LBRACKET)).lexeme){
+    else if(matchToken(&parser->lexer,tokenForType(LBRACKET)).lexeme)
+    {
 	   temp = parseCharSet(&parser->parseTree->alphabet,parser);
-	   if(!matchToken(&parser->lexer,tokenForType(RBRACKET)).lexeme){
+	   if(!matchToken(&parser->lexer,tokenForType(RBRACKET)).lexeme)
+      {
 		    lex_error(13);
 			LOG_ERROR("to finish a character class%s","\n");
 		    exit(-1);
 		}
     }
-    else if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme){
+    else if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme)
+    {
 	   temp = apply_def(parser);
-	   if(!matchToken(&parser->lexer,tokenForType(RCURLY)).lexeme){
+
+	   if(!matchToken(&parser->lexer,tokenForType(RCURLY)).lexeme)
+      {
 		  lex_error(13);
-		  LOG_ERROR("curly, to finish off a range%s","\n");
+		  LOG_ERROR("curly, to finish off a range%s, instead found %s\n","}",parser->lexer.tokens.stack.top->lexeme);
 		  exit(-1);
 	   }
     }
@@ -239,7 +246,9 @@ RegularExpressionTreeNode* parseExpression(Parser* parser){ /* char_set** */
     return temp;
 }
 
-RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
+RegularExpressionTreeNode* apply_def(Parser* parser)
+{
+	/* char_set** */
 /*    struct _node* rnode;*/
     RegularExpressionTreeNode* tempNode;
     LexerToken tempToken;
@@ -248,7 +257,11 @@ RegularExpressionTreeNode* apply_def(Parser* parser){ /* char_set** */
     int e;
     char v;
 /*    rnode = NULL;*/
+   fprintf(stderr,"appying definition\n");
+
+    setIndividualTokens(&parser->lexer,0);
     tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+    fprintf(stderr,"temptoken lexem <%s>\n", tempToken.lexeme);
     if((tempDefinition = definitionExists(parser,tempToken))){
 	   parser->fileBuffer = parser->lexer.inputBuffer;
 	   pushBackChar(&parser->lexer);

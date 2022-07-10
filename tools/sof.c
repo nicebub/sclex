@@ -36,6 +36,7 @@ int main(int argc, char const ** argv){
 
 
 
-inline void usage(void){
+static inline void usage(void)
+{
 	printf("Usage: sof [filename] ** a file to serialize\n");	
 }

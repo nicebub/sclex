@@ -45,53 +45,59 @@ void init_base_buffer_vtable(){
 	vtable_base_buffer.display_buffer = &base_display_buffer;
 }
 */
-inline void refresh_upper_buffer(base_buffer* inbuf){
+extern inline void refresh_upper_buffer(base_buffer* inbuf)
+{
 	inbuf->vtable->refresh_upper_buffer(inbuf);
 }
 
-inline void refresh_lower_buffer(base_buffer* inbuf){
+extern  inline void refresh_lower_buffer(base_buffer* inbuf)
+{
 	inbuf->vtable->refresh_lower_buffer(inbuf);
 }
 
-inline void refresh_buffer(base_buffer* inbuf, const int start){
+extern  inline void refresh_buffer(base_buffer* inbuf, const int start)
+{
 	inbuf->vtable->refresh_buffer(inbuf,start);
 }
-inline void delete_buffer(base_buffer* mbuf){
+extern  inline void delete_buffer(base_buffer* mbuf)
+{
 	mbuf->vtable->delete_buffer(mbuf);
 }
 
-inline void display_buffer(const base_buffer* inbuf){
+extern inline void display_buffer(const base_buffer* inbuf)
+{
 	inbuf->vtable->display_buffer(inbuf);
 }
 
-inline int bgetchar(base_buffer* inbuf){
+extern  inline int bgetchar(base_buffer* inbuf)
+{
 	return inbuf->vtable->bgetchar(inbuf);
 }
-inline int ungetchar(base_buffer* mbuf){
+extern  inline int ungetchar(base_buffer* mbuf)
+{
 	return mbuf->vtable->ungetchar(mbuf);
 }
 
-void init_base_buffer(base_buffer* buf){
+void init_base_buffer(base_buffer* buf)
+{
+	memset(buf,0,sizeof(*buf));
 	buf->vtable= &vtable_base_buffer;
-    buf->buf=NULL;
-    buf->forward=NULL;
-    buf->back=NULL;
-    buf->work=NULL;
-    buf->len=0;
-    buf->type=0;
 }
 
-base_buffer* new_base_buffer(size_t size){
+base_buffer* new_base_buffer(size_t size)
+{
     base_buffer *mbuf;
     mbuf = NULL;
     mbuf = malloc(sizeof(*mbuf));
-    if(!mbuf){
+    if(!mbuf)
+	{
 	   LOG_0("couldn't allocate memory for new buffer%s","");
 	   return NULL;
     }
 	   mbuf->len = size;
 	   mbuf->buf = malloc(sizeof(char)*(mbuf->len+2));
-    if(!mbuf->buf){
+    if(!mbuf->buf)
+	{
 	   free(mbuf);
 	   mbuf = NULL;
 	   LOG_0("couldn't allocate memory for new buffer%s","");
@@ -110,7 +116,8 @@ base_buffer* new_base_buffer(size_t size){
 	   return mbuf;
 }
 
-base_buffer * base_buffer_from_string(char* instring){
+base_buffer * base_buffer_from_string(char* instring)
+{
 /* create a buffer structure, and from the length of the
 	input string create a buffer in memory the same size
 	plus a few extra bytes for control characters. 
@@ -132,7 +139,8 @@ base_buffer * base_buffer_from_string(char* instring){
     return mbuf;
 }
 
-base_buffer* base_buffer_from_file(FILE* infile){
+base_buffer* base_buffer_from_file(FILE* infile)
+{
 /* buffer created and set to size of BUFFER_LENGTH */
 	int b;
     base_buffer *mbuf = malloc(sizeof(*mbuf));
@@ -140,7 +148,8 @@ base_buffer* base_buffer_from_file(FILE* infile){
     mbuf->buf = malloc(sizeof(char)*BUFFER_LENGTH);
     
 	/* exit with error, nothing given to function as input */
-    if(infile == NULL ){
+    if(infile == NULL )
+	{
 	   LOG_0("\033[0;31merror\033[0m%s","");
 	   exit(-1);
     }
@@ -175,7 +184,8 @@ base_buffer* base_buffer_from_file(FILE* infile){
 }
 
 
-base_buffer* base_buffer_from_filename(const char * name){
+base_buffer* base_buffer_from_filename(const char * name)
+{
 	/* allocate memory for buffer */
 	int b;
     base_buffer *mbuf = malloc(sizeof(*mbuf));
@@ -184,7 +194,8 @@ base_buffer* base_buffer_from_filename(const char * name){
 	/* try to open file, if it exists continue otherwise
 		exit with an error
 	*/
-    if((mbuf->work = fopen(name, "r")) == NULL ){
+    if((mbuf->work = fopen(name, "r")) == NULL )
+	{
 	   free(mbuf);
 	   
 		 return NULL;
@@ -213,34 +224,40 @@ base_buffer* base_buffer_from_filename(const char * name){
     return mbuf;
 }
 
-int base_bgetchar(base_buffer* inbuf){
+int base_bgetchar(base_buffer* inbuf)
+{
 	/* Temporary used to return current character of buffer */
     int r;
 /* Check buffer, either we have found EOF in which we may be at the end of half
 	the buffer or we can increment the buffer 1 character instead
 */
-    switch(*(inbuf->forward)){
+    switch(*(inbuf->forward))
+	{
 	   case EOF:
 /* 
 	Check whether we found true EOF or just the token used to represent the end
 	   of the buffer half.
 */
-		  switch(inbuf->type){
+		  switch(inbuf->type)
+		  {
 			  /* Buffer Half has been found */
 			 case 0:
 			 /* either we found the upper buffer limit ... */
 			 /* and if so we move the pointer to the proper start of next buffer */
-					if(inbuf->forward == &inbuf->buf[HALF_BUFFER-1]){
+					if(inbuf->forward == &inbuf->buf[HALF_BUFFER-1])
+					{
 					    refresh_lower_buffer(inbuf);
 					    inbuf->forward = &inbuf->buf[HALF_BUFFER];
 					}
 			/* or we found the lower buffer limit */
-					else if(inbuf->forward == &inbuf->buf[BUFFER_LENGTH-1]){
+					else if(inbuf->forward == &inbuf->buf[BUFFER_LENGTH-1])
+					{
 					    refresh_upper_buffer(inbuf);
 					    inbuf->forward = &inbuf->buf[0];
 
 					}
-					else{
+					else
+					{
 			/* True EOF has been found, so return it */
 			case 1:
 					    return EOF;
@@ -259,9 +276,11 @@ int base_bgetchar(base_buffer* inbuf){
 	return '\0';
 }
 
-int base_ungetchar(base_buffer* mbuf){
+int base_ungetchar(base_buffer* mbuf)
+{
 /* Check to see if we have found True EOF, the token EOF, or other */
-    switch(mbuf->type){
+    switch(mbuf->type)
+	{
 	  /* Buffer Half has been found */
 	   case 0:
 		 /* either we found the upper buffer limit ... */
@@ -295,8 +314,10 @@ int base_ungetchar(base_buffer* mbuf){
     return -1;
 }
 
-inline void base_delete_buffer(base_buffer* mbuf){
-	if(mbuf){
+extern inline void base_delete_buffer(base_buffer* mbuf)
+{
+	if(mbuf)
+	{
 	    free(mbuf->buf);
 	    mbuf->buf = NULL;
 	    free(mbuf);
@@ -305,8 +326,10 @@ inline void base_delete_buffer(base_buffer* mbuf){
 }
 
 
-inline void base_display_buffer(const base_buffer* inbuf){
-    switch(inbuf->type){
+extern inline void base_display_buffer(const base_buffer* inbuf)
+{
+    switch(inbuf->type)
+	{
 	   case 0:
 		  LOG_0("--MARK UP END--\n%s\n--MARK MIDDLE--\n",(char*)inbuf->buf);
 		  LOG_0("%s\n--MARK LOW END--\n",&inbuf->buf[HALF_BUFFER]);
@@ -316,25 +339,31 @@ inline void base_display_buffer(const base_buffer* inbuf){
 		  break;
     }
 }
-inline void base_refresh_upper_buffer(base_buffer* inbuf){
+extern  inline void base_refresh_upper_buffer(base_buffer* inbuf)
+{
     refresh_buffer(inbuf,0);
 }
 
-inline void base_refresh_lower_buffer(base_buffer* inbuf){
+extern  inline void base_refresh_lower_buffer(base_buffer* inbuf)
+{
     refresh_buffer(inbuf,HALF_BUFFER);
 }
 
-inline void base_refresh_buffer(base_buffer* inbuf, const int start){
+extern  inline void base_refresh_buffer(base_buffer* inbuf, const int start)
+{
     static size_t amount;
 	/* read more data into the buffer and store the amount read into 'amount' */
-	if(inbuf->work == stdin){
+	if(inbuf->work == stdin)
+	{
 		fgets(&inbuf->buf[start],(int)(HALF_BUFFER-2),inbuf->work);
 		amount = strlen(&inbuf->buf[start]);
 	}
 	else
 		amount=fread(&inbuf->buf[start],1,HALF_BUFFER-2,inbuf->work);	
-    if( amount != HALF_BUFFER-2){
-	   if(ferror(inbuf->work)!=0){
+    if( amount != HALF_BUFFER-2)
+	{
+	   if(ferror(inbuf->work)!=0)
+	   {
 		  perror("\033[0;31merror\033[0m");
 		  exit(-1);
 	   }

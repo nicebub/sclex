@@ -61,7 +61,7 @@ void int_delete_set(base_set* set){
 	    set = NULL;
 	}
 }
-inline int int_is_in_set(base_set * set, int value){
+extern inline int int_is_in_set(base_set * set, int value){
 	int y;
     if(set){
 	   for(y=0;y<base_set_used(set) && *(int*)get_value_by_index_set(set,y)<=value;y++){
@@ -206,21 +206,21 @@ void int_display_set(base_set* set){
 	}
 }
 
-inline int int_set_used(base_set* set){
+extern inline int int_set_used(base_set* set){
 	int_set* nset;
 	if(!set) return 0;
 	nset = (int_set*)set;
 	return base_set_used(&nset->super);
 }
 
-inline void* int_get_value_by_index_set(base_set* set, int index){
+extern inline void* int_get_value_by_index_set(base_set* set, int index){
 	int_set* nset;
 	if(!set || index < 0 || index >= base_set_used(set))
 		return NULL;
 	nset = (int_set*)set;
 	return &nset->values[index];
 }
-inline int int_set_size(base_set* set){
+extern inline int int_set_size(base_set* set){
 	int_set* nset;
 	if(!set) return 0;
 	nset = (int_set*)set;

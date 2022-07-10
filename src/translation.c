@@ -32,64 +32,63 @@ Results: The input stream is parsed for definitions and code and the parse
 	tree is constructed, the source code is read and held to be associated
 	later, and it is finally returned in a struct _ta.
 */
-RegularExpressionTreeArray* parseTranslations(Parser* parser){
-    int counter;
+RegularExpressionTreeArray* parseTranslations(Parser* parser)
+{
+   RegularExpressionTreeArray* ret = NULL;
+   int counter = 0;
 	/* call the rexexpset() function that parses the input for more than
 		one regular expression definition any their associated code sections
 	*/
-    parseRegularExpressionSet(parser);
-	/* create the initial firpos set for a set amount of  regular expressions */
-    parser->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
-	/* if memory error or something else thing print an error to standard
-		output and return NULL */
-    if(!parser->fpos){
-	   lex_error(4);
-	   return NULL;
-    }
-	/* initialize each regular expressions' firstpos set or print an error and
-		return NULL if issues arise */
-/*	{
-		int r;
-    for(r=0;r<vector_size(file->fpos);r++){
-	   *get_by_index_in_vector(file->fpos,r) = new_int_set(vector_size(file->fpos));
-	   if(*(int_vector**)get_by_index_in_vector(file->fpos,r) == NULL){
-		  lex_error(5);
-		  return NULL;
-	   }
-    }
-}*/
-	/* still initializing more of the firstpos sets */
-    for(counter=vector_size(parser->fpos);counter<SETSIZE;counter++){
-	/*   printf("setting extra to NULL\n");*/
-	   *(int_vector**)get_by_index_in_vector(parser->fpos,counter) = NULL;
-    }
-/*    printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
-    set_vector_used(parser->fpos,vector_size(parser->fpos));
-/*	printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
-	/* Currently just some debugging information and construction statistics */
-#ifdef DEBUG
-    printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
-	{
-		int h;
-    for(h=0;h<parser->parseTree->used;h++){
-		  printf("REGEX\n");
-		  display_tree(parser->parseTree->t[h]);
-		  printf("\n");
-    }
+   if (NULL != parser)
+   {
+      parseRegularExpressionSet(parser);
+   	/* create the initial firpos set for a set amount of  regular expressions */
+      parser->fpos = new_int_vector_with_init_sets(SETSIZE,SETSIZE);
+   	/* if memory error or something else thing print an error to standard
+	   	output and return NULL */
+      if(NULL != parser->fpos)
+      {
+         /* still initializing more of the firstpos sets */
+         for(counter=vector_size(parser->fpos);counter<SETSIZE;counter++)
+         {
+      	/*   printf("setting extra to NULL\n");*/
+      	   *(int_vector**)get_by_index_in_vector(parser->fpos,counter) = NULL;
+         }
+      /*    printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
+         set_vector_used(parser->fpos,vector_size(parser->fpos));
+      /*	printf("checking fpos vector used and size: used: %d size: %d\n",vector_used(file->fpos),vector_size(file->fpos));*/
+      	/* Currently just some debugging information and construction statistics */
+        #ifdef DEBUG
+          printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
+      	{
+      		int h;
+          for(h=0;h<parser->parseTree->used;h++)
+          {
+      		  printf("REGEX\n");
+      		  display_tree(parser->parseTree->t[h]);
+      		  printf("\n");
+          }
+      }
+          printf("\n");
+        #endif
+      	/* create the entire followpos set on the entire tree of regular expressions */
+         followpos(&parser->fpos,&parser->parseTree->atop);
+        #ifdef DEBUG
+          printf("\n");
+          printf("ITS ALPHABET\n");
+          display_set(parser->parseTree->alphabet);
+          printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
+      
+      	/* return the entire constructed parse tree structure or potentially NULL if 
+      		we found some error along the way */
+        #endif
+         ret = parser->parseTree;
+      }
+      else
+      {
+	     lex_error(4);
+      }
+   }
+   return ret;
 }
-    printf("\n");
-#endif
-	/* create the entire followpos set on the entire tree of regular expressions */
-    followpos(&parser->fpos,&parser->parseTree->atop);
-#ifdef DEBUG
-    printf("\n");
-    printf("ITS ALPHABET\n");
-    display_set(parser->parseTree->alphabet);
-    printf("=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=\n");
-
-	/* return the entire constructed parse tree structure or potentially NULL if 
-		we found some error along the way */
-#endif
-    return parser->parseTree;
-
-}
+   

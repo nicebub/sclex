@@ -72,7 +72,7 @@ int set_used(base_set* set){
 	   return set->vtable->set_used(set);
     return 0;
 }
-inline void* get_value_by_index_set(base_set* set, int index){
+extern inline void* get_value_by_index_set(base_set* set, int index){
     if(set)
 	   return set->vtable->get_value_by_index_set(set,index);
     return NULL;
@@ -148,7 +148,7 @@ void base_display_set(base_set* set){
 int base_set_used(base_set* set){
 	return set->used;
 }
-inline void* base_get_value_by_index_set(base_set* set, int index){
+extern inline void* base_get_value_by_index_set(base_set* set, int index){
 	return NULL;
 }
 int base_set_size(base_set* set){

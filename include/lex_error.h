@@ -4,7 +4,7 @@
 
 /* Function Prototype
 	
-	void lex_error(int en);
+    void lex_error(int en, const char* file, int line, const char* func);
 
 Functionality: Print an error message depending on err number
 	given as input
@@ -15,7 +15,10 @@ Parameter: an integer that represents which string in the
 Results: Print an error message to stdout
 
 */
-void lex_error(int en);
+#define lex_error(e) _lex_err(e,__FILE__,__LINE__,__func__)
+
+
+void _lex_err(int en, const char* file, int line, const char* func);
 
 #define SCERR_OPEN 0
 #define SCERR_DECL_UNDECLARED 1

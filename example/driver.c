@@ -114,7 +114,7 @@ Results: A line is printed to standard output from the input stream
 
 */
 
-inline void printline(buffer* mybuf){
+static inline void printline(buffer* mybuf){
 	/* 4 kilobytes character string */
 	char  mystring[4048];
 
@@ -146,7 +146,7 @@ Results: a Line is printed to standard output from the input stream up
 	to a newline '\n' character, but reading backwards in the stream, not
 	forwards
 */
-inline void printbackline(buffer* mybuf){
+static inline void printbackline(buffer* mybuf){
 	/* 4 kilobytes character string*/
     char  mystring[4048];
 	/* 4 kiobytes character string to duplicate previous declared */

@@ -6,10 +6,11 @@
 #include "intset.h"
 #include "chrset.h"
 #include <stdlib.h>
+#include <stdbool.h>
 #include "log.h"
 
 #define checkForUnmarked()     for(counter=0;counter<sets;counter++) \
-	   if(tCalcs.unmarked[counter] ==1) \
+	   if(tCalcs.unmarked[counter] == 1) \
 		  break; 
 
 #define INITIALSTATE 0
@@ -67,124 +68,143 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
    set_vector_used(tCalcs->Dstates,INITIALSTATE);
    tCalcs->marked = malloc(sizeof(int)*numFirstPositionSets);
    tCalcs->unmarked = malloc(sizeof(int)*numFirstPositionSets);
-   for(row=ZERO;row<numFirstPositionSets;row++){
+   fprintf(stderr,"found this many <%d>\n",numFirstPositionSets);
+   for(row=ZERO;row<numFirstPositionSets;row++)
+   {
+        fprintf(stderr,"what row we on <%d>\n", row);
 		tCalcs->marked[row]= TABLEERROR;
 		tCalcs->unmarked[row] = TABLEERROR;
    }
-    return (void*)1;
+   fprintf(stderr,"done\n");
+
+   return (void*)1;
 }
 
-void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculations* tCalcs,base_set** U){
-	base_set* temps;
-	struct _node *tempNode;
-		int same;
- 	   int currentLetter;
-		int currentState;
-		int alphabetSize;
+void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculations* tCalcs,base_set** U)
+{
+   base_set*        temps = NULL;
+   struct _node *tempNode = NULL;
+   int               same = 0;
+   int      currentLetter = 0;
+   int       currentState = 0;
+   int       alphabetSize = 0;
 		/* mark the state */
-		 alphabetSize = set_used(parser->parseTree->alphabet);
-	   tCalcs->unmarked[*counter] =0;
-	   tCalcs->marked[*counter] = 1;
-      tempNode = NULL;
-	   for(currentLetter=0;currentLetter<alphabetSize;currentLetter++){
-			int stateSetSize;
-			int stateNode;
-			base_set* stateSet;
+   if((NULL != parser) && (NULL != counter) && (NULL != sets) && (NULL != tCalcs) && (NULL != U))
+   {
+      alphabetSize = set_used(parser->parseTree->alphabet);
+      tCalcs->unmarked[*counter] =0;
+      tCalcs->marked[*counter] = 1;
+
+      for(currentLetter=0;currentLetter<alphabetSize;currentLetter++)
+      {
+         int   stateSetSize = 0;
+         int      stateNode = 0;
+         base_set* stateSet = NULL;
 /*		  printf("creating new U set to use\n");*/
-		  *U = new_int_set(vector_used(parser->fpos));
-		  if(*U == NULL){
-			 LOG_ERROR("couldn't create new U%s","\n");
-			 return NULL;
-		  }
-		  stateSet = *get_by_index_in_vector(tCalcs->Dstates,*counter);
-		  stateSetSize = set_used(stateSet);
-		  for(currentState=0;currentState<stateSetSize;currentState++){
-			  stateNode = *(int*)get_value_by_index_set(stateSet,currentState);
-			  tempNode = get_node_for_uniq(parser->parseTree->atop,stateNode);
+         *U = new_int_set(vector_used(parser->fpos));
+         if(*U == NULL)
+         {
+            LOG_ERROR("couldn't create new U%s","\n");
+            return NULL;
+         }
+         stateSet = *get_by_index_in_vector(tCalcs->Dstates,*counter);
+         stateSetSize = set_used(stateSet);
+         for(currentState=0;currentState<stateSetSize;currentState++)
+         {
+            stateNode = *(int*)get_value_by_index_set(stateSet,currentState);
+			   tempNode = get_node_for_uniq(parser->parseTree->atop,stateNode);
 			  /*check to see if this state has any transition for this alphabet letter*/
-			 if(tempNode->value == *(char*)get_value_by_index_set(parser->parseTree->alphabet,currentLetter)){
+            if(tempNode->value == *(char*)get_value_by_index_set(parser->parseTree->alphabet,currentLetter))
+            {
 /*				printf("alphabet symbol %c from state %d for position %d\n", \
 					  alphabet->s[j],a+1,Dstates->iset[a]->s[g]);*/
-				temps = *U;
-				*U = merge_sets( *U, *get_by_index_in_vector(parser->fpos,stateNode - 1));
-				((int_set*)*U)->super.uniq = *sets;
+               temps = *U;
+				   *U = merge_sets( *U, *get_by_index_in_vector(parser->fpos,stateNode - 1));
+				   ((int_set*)*U)->super.uniq = *sets;
 /*				printf("U created: displaying ");*/
 /*				display_set(U,0);*/
 /*				printf("Adding to DUtransition and displaying\n");*/
-				add_to_set(&tCalcs->DUtransition[currentLetter][*counter],stateNode);
-				delete_set(temps);
-				temps = NULL;
-				temps = *U;
-			 }
-		  }
+				   add_to_set(&tCalcs->DUtransition[currentLetter][*counter],stateNode);
+				   delete_set(temps);
+				   temps = NULL;
+				   temps = *U;
+            }
+         }
 	  		
-			same  = 0;
-			if(set_used(*U) != 0){
+         same  = 0;
+         if(set_used(*U) != 0)
+         {
 /*				    printf("U is not empty\n");*/
-				int z;
-				    for(z=0;z<vector_used(tCalcs->Dstates);z++){
-					   	if(sets_are_same(*U,*get_by_index_in_vector(tCalcs->Dstates,z))){
+            int z = 0;
+            for(z=0;z<vector_used(tCalcs->Dstates);z++)
+            {
+				   if(sets_are_same(*U,*get_by_index_in_vector(tCalcs->Dstates,z)))
+               {
 /*						    printf("set already in Dstates\n");*/
-						    ((int_set*)*U)->super.uniq = (*(int_set**)get_by_index_in_vector(tCalcs->Dstates,z))->super.uniq;
-						    same = 1;
-						    break;
-						}
-						else
-						    ;
-				    }
-				    if(same != 1){
-					   int_set* Fstates = NULL;
+					   ((int_set*)*U)->super.uniq = (*(int_set**)get_by_index_in_vector(tCalcs->Dstates,z))->super.uniq;
+					   same = 1;
+					   break;
+					}
+					else
+               {
+               }
+            }
+				if(same != 1)
+            {
+				   int_set* Fstates = NULL;
 /*					   	printf("haven't seen this state yet\n");*/
-					   	((int_set*)*U)->super.uniq = *sets+1;
-					   	add_to_vector(*U,tCalcs->Dstates);
-					   delete_set(*U);
-					   *U = NULL;
-					   *U = *get_by_index_in_vector(tCalcs->Dstates,vector_used(tCalcs->Dstates)-1);
-					   	tCalcs->unmarked[*sets] = 1;
-					   	tCalcs->marked[*sets] = 0;
-				    		sets++;
-				    }
+					((int_set*)*U)->super.uniq = *sets+1;
+					add_to_vector(*U,tCalcs->Dstates);
+					delete_set(*U);
+					*U = NULL;
+					*U = *get_by_index_in_vector(tCalcs->Dstates,vector_used(tCalcs->Dstates)-1);
+					tCalcs->unmarked[*sets] = 1;
+					tCalcs->marked[*sets] = 0;
+				   sets++;
+            }
 			}
-			else{
-				    ((int_set*)*U)->super.uniq = -1;
+			else
+         {
+			   ((int_set*)*U)->super.uniq = -1;
 			}
-			tCalcs->Dtransition[currentLetter][*counter] = ((int_set*)*U)->super.uniq;
-	   }
 
-
-/*	   for(counter=0;counter<sets;counter++)
-			if(unmarked[counter] ==1)
-				break;
-				*/
+         tCalcs->Dtransition[currentLetter][*counter] = ((int_set*)*U)->super.uniq;
+      }
+   }
+   else
+   {
+      fprintf(stderr, "NULL arguments given\n");
+   }
     return NULL;
 }
 
-struct _DFA* generate_dfa(Parser* parser){
-    base_set*** DUtransition; /* int_set*** */
-    base_set* temps, *temps2; /* int_set* */
-    base_set* U; /* int_set* */
-    struct _DFA *dfa;
-    int a;
-    int sets;
-    base_set*fpt; /* int_set* */
-    int **tTran;
-    base_set***tDUtransition; /* int_set*** */
-    base_set* Fstates; /* int_set* */
-    base_set* FFstates; /* int_set* */
-    int lastpos;
-    int fcount;
-	 int counter;
-	 int row,col;
-	 int* status;
-	 TableCalculations tCalcs;
-    temps = temps2 = NULL;
-    U = NULL;
-    dfa = NULL;
-    sets =0;
-	 status = NULL;
+struct _DFA* generate_dfa(Parser* parser)
+{
+    base_set*** DUtransition = NULL; /* int_set*** */
+    base_set*          temps = NULL;
+    base_set*         temps2 = NULL; /* int_set* */
+    base_set*              U = NULL; /* int_set* */
+    struct _DFA *        dfa = NULL;
+    int                    a = 0;
+    int                 sets = 0;
+    base_set*            fpt = NULL; /* int_set* */
+    int **             tTran = NULL;
+    base_set***tDUtransition = NULL; /* int_set*** */
+    base_set*        Fstates = NULL; /* int_set* */
+    base_set*       FFstates = NULL; /* int_set* */
+    int              lastpos = 0;
+    int               fcount = 0;
+	 int              counter = 0;
+	 int                  row = 0;
+    int                  col = 0;
+	 int*              status = NULL;
+	 TableCalculations tCalcs = {0};
 	 
-	 if(!(status = initDFATransitionTables(parser,&tCalcs)))
-	 	return status;
+   if(false == (status = initDFATransitionTables(parser,&tCalcs)))
+   {
+      fprintf(stderr,"caught error during initialization of tables\n");
+      return status;
+   }
 
     temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
 	fpt = firstpos(&(parser->parseTree->atop));

@@ -7,7 +7,8 @@
 #include "../include/lex_error.h"
 #include "log.h"
 
-void lex_error(int en){
+void _lex_err(int en, const char* file, int line, const char * func)
+{
 
 /* An array of error strings to print in case of error */
     const static char * err_strings[] = {
@@ -43,6 +44,9 @@ void lex_error(int en){
     };
 	/* check to see if in array bounds */
     if(en <0 || en >28)
+	{
 	   return;
-    LOG_0("%s\n",err_strings[en]);
+	}
+
+    LOG_ERROR("%s():<%d>:%s# %s\n",file,line,func,err_strings[en]);
 }

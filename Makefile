@@ -57,7 +57,7 @@ DEPS := $(patsubst %.c, $(PATHD)%.d,$(SRC_FILES))
 COMPILE=$(CC) -c
 LINK=$(CC)
 DEPEND=$(CC) -MM -MG -MF
-CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) -std=c99 -Wall -Wpedantic -pedantic-errors -Wno-comment -Wno-incompatible-pointer-types
+CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) --std=gnu2x -Wall -Wpedantic -Wno-comment -Wno-incompatible-pointer-types
 CFLAGS += -g -Wno-unused-variable
 EXECFLAGS = -Wno-unused-command-line-argument
 TFLAGS = $(CFLAGS) -DTEST

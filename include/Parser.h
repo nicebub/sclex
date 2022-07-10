@@ -34,7 +34,7 @@ struct _parser {
 
 
 void initParser(Parser* parser);
-void initParserWithFilename(Parser* parser,char* arg);
+int initParserWithFilename(Parser* parser,char* arg);
 void initNextDefinition(Parser* parser);
 void setupdefinitionList(Parser* parser);
 void parseDefinitionValue(Parser* parser, LexerToken name);

@@ -65,21 +65,26 @@ static int ndeleted = 0;
 static int atinc = 0;
 static int atdeleted = 0;
 static int missinghelp =0;
-inline int tnum_deleted(void){
+extern inline int tnum_deleted(void)
+{
     return ndeleted;
 }
 
-inline int tnum_created(void){
+extern inline int tnum_created(void)
+{
     return idinc;
 }
-inline int atnum_deleted(void){
+extern inline int atnum_deleted(void)
+{
     return atdeleted;
 }
 
-inline int atnum_created(void){
+extern inline int atnum_created(void)
+{
     return atinc;
 }
-inline int missingh(void){
+extern inline int missingh(void)
+{
     return missinghelp;
 }
 

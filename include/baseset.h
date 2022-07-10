@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #define SETSIZE 400
 #include "log.h"
-#define NEWSETERROR(in) LOG_ERROR("couldn't create new " #in "set%s","\n");
+#define NEWSETERROR(in) LOG_ERROR("couldn't create new "#in"set");
 
 typedef struct _base_set base_set;
 typedef struct _base_set_vtable base_set_vtable;

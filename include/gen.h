@@ -21,5 +21,4 @@ typedef enum _PARAGRAPH {
 
 void generate_output(Parser* parser, struct _DFA*);
 
-extern void lex_error(int en);
 #endif

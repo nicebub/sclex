@@ -5,14 +5,14 @@
 #include "token.h"
 
 typedef struct _lexer Lexer;
-struct _lexer {
+struct _lexer
+{
     Buffer *inputBuffer;
     TokenStream tokens;
     char previous_char;
     char current_char;
     int passWS;
     int individualTokens;
-
 };
 
 /*
