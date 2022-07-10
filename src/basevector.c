@@ -11,7 +11,9 @@
 static base_vector_vtable vtable_base_vector= {
 	&base_delete_vector,
 	&base_add_to_vector,
+   #ifdef LOGGING
 	&base_display_vector,
+   #endif // LOGGING
 	&base_vector_used,
 	&base_get_by_index_in_vector,
 	&base_set_by_index_in_vector,
@@ -36,12 +38,13 @@ void add_to_vector(void* to_add, base_vector* vec){
 	if(vec)
 	    vec->vtable->add_to_vector(to_add,vec);
 }
-
-extern inline void display_vector(base_vector* vec){
+#ifdef LOGGING
+extern inline void display_vector(base_vector* vec)
+{
 	if(vec)
 	    vec->vtable->display_vector(vec);
 }
-
+#endif // LOGGING
 extern inline int vector_used(base_vector* vec){
 	if(vec)
 	    return vec->vtable->vector_used(vec);
@@ -108,7 +111,8 @@ extern inline void base_add_to_vector(void* to_add, base_vector* vec){
     return;
 }
 
-extern inline void base_display_vector(base_vector* vec){
+extern inline void base_display_vector(base_vector* vec)
+{
     if(vec)
 	   LOG_0("vtable: %p size: %d used: %d id: %d\n",(void*)vec->vtable,
 		vec->size,vec->used,vec->id);

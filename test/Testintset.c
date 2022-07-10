@@ -56,12 +56,14 @@ void test_new_and_delete_int_set(void){
 	
 	int_delete_set(NULL);
 }
-void test_display_int_set(void){
+#ifdef LOGGING
+void test_display_int_set(void)
+{
 
 	int_display_set(NULL);
 	int_display_set(set1);
 }
-
+#endif // LOGGING
 void test_int_set_used(void){
 	TEST_ASSERT_EQUAL(0,int_set_used(NULL));
 	TEST_ASSERT_EQUAL(0,int_set_used(set1));

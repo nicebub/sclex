@@ -56,12 +56,14 @@ void test_new_and_delete_char_set(void){
 	
 	char_delete_set(NULL);
 }
-void test_display_char_set(void){
+#ifdef LOGGING
+void test_display_char_set(void)
+{
 
 	char_display_set(NULL);
 	char_display_set(set1);
 }
-
+#endif // LOGGING
 void test_char_set_used(void){
 	TEST_ASSERT_EQUAL(0,char_set_used(NULL));
 	TEST_ASSERT_EQUAL(0,char_set_used(set1));

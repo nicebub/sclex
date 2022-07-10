@@ -98,7 +98,7 @@ RegularExpressionTreeArray* parseRegularExpressionSet(Parser* parser)
    }
    else
    {
-      fprintf(stderr,"NULL arguments given");
+      LOG_0("NULL arguments given");
    }
 
    return ret;

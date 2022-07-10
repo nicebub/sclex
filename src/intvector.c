@@ -5,15 +5,17 @@
 #include "intset.h"
 
 static base_vector_vtable int_vector_vtable = {
- &int_delete_vector,
- &int_add_to_vector,
- &int_display_vector,
- &int_vector_used,
- &int_get_by_index_in_vector,
- &int_set_by_index_in_vector,
- &int_vector_size,
-    &int_set_vector_used,
-    &int_set_vector_size
+   &int_delete_vector,
+   &int_add_to_vector,
+  #ifdef LOGGING
+   &int_display_vector,
+  #endif // LOGGING
+   &int_vector_used,
+   &int_get_by_index_in_vector,
+   &int_set_by_index_in_vector,
+   &int_vector_size,
+   &int_set_vector_used,
+   &int_set_vector_size
 };
 
 base_vector* new_int_vector(int size){
@@ -98,14 +100,16 @@ void int_add_to_vector(void* data, base_vector* vec){
 	}
 }
 
-void int_display_vector(base_vector* vec){
+#ifdef LOGGING
+void int_display_vector(base_vector* vec)
+{
 	int i;
 	if(vec){
 		for(i=0;i<base_vector_used(vec);i++)
 			display_set(*get_by_index_in_vector(vec,i));
 	}
 }
-
+#endif // LOGGING
 int int_vector_used(base_vector* vec){
     int_vector* nvec;
 	if(!vec) return 0;

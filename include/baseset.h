@@ -15,7 +15,8 @@ struct _base_set {
 	int uniq;
 	int id;
 };
-struct _base_set_vtable{
+struct _base_set_vtable
+{
 	void (*delete_set)(base_set* inset);	
 
 	void (*add_to_set)(base_set ** set, int value);
@@ -27,7 +28,9 @@ struct _base_set_vtable{
 	int (*sets_are_same)(base_set* set1, base_set* set2);
 	int (*is_in_set)(base_set * set, int value);
 
+   #ifdef LOGGING
 	void (*display_set)(base_set* set);
+   #endif // LOGGING
 	int (*set_used)(base_set* set);
 	void* (*get_value_by_index_set)(base_set* set, int index);
 	int (*set_size)(base_set* set);
@@ -53,7 +56,9 @@ void remove_from_set(base_set ** set, int value);
 base_set * merge_sets(base_set * set1, base_set* set2);
 base_set * copy_sets(base_set * set);
 int sets_are_same(base_set* set1, base_set* set2);
+#ifdef LOGGING
 void display_set(base_set* set);
+#endif // LOGGING
 int set_used(base_set* set);
 void* get_value_by_index_set(base_set* set, int index);
 int set_size(base_set* set);
@@ -77,7 +82,9 @@ void base_remove_from_set(base_set ** set, int value);
 base_set * base_merge_sets(base_set * set1, base_set* set2);
 base_set * base_copy_sets(base_set * set);
 int base_sets_are_same(base_set* set1, base_set* set2);
+#ifdef LOGGING
 void base_display_set(base_set* set);
+#endif // LOGGING
 int base_set_used(base_set* set);
 void* base_get_value_by_index_set(base_set* set, int index);
 int base_set_size(base_set* set);

@@ -18,7 +18,9 @@ struct _base_vector{
 struct _base_vector_vtable{
 	void (*delete_vector)(base_vector* vec);
 	void (*add_to_vector)(void* to_add, base_vector* vec);
+   #ifdef LOGGING
 	void (*display_vector)(base_vector* vec);
+   #endif // LOGGING
 	int (*vector_used)(base_vector* vec);
 	void ** (*get_by_index_in_vector)(base_vector* vec, int index);
 	void (*set_by_index_in_vector)(base_vector* vec, int index,void* value);
@@ -34,7 +36,9 @@ base_vector* new_vector_with_init_sets(int vec_size, int data_size);
 
 void delete_vector(base_vector* vec);
 void add_to_vector(void* to_add, base_vector* vec);
+#ifdef LOGGING
 void display_vector(base_vector* vec);
+#endif // LOGGING
 int vector_used(base_vector* vec);
 void ** get_by_index_in_vector(base_vector* vec, int index);
 void set_by_index_in_vector(base_vector* vec, int index,void* value);
@@ -46,7 +50,9 @@ base_vector* new_base_vector(int size);
 base_vector* new_base_vector_with_init_sets(int vec_size, int data_size);
 void base_delete_vector(base_vector* vec);
 void base_add_to_vector(void* to_add, base_vector* vec);
+#ifdef LOGGING
 void base_display_vector(base_vector* vec);
+#endif // LOGGING
 int base_vector_used(base_vector* vec);
 void ** base_get_by_index_in_vector(base_vector* vec, int index);
 void base_set_by_index_in_vector(base_vector* vec, int index,void* value);

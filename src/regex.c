@@ -88,7 +88,7 @@ RegularExpressionTreeNode* parseRegularExpression(Parser* parser)
    }
    else
    {
-      fprintf(stderr,"NULL arguments given\n");
+      LOG_0("NULL arguments given\n");
    }
    return ret;
 }

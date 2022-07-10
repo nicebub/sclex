@@ -257,11 +257,11 @@ RegularExpressionTreeNode* apply_def(Parser* parser)
     int e;
     char v;
 /*    rnode = NULL;*/
-   fprintf(stderr,"appying definition\n");
+   LOG_0("appying definition\n");
 
     setIndividualTokens(&parser->lexer,0);
     tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
-    fprintf(stderr,"temptoken lexem <%s>\n", tempToken.lexeme);
+    LOG_0("temptoken lexem <%s>\n", tempToken.lexeme);
     if((tempDefinition = definitionExists(parser,tempToken))){
 	   parser->fileBuffer = parser->lexer.inputBuffer;
 	   pushBackChar(&parser->lexer);

@@ -18,7 +18,9 @@ base_vector* new_int_vector_with_init_sets(int vec_size, int data_size);
 
 void int_delete_vector(base_vector* vector);	
 void int_add_to_vector(void* data,base_vector * vector);
+#ifdef LOGGING
 void int_display_vector(base_vector* vector);
+#endif // LOGGING
 int int_vector_used(base_vector* vec);
 /*int_set** */void** int_get_by_index_in_vector(base_vector* vec, int index);
 void int_set_by_index_in_vector(base_vector* vec, int index,void* value);

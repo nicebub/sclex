@@ -18,21 +18,24 @@
 #define TABLEERROR -1
 
 void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
-	int row,col;
-	int numFirstPositionSets;
-	int alphabetSize;
+	int                  row = 0;
+   int                  col = 0;
+	int numFirstPositionSets = 0;
+	int         alphabetSize = 0;
 	
 	numFirstPositionSets = vector_used(parser->fpos);
 	alphabetSize = set_used(parser->parseTree->alphabet);
 
    tCalcs->Dstates = new_int_vector(numFirstPositionSets);
-   if(!tCalcs->Dstates){
+   if(!tCalcs->Dstates)
+   {
 		LOG_ERROR("Couldn't allocate enough memory for Dstates in dfa gen%s","\n");
 		return NULL;
    }
 
    tCalcs->Dtransition = malloc(sizeof(int*)*alphabetSize);
-   if(!tCalcs->Dtransition){
+   if(!tCalcs->Dtransition)
+   {
 		LOG_ERROR("Couldnt' allocate memory for Dtransition in dfa gen%s","\n");
 		delete_vector(tCalcs->Dstates);
 		tCalcs->Dstates = NULL;
@@ -40,7 +43,8 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
    }
 
    tCalcs->DUtransition = malloc(sizeof(int_set**)*alphabetSize);
-	if(!tCalcs->DUtransition){
+	if(!tCalcs->DUtransition)
+   {
    	LOG_ERROR("Couldnt' allocate memory for DUtransition in dfa gen%s","\n");
     	delete_vector(tCalcs->Dstates);
    	tCalcs->Dstates = NULL;
@@ -48,17 +52,20 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
    	tCalcs->Dtransition = NULL;
    	return NULL;
 	}
-	for(row=ZERO;row<alphabetSize;row++){
+	for(row=ZERO;row<alphabetSize;row++)
+   {
    	tCalcs->Dtransition[row] = malloc(sizeof(int) * numFirstPositionSets);
 	   tCalcs->DUtransition[row] = malloc(sizeof(int_set*) * numFirstPositionSets);
  	}
 	for(row=ZERO;row<alphabetSize;row++)
-   	for(col=ZERO;col<numFirstPositionSets;col++){
+   	for(col=ZERO;col<numFirstPositionSets;col++)
+      {
 	  	 	tCalcs->Dtransition[row][col] = TABLEERROR;
 	  		tCalcs->DUtransition[row][col] = new_int_set(numFirstPositionSets);
    	}
 
-   for(row=ZERO;row<numFirstPositionSets;row++){
+   for(row=ZERO;row<numFirstPositionSets;row++)
+   {
    	set_by_index_in_vector(tCalcs->Dstates,row,new_int_set(numFirstPositionSets));
    	if(*(int**)get_by_index_in_vector(tCalcs->Dstates,row) == NULL){
 			LOG_ERROR("couldn't create new Dstates state%s","\n");
@@ -68,14 +75,14 @@ void* initDFATransitionTables(Parser* parser, TableCalculations* tCalcs){
    set_vector_used(tCalcs->Dstates,INITIALSTATE);
    tCalcs->marked = malloc(sizeof(int)*numFirstPositionSets);
    tCalcs->unmarked = malloc(sizeof(int)*numFirstPositionSets);
-   fprintf(stderr,"found this many <%d>\n",numFirstPositionSets);
+   LOG_0("found this many <%d>\n",numFirstPositionSets);
    for(row=ZERO;row<numFirstPositionSets;row++)
    {
-        fprintf(stderr,"what row we on <%d>\n", row);
+      LOG_0("what row we on <%d>\n", row);
 		tCalcs->marked[row]= TABLEERROR;
 		tCalcs->unmarked[row] = TABLEERROR;
    }
-   fprintf(stderr,"done\n");
+   LOG_0("done\n");
 
    return (void*)1;
 }
@@ -173,7 +180,7 @@ void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculati
    }
    else
    {
-      fprintf(stderr, "NULL arguments given\n");
+      LOG_0("NULL arguments given\n");
    }
     return NULL;
 }
@@ -202,35 +209,36 @@ struct _DFA* generate_dfa(Parser* parser)
 	 
    if(false == (status = initDFATransitionTables(parser,&tCalcs)))
    {
-      fprintf(stderr,"caught error during initialization of tables\n");
+      LOG_0("caught error during initialization of tables\n");
       return status;
    }
 
-    temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
+   temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
 	fpt = firstpos(&(parser->parseTree->atop));
-    temps2 = merge_sets(temps,fpt);
-    delete_set(temps);
-    temps = NULL;
+   temps2 = merge_sets(temps,fpt);
+   delete_set(temps);
+   temps = NULL;
 /*    set_by_index_in_vector(Dstates,sets,temps2);*/
-    add_to_vector(temps2,tCalcs.Dstates);
-    delete_set(temps2);
-    temps2 = NULL;
+   add_to_vector(temps2,tCalcs.Dstates);
+   delete_set(temps2);
+   temps2 = NULL;
 
-    temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
-    ((int_set*)temps)->super.uniq = sets+1;
-    tCalcs.unmarked[sets]=1;
-    sets++;
-	 checkForUnmarked();
+   temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);
+   ((int_set*)temps)->super.uniq = sets+1;
+   tCalcs.unmarked[sets]=1;
+   sets++;
+   checkForUnmarked();
 /*    for(counter=0;counter<sets;counter++)
 	   if(unmarked[counter] ==1)
 		  break;*/
 
 /*    printf("Starting State added, firstpos is\n");*/
 /*    display_set(Dstates->iset[0],0);*/
-    while(counter < sets){
-		 processUnmarkedState(parser,&counter,&sets,&tCalcs,&U);
-	  	 checkForUnmarked();
-}
+   while(counter < sets)
+   {
+	   processUnmarkedState(parser,&counter,&sets,&tCalcs,&U);
+	   checkForUnmarked();
+   }
 /*    printf("DONE CREATING DFA STATES\n");*/
 /*    printf("THEY ARE AS FOLLOWS\n");*/
 /*    for(int j=0;j<vector_used(Dstates);j++)*/
@@ -239,57 +247,62 @@ struct _DFA* generate_dfa(Parser* parser)
 	tDUtransition= malloc(sizeof(int_set**)*set_used(parser->parseTree->alphabet));
 	{
 	int we;
-    	for(we=0;we<set_used(parser->parseTree->alphabet);we++){
-			tTran[we] = malloc(sizeof(int)*vector_used(tCalcs.Dstates));
-	   		tDUtransition[we] = malloc(sizeof(int_set*)*vector_used(tCalcs.Dstates));
+    	for(we=0;we<set_used(parser->parseTree->alphabet);we++)
+      {
+		   tTran[we] = malloc(sizeof(int)*vector_used(tCalcs.Dstates));
+	      tDUtransition[we] = malloc(sizeof(int_set*)*vector_used(tCalcs.Dstates));
 		}
-}
-{
-	int i;
-    for(i=0;i<set_used(parser->parseTree->alphabet);i++){
-		int j;
-	   for(j=0;j<vector_used(tCalcs.Dstates);j++){
-		  tTran[i][j] = tCalcs.Dtransition[i][j];
-		  tDUtransition[i][j] = tCalcs.DUtransition[i][j];
-		  tCalcs.DUtransition[i][j] = NULL;
-	   }
-	   free(tCalcs.Dtransition[i]);
-	   free(tCalcs.DUtransition[i]);
-	   tCalcs.Dtransition[i] = NULL;
-	   tCalcs.DUtransition[i] = NULL;
-    }
-}
-    free(tCalcs.Dtransition);
-    free(tCalcs.DUtransition);
-    tCalcs.Dtransition = NULL;
-    tCalcs.DUtransition = NULL;
+   }
+   {
+	   int i = 0;
+      for(i=0;i<set_used(parser->parseTree->alphabet);i++)
+      {
+   	   int j = 0;
+	      for(j=0;j<vector_used(tCalcs.Dstates);j++)
+         {
+   		  tTran[i][j] = tCalcs.Dtransition[i][j];
+	   	  tDUtransition[i][j] = tCalcs.DUtransition[i][j];
+		     tCalcs.DUtransition[i][j] = NULL;
+   	   }
+	      free(tCalcs.Dtransition[i]);
+	      free(tCalcs.DUtransition[i]);
+   	   tCalcs.Dtransition[i] = NULL;
+	      tCalcs.DUtransition[i] = NULL;
+      }
+   }
+   free(tCalcs.Dtransition);
+   free(tCalcs.DUtransition);
+   tCalcs.Dtransition = NULL;
+   tCalcs.DUtransition = NULL;
 /*    printf("Dtransition table computed\n");*/
     printf("Alphabet Symbol %s","\n");
     printf("S|%s","");
-	{
-		int i;
+   {
+		int i = 0;
 		for(i=0;i<set_used(parser->parseTree->alphabet);i++){
 		   printf("|%c",*(char*)get_value_by_index_set(parser->parseTree->alphabet,i));
 		}
-	}
+   }
     printf("|%s","\n");
 	{
 		{
-		int r;
-		for(r=0;r<vector_used(tCalcs.Dstates);r++){
-			int i;
+		int r = 0;
+		for(r=0;r<vector_used(tCalcs.Dstates);r++)
+      {
+			int i = 0;
 			printf("%d|",r+1);
-	   	 	for(i=0;i<set_used(parser->parseTree->alphabet);i++){
-		 	   if(tTran[i][r] != -1)
-			   {
-				   printf("|%d", tTran[i][r]);
+	   	for(i=0;i<set_used(parser->parseTree->alphabet);i++)
+         {
+   		 	 if(tTran[i][r] != -1)
+	   		 {
+		   		printf("|%d", tTran[i][r]);
 			   }
 			   else
-			   {
-				   printf("|x%s","");
-			   }
+   			{
+	   			printf("|x%s","");
+		   	}
 		   }
-		   printf("|%s","\n");
+   		printf("|%s","\n");
  	   }
    }
 }
@@ -302,7 +315,8 @@ struct _DFA* generate_dfa(Parser* parser)
 /*    printf("number of states %d\n", vector_used(Dstates));*/
 /*    printf("Start State: %d\n",Dstates->iset[0]->uniq);*/
     dfa = create_dfa();
-    if(dfa == NULL){
+    if(dfa == NULL)
+    {
 	   LOG_ERROR("couldn't create new DFA%s","\n");
 	   return NULL;
     }
@@ -311,35 +325,41 @@ struct _DFA* generate_dfa(Parser* parser)
     FFstates = new_int_set(100);
 /*	printf("number of regular expressions found %d\n",tree->num_re);*/
 	{
-	int k;
-    for(k=0;k<parser->parseTree->num_re;k++){
-		int y;
-	   	Fstates = NULL;
-	   	lastpos = parser->parseTree->finalpos[k];
+	int k = 0;
+   for(k=0;k<parser->parseTree->num_re;k++)
+   {
+      int y = 0;
+	   Fstates = NULL;
+	   lastpos = parser->parseTree->finalpos[k];
 /*    printf("Finish States for the whole file RE: \n");*/
-	   	fcount = 0;
+	   fcount = 0;
 /*    printf("Position using for last state: %d\n",lastpos);*/
-	   	for(y=0;y<vector_used(tCalcs.Dstates);y++){
-		    if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0){
+	   for(y=0;y<vector_used(tCalcs.Dstates);y++)
+      {
+		   if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0)
+         {
 /*		  	  printf("State %d is in finish states\n",y+1);*/
 			   fcount++;
-		    }
-    		}
-	   	Fstates = new_int_set(fcount);
-	   	if(Fstates == NULL){
+		   }
+    	}
+	   Fstates = new_int_set(fcount);
+	   if(Fstates == NULL)
+      {
 		    LOG_ERROR("couldn't create new Fstates%s","\n");
 		    return NULL;
-    		}
-			{
-				int y;
-	   			for(y=0;y<vector_used(tCalcs.Dstates);y++){
-		    		if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0){
+    	}
+		{
+		   int y = 0;
+         for(y=0;y<vector_used(tCalcs.Dstates);y++)
+         {
+		    	if(is_in_set(*get_by_index_in_vector(tCalcs.Dstates,y),lastpos)==0)
+            {
 /*		  printf("Adding State %d to finish states\n",y+1);*/
 						add_to_set(&Fstates,y+1);
 						add_to_set(&FFstates,y+1);
-		   		 	}
-				}
+		   	}
 			}
+		}
 	   parser->parseTree->Fstates[k] = Fstates;
     }
 }
@@ -359,30 +379,35 @@ struct _DFA* generate_dfa(Parser* parser)
 }
 
 
-struct _DFA* create_dfa(void){
-    struct _DFA * dfa;
-    dfa = NULL;
-    dfa = malloc(sizeof(*dfa));
-    dfa->Dtran = NULL;
-    dfa->DUTran = NULL;
-    dfa->alphabet = NULL;
-    dfa->FFstates = NULL;
-    dfa->Fstates = NULL;
-    dfa->Dstates = NULL;
-    dfa->action_array= NULL;
-    dfa->num_states = 0;
-    dfa->start =0;
-	dfa->num_re = -1;
-    return dfa;
+struct _DFA* create_dfa(void)
+{
+   struct _DFA * dfa = NULL;
+
+   dfa = calloc(1, sizeof(*dfa));
+   if (NULL != dfa)
+   {
+      dfa->num_re = -1;
+   }
+   else
+   {
+      perror(NULL);
+      LOG_ERROR("calloc failed");
+   }
+
+   return dfa;
 }
-void delete_dfa(struct _DFA* dfa){
-    if(dfa){
+void delete_dfa(struct _DFA* dfa)
+{
+    if(dfa)
+    {
  	   int b;
 	   free(dfa->Dtran);
 	   dfa->Dtran = NULL;
-	   for(b=0;b<set_used(dfa->alphabet);b++){
+	   for(b=0;b<set_used(dfa->alphabet);b++)
+      {
 		   int a;
-		  for(a=0;a<dfa->num_states;a++){
+		  for(a=0;a<dfa->num_states;a++)
+        {
 			 delete_set(dfa->DUTran[b][a]);
 			 dfa->DUTran[b][a] = NULL;
 		  }

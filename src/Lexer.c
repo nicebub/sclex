@@ -152,7 +152,7 @@ LexerToken tokenRunner(Lexer* lexer,LexerToken token,int type)
    if (NULL != lexer)
    {
       temp = peekTokenStack(&lexer->tokens.stack);
-      fprintf(stderr, "lexeme found <%s>\n", temp.lexeme);
+      LOG_0("lexeme found <%s>\n", temp.lexeme);
       if(NULL == temp.lexeme)
       {
          pushNextTokenOnStack(lexer);
@@ -164,7 +164,7 @@ LexerToken tokenRunner(Lexer* lexer,LexerToken token,int type)
          {
             if(token.id != (temp.id))
             {
-               fprintf(stderr,"setting default token\n");
+               LOG_0("setting default token\n");
                temp = defaultTokens[0];
             }
             else
@@ -291,7 +291,7 @@ void pushNextTokenOnStack(Lexer* lexer)
    if (NULL != lexer)
    {
    	tempToken = readNextToken(lexer);
-      fprintf(stderr, "pushing this token onto stack <%s>\n",tempToken.lexeme);
+      LOG_0("pushing this token onto stack <%s>\n",tempToken.lexeme);
 	   pushTokenStack(&lexer->tokens.stack,tempToken);
    }
    else

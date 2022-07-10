@@ -18,7 +18,9 @@ base_vector* new_char_vector_with_init_sets(int vec_size, int data_size);
 
 void char_delete_vector(base_vector* vector);
 void char_add_to_vector(void* data,base_vector * vector);
+#ifdef LOGGING
 void char_display_vector(base_vector* vector);
+#endif //LOGGING
 int char_vector_used(base_vector* vec);
 /*char_set** */void** char_get_by_index_in_vector(base_vector* vec, int index);
 void char_set_by_index_in_vector(base_vector* vec, int index,void* value);

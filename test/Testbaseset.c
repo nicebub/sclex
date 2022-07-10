@@ -18,7 +18,8 @@ void test_new_and_delete_base_set(void){
 	set1 = NULL;
 	
 }
-void test_display_set(void){
+void test_display_set(void)
+{
 	base_set *set1;
 	set1 = new_set(10);
 	display_set(NULL);

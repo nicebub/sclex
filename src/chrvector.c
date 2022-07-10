@@ -7,7 +7,9 @@
 static base_vector_vtable char_vector_vtable = {
  &char_delete_vector,
  &char_add_to_vector,
+ #ifdef LOGGING
  &char_display_vector,
+ #endif // LOGGING
  &char_vector_used,
  &char_get_by_index_in_vector,
  &char_set_by_index_in_vector,
@@ -99,14 +101,16 @@ void char_add_to_vector(void* data, base_vector* vec){
 	}
 }
 
-void char_display_vector(base_vector* vec){
+#ifdef LOGGING
+void char_display_vector(base_vector* vec)
+{
 	int i;
 	if(vec){
 		for(i=0;i<base_vector_used(vec);i++)
 			char_display_set(*char_get_by_index_in_vector(vec,i));
 	}
 }
-
+#endif //LOGGING
 int char_vector_used(base_vector* vec){
     char_vector* nvec;
 	if(!vec) return 0;

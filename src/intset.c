@@ -14,7 +14,9 @@ static base_set_vtable int_set_vtable = {
  &int_copy_sets,
  &int_sets_are_same,
  &int_is_in_set,
+ #ifdef LOGGING
  &int_display_set,
+ #endif //LOGGING
  &int_set_used,
  &int_get_value_by_index_set,
  &int_set_used
@@ -191,8 +193,10 @@ base_set * int_copy_sets(base_set * set){
 	 tempset->super.uniq = nset->super.uniq;
 	 return (base_set*)tempset;
 }
-void int_display_set(base_set* set){
-    int_set* nset;
+#ifdef LOGGING
+void int_display_set(base_set* set)
+{
+    int_set* nset = NULL;
 	if(!set) return;
 	nset = (int_set*)set;
     LOG_0("vtable:%p set:%p size: %d used: %d uniq%d id: %d\n", 
@@ -205,7 +209,7 @@ void int_display_set(base_set* set){
 		LOG_0("%s","\n");
 	}
 }
-
+#endif // LOGGING
 extern inline int int_set_used(base_set* set){
 	int_set* nset;
 	if(!set) return 0;

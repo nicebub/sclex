@@ -23,7 +23,9 @@ void char_add_to_set(base_set ** set, int value);
 void char_remove_from_set(base_set ** set, int value);
 base_set * char_merge_sets(base_set * set1, base_set* set2);
 base_set * char_copy_sets(base_set * set);
+#ifdef LOGGING
 void char_display_set(base_set* set);
+#endif //LOGGING
 int char_set_used(base_set* set);
 void* char_get_value_by_index_set(base_set* set, int index);
 int char_set_size(base_set* set);

@@ -54,7 +54,9 @@ void test_new_with_init_and_delete_char_vector(void){
 	delete_vector(NULL);
 }
 
-void test_char_display_vector(void){
+#ifdef LOGGING
+void test_char_display_vector(void)
+{
 	char_display_vector(NULL);
 	
 	char_display_vector(vec);
@@ -63,7 +65,7 @@ void test_char_display_vector(void){
 	char_display_vector(vec);
 	
 }
-
+#endif //LOGGING
 void test_char_vector_used(void){
 
 	TEST_ASSERT_EQUAL(0,base_vector_used(NULL));

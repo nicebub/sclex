@@ -14,7 +14,9 @@ static base_set_vtable char_set_vtable = {
  &char_copy_sets,
  &char_sets_are_same,
  &char_is_in_set,
+ #ifdef LOGGING
  &char_display_set,
+ #endif // LOGGING
  &char_set_used,
  &char_get_value_by_index_set,
  &char_set_size
@@ -194,21 +196,27 @@ base_set * char_copy_sets(base_set * set){
 	 tempset->super.uniq = nset->super.uniq;
 	 return (base_set*)tempset;
 }
-void char_display_set(base_set* set){
-    char_set* nset;
+#ifdef LOGGING
+void char_display_set(base_set* set)
+{
+   char_set* nset = NULL;
 	if(!set) return;
 	nset = (char_set*)set;
+
     LOG_0("vtable:%p set:%p size: %d used: %d uniq: %d id: %d\n", 
 		(void*)nset->super.vtable,(void*)nset->values,base_set_size(set),base_set_used(set),
 		nset->super.uniq,nset->super.id);
-	if(base_set_used(set) >0){
-		int r;
+	if(base_set_used(set) >0)
+   {
+		int r = 0;
 		for(r=0;r<base_set_used(set);r++)
-			LOG_0("%c ",*(char*)get_value_by_index_set(set,r));
+      {
+         LOG_0("%c ",*(char*)get_value_by_index_set(set,r));
+      }
 		LOG_0("\n%s","");
 	}
 }
-
+#endif // LOGGING
 extern inline int char_set_used(base_set* set){
 	char_set* nset;
 	if(!set) return 0;

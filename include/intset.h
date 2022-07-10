@@ -22,7 +22,9 @@ void int_add_to_set(base_set ** set, int value);
 void int_remove_from_set(base_set ** set, int value);
 base_set * int_merge_sets(base_set * set1, base_set* set2);
 base_set * int_copy_sets(base_set * set);
+#ifdef LOGGING
 void int_display_set(base_set* set);
+#endif // LOGGING
 int int_set_used(base_set* set);
 void* int_get_value_by_index_set(base_set* set, int index);
 int int_set_size(base_set* set);

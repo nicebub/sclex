@@ -66,7 +66,7 @@ RegularExpressionTreeArray* parseInputFile(Parser* parser)
 /*	if(!matchedNextToken(&parser->lexer,OPEN_STARTER).lexeme){*/
 	if(!matchToken(&parser->lexer,tokenForType(OPEN_STARTER)).lexeme)
    {
-      fprintf(stderr, "found token <%s>\n",parser->lexer.tokens.stack.top->lexeme);
+      LOG_0("found token <%s>\n",parser->lexer.tokens.stack.top->lexeme);
 		/*fail*/
 		lex_error(SCERR_DECL_UNDECLARED);
 		return NULL;

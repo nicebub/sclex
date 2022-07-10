@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "Lexer.h"
 #include "token.h"
-
+#include "log.h"
 void initToken(LexerToken* token)
 {
 	*token = defaultTokens[NONE];
@@ -61,12 +61,12 @@ LexerToken peekTokenStack(LStack* astack)
    {
       if(astack->top == astack->stack)
       {
-		fprintf(stderr,"equal to top of stack\n");
+		LOG_0("equal to top of stack\n");
          t = defaultTokens[0];
       }
       else
       {
-		fprintf(stderr,"not equal to top of stack\n");
+		LOG_0("not equal to top of stack\n");
          t = *(astack->top-1);
       }
    }

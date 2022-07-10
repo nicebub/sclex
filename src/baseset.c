@@ -6,7 +6,7 @@
 #ifdef __STRICT_ANSI__
 #define inline
 #endif
-static base_set_vtable vtable_base_set={
+static base_set_vtable vtable_base_set = {
 	 &base_delete_set,
 	 &base_add_to_set,
 	 &base_remove_from_set,
@@ -14,7 +14,9 @@ static base_set_vtable vtable_base_set={
 	 &base_copy_sets,
 	 &base_sets_are_same,
 	 &base_is_in_set,
+   #ifdef LOGGING
 	 &base_display_set,
+   #endif // LOGGING
 	 &base_set_used,
 	 &base_get_value_by_index_set,
 	 &base_set_size
@@ -62,11 +64,13 @@ int sets_are_same(base_set* set1, base_set* set2){
 	    return set1->vtable->sets_are_same(set1,set2);
     return -1;
 }
-void display_set(base_set* set){
+#ifdef LOGGING
+void display_set(base_set* set)
+{
     if(set)
 	   set->vtable->display_set(set);
 }
-
+#endif // LOGGING
 int set_used(base_set* set){
     if(set)
 	   return set->vtable->set_used(set);
@@ -138,7 +142,8 @@ base_set * base_copy_sets(base_set * set){
 int base_sets_are_same(base_set* set1, base_set* set2){
 	return 0;
 }
-void base_display_set(base_set* set){
+void base_display_set(base_set* set)
+{
 	if(set)
 	{
 		LOG_0("vtable:%p size: %d used: %d uniq: %d id: %d\n", 
