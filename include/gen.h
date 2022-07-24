@@ -5,7 +5,8 @@
 #include "dfa.h"
 /*#include "lfile.h"*/
 
-typedef enum _PARAGRAPH {
+typedef enum _PARAGRAPH
+{
 	BUFFER_PAR,
 	DECL_PAR,
 	ALPH_SZ_PAR,

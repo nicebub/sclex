@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdbool.h>
 #include "Parser.h"
 #include "lex_error.h"
 #include "retodfa.h"
@@ -7,65 +8,79 @@
 RegularExpressionTreeNode* parseExpression(Parser* parser)
 {
 	/* char_set** */
-    struct _node * temp = NULL;
-    struct _node *temp2 = NULL;
-    struct _node *temp3 = NULL;
-    struct _node *temp4 = NULL;
-    char m = '\0';
+   struct _node *            temp = NULL;
+   struct _node *           temp2 = NULL;
+   struct _node *           temp3 = NULL;
+   struct _node *           temp4 = NULL;
+   char                         m = '\0';
+   bool                 need_exit = false;
 
     /*
 	can be an (expr) OR [range] OR expr OR expr* OR expr+ OR expr? OR expr{a,b} OR expr|expr
 	*/
-    setIndividualTokens(&parser->lexer,1);
-    if(matchToken(&parser->lexer,tokenForType(LPAREN)).lexeme){
+
+   setIndividualTokens(&parser->lexer,1);
+   if(NULL != matchToken(&parser->lexer,tokenForType(LPAREN)).lexeme)
+   {
 	   temp = parseExpressionOR(parser);
-	   if(!matchToken(&parser->lexer,tokenForType(RPAREN)).lexeme){
-		  lex_error(14);
-		  exit(-1);
-	   }
-    }
-    else if(matchToken(&parser->lexer,tokenForType(LBRACKET)).lexeme)
-    {
-	   temp = parseCharSet(&parser->parseTree->alphabet,parser);
-	   if(!matchToken(&parser->lexer,tokenForType(RBRACKET)).lexeme)
+	   if(NULL == matchToken(&parser->lexer,tokenForType(RPAREN)).lexeme)
       {
-		    lex_error(13);
-			LOG_ERROR("to finish a character class%s","\n");
-		    exit(-1);
+		  lex_error(14);
+        need_exit = true;
+	   }
+   }
+   else if(NULL != matchToken(&parser->lexer,tokenForType(LBRACKET)).lexeme)
+   {
+	   temp = parseCharSet(&parser->parseTree->alphabet,parser);
+	   if(NULL == matchToken(&parser->lexer,tokenForType(RBRACKET)).lexeme)
+      {
+         lex_error(13);
+         LOG_ERROR("to finish a character class%s","\n");
+         need_exit = true;
 		}
-    }
-    else if(matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme)
-    {
+   }
+   else if(NULL != matchToken(&parser->lexer,tokenForType(LCURLY)).lexeme)
+   {
 	   temp = apply_def(parser);
 
-	   if(!matchToken(&parser->lexer,tokenForType(RCURLY)).lexeme)
+	   if(NULL == matchToken(&parser->lexer,tokenForType(RCURLY)).lexeme)
       {
 		  lex_error(13);
 		  LOG_ERROR("curly, to finish off a range%s, instead found %s\n","}",parser->lexer.tokens.stack.top->lexeme);
-		  exit(-1);
+        need_exit = true;
 	   }
-    }
-    else if(matchToken(&parser->lexer,tokenForType(BSLASH)).lexeme){
+   }
+   else if(NULL != matchToken(&parser->lexer,tokenForType(BSLASH)).lexeme)
+   {
+      LOG_0("TOP OF STACK <%s>", parser->lexer.tokens.stack.top->lexeme);
 	   temp = parseEscapeChars(parser);
-	   if(!temp){
+	   if(NULL == temp)
+      {
 		  lex_error(27);
-		  setIndividualTokens(&parser->lexer,0);
-		  return NULL;
 	   }
-	   add_to_set(&parser->parseTree->alphabet,temp->value);
-    }
-    else{
+      else
+      {
+   	   add_to_set(&parser->parseTree->alphabet,temp->value);
+      }
+   }
+   else
+   {
 	   m = *getNextToken(&parser->lexer).lexeme;
-	   temp = create_node(m);\
-	   if(!temp){
-		  lex_error(12);
-		  setIndividualTokens(&parser->lexer,0);
-		  return NULL;
+	   temp = create_node(m);
+	   if(NULL == temp)
+      {
+		   lex_error(12);
 	   }
-	   add_to_set(&parser->parseTree->alphabet,temp->value);
-
-    }
-    setIndividualTokens(&parser->lexer,0);
+      else
+      {
+         add_to_set(&parser->parseTree->alphabet,temp->value);
+      }
+   }
+   setIndividualTokens(&parser->lexer,0);
+   if(true == need_exit)
+   {
+      exit(-1);
+   }
 
  /*   else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
     else if(matchToken(&parser->lexer,tokenForType()).lexeme){}
@@ -135,7 +150,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 			   break;
     		}
     }*/
-	   switch(parser->lexer.current_char){
+	   switch(parser->lexer.current_char)
+      {
 		  case '\n':
 			 firstpos(&temp);
 			 lastpos(&temp);
@@ -143,7 +159,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 			 break;
 		  case '*':
 			 temp2 = create_node((char)STAR);
-			 if(!temp2){
+			 if(NULL == temp2)
+          {
 				lex_error(15);
 				return NULL;
 			 }
@@ -155,7 +172,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 			 break;
 		  case '+':
 			 temp2 = create_node((char)PLUS);
-			 if(!temp2){
+			 if(NULL == temp2)
+          {
 				lex_error(16);
 				return NULL;
 			 }
@@ -167,7 +185,8 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 			 break;
 		  case '?':
 			 temp2 = create_node((char)QUEST);
-			 if(!temp2){
+			 if(NULL == temp2)
+          {
 				lex_error(17);
 				return NULL;
 			 }
@@ -180,33 +199,39 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 		  case '{':
 			 getNextChar(&parser->lexer);
 			 getNextChar(&parser->lexer);
-			 if(parser->lexer.current_char == ','){
+			 if(parser->lexer.current_char == ',')
+          {
 				ungetchar(parser->lexer.inputBuffer);
 				ungetchar(parser->lexer.inputBuffer);
 					getNextChar(&parser->lexer);
 					temp2 = create_node(parser->lexer.current_char);
-					if(!temp2){
+					if(NULL == temp2)
+               {
 					    lex_error(18);
 					    return NULL;
 					}
 					getNextChar(&parser->lexer);
 					getNextChar(&parser->lexer);
 					temp3 = create_node(parser->lexer.current_char);
-					if(!temp3){
+					if(NULL == temp3)
+               {
 					    lex_error(18);
 					    return NULL;
 					}
 					getNextChar(&parser->lexer);
-					if(parser->lexer.current_char == '}'){
+					if(parser->lexer.current_char == '}')
+               {
 					   temp4 = create_node((char)COMMA);
-					    if(!temp4){
+					    if(NULL == temp4)
+                   {
 						   lex_error(19);
 						   return NULL;
 					    }
 					    temp4->left = temp2;
 					    temp4->right = temp3;
 					    temp3 = create_node((char)REPS);
-					    if(!temp4){
+					    if(NULL ==  temp4)
+                   {
 						   lex_error(20);
 						   return NULL;
 					    }
@@ -218,13 +243,14 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 					    return temp3;
 					    break;
 					}
-					else{
+					else
+               {
 					    lex_error(19);
 					    exit(-1);
-
 					}
 			 }
-			 else{
+			 else
+          {
  				 /* found another expression definition?? */
  				LOG_ERROR("shouldn't be here in scyak.l perhaps%s","\n");
 				ungetchar(parser->lexer.inputBuffer);
@@ -248,28 +274,26 @@ RegularExpressionTreeNode* parseExpression(Parser* parser)
 
 RegularExpressionTreeNode* apply_def(Parser* parser)
 {
-	/* char_set** */
-/*    struct _node* rnode;*/
-    RegularExpressionTreeNode* tempNode;
-    LexerToken tempToken;
-    Definition *tempDefinition;
-    char str[200];
-    int e;
-    char v;
+   /* char_set** */
+   /*    struct _node* rnode;*/
+   RegularExpressionTreeNode* tempNode = NULL;
+   LexerToken                tempToken = {0};
+   Definition *         tempDefinition = NULL;
 /*    rnode = NULL;*/
    LOG_0("appying definition\n");
 
-    setIndividualTokens(&parser->lexer,0);
-    tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
-    LOG_0("temptoken lexem <%s>\n", tempToken.lexeme);
-    if((tempDefinition = definitionExists(parser,tempToken))){
+   setIndividualTokens(&parser->lexer,0);
+   tempToken = matchToken(&parser->lexer,tokenForType(IDENTIFIER));
+   LOG_0("temptoken lexem <%s>\n", tempToken.lexeme);
+   if((tempDefinition = definitionExists(parser,tempToken)))
+   {
 	   parser->fileBuffer = parser->lexer.inputBuffer;
 	   pushBackChar(&parser->lexer);
 	   swapBuffer(parser,tempDefinition->buffer);
 	   tempNode = parseExpressionOR(parser);
 	   swapBuffer(parser,parser->fileBuffer);
 	   return tempNode;
-    }
+   }
 /*    for(e=0;parser->lexer.current_char != '}';e++){
 	   str[e] = parser->lexer.current_char;
 	   getNextChar(&parser->lexer);
@@ -293,5 +317,5 @@ RegularExpressionTreeNode* apply_def(Parser* parser)
 	   swapBuffer(parser,parser->fileBuffer);
 	   return tempNode;
     }*/
-    return NULL;
+   return NULL;
 }

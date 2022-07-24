@@ -159,15 +159,16 @@ void* processUnmarkedState(Parser* parser, int* counter,int* sets,TableCalculati
 				if(same != 1)
             {
 				   int_set* Fstates = NULL;
+               (void)Fstates;
 /*					   	printf("haven't seen this state yet\n");*/
-					((int_set*)*U)->super.uniq = *sets+1;
+					((int_set*)*U)->super.uniq = (*sets)+1;
 					add_to_vector(*U,tCalcs->Dstates);
 					delete_set(*U);
 					*U = NULL;
 					*U = *get_by_index_in_vector(tCalcs->Dstates,vector_used(tCalcs->Dstates)-1);
 					tCalcs->unmarked[*sets] = 1;
 					tCalcs->marked[*sets] = 0;
-				   sets++;
+				   (*sets)++;
             }
 			}
 			else
@@ -202,15 +203,22 @@ struct _DFA* generate_dfa(Parser* parser)
     int              lastpos = 0;
     int               fcount = 0;
 	 int              counter = 0;
+
 	 int                  row = 0;
     int                  col = 0;
+
 	 int*              status = NULL;
 	 TableCalculations tCalcs = {0};
-	 
+
+   (void)col;
+   (void)row;
+   (void)a;
+   (void)DUtransition;
+
    if(false == (status = initDFATransitionTables(parser,&tCalcs)))
    {
       LOG_0("caught error during initialization of tables\n");
-      return status;
+      return NULL;
    }
 
    temps = *get_by_index_in_vector(tCalcs.Dstates,INITIALSTATE);

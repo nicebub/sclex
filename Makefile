@@ -57,9 +57,9 @@ DEPS := $(patsubst %.c, $(PATHD)%.d,$(SRC_FILES))
 COMPILE=$(CC) -c
 LINK=$(CC)
 DEPEND=$(CC) -MM -MG -MF
-CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) --std=gnu2x -Wall -Wpedantic -Wno-comment -Wno-incompatible-pointer-types
-CFLAGS += -g -Wno-unused-variable
-EXECFLAGS = -Wno-unused-command-line-argument
+CFLAGS=-I. -I$(PATHI) -I$(PATHU) -I$(PATHS) --std=gnu99 -Wall -Wpedantic -Wno-unused-variable
+#CFLAGS += -g -Wno-unused-variable -Wno-comment -Wno-incompatible-pointer-types
+#EXECFLAGS = -Wno-unused-command-line-argument
 TFLAGS = $(CFLAGS) -DTEST
 BASE_RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(BASE_SRCT) )
 RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(SRCT) )
@@ -67,6 +67,11 @@ RESULTS = $(patsubst $(PATHT)Test%_Runner.c,$(PATHR)Test%_Runner.txt,$(SRCT) )
 PASSED = `grep -s PASS $(PATHR)*.txt`
 FAIL = `grep -s FAIL $(PATHR)*.txt`
 IGNORE = `grep -s IGNORE $(PATHR)*.txt`
+
+ifeq ($(LOGGING),true)
+CFLAGS += -DLOGGING
+TFLAGS += -DLOGGING
+endif
 
 all: $(BUILD_PATHS) $(EXEC)
 

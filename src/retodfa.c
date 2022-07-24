@@ -3,91 +3,131 @@
 #include "intset.h"
 #include "log.h"
 
-int nullable(struct _node ** n){
-    if(*n){
-	   if((*n)->nullable != -1)
-		  return (*n)->nullable;
-	   if((*n)->left == NULL && (*n)->right == NULL){
-		  if((*n)->value == (char) EPSILON){
-			 (*n)->nullable = 0;
-			 return 0;
-		  }
-		  else{
-			 (*n)->nullable = 1;
-			 return 1;
-		  }
-	   }
-	   switch((*n)->value){
-		  case (char)COMMA:
-			 if((*n)->left->value == '0'){
-				(*n)->nullable = 0;
-				return 0;
-			 }
-			 (*n)->nullable = 1;
-			 return 1;
-		  case (char)REPS:
-			 if(nullable(&(*n)->right)==0){
-				(*n)->nullable = 0;
-				return 0;
-			 }
-			 (*n)->nullable = 1;
-			 return 1;
-		  case (char)CHARSET:
-			 (*n)->nullable = 1;
-			 return 1;
-		  case (char)STAR:
-			 (*n)->nullable = 0;
-				    return 0;
-		  case (char)CONCAT:
-			 if(nullable(&(*n)->left)==0 && nullable(&(*n)->right)==0){
-					(*n)->nullable = 0;
-					return 0;
-			 }
-			 else{
-					(*n)->nullable = 1;
-					return 1;
-			 }
-		  case (char)MINUS:
-			 (*n)->nullable = 1;
-			 return 1;
-		  case (char)OR:
-			 if(nullable(&(*n)->left)==0 || nullable(&(*n)->right)==0){
-				(*n)->nullable = 0;
-				return 0;
-			 }
-			 else{
-				(*n)->nullable = 1;
-				return 1;
-			 }
-		  case (char)PLUS:
-			 (*n)->nullable = nullable(&(*n)->left);
-			 return (*n)->nullable;
-		  case (char)QUEST:
-			 (*n)->nullable = 0;
-			 return 0;
-	   }
-    }
-    LOG_ERROR("nullable error%s","\n");
-    return -1;
+int nullable(struct _node ** n)
+{
+   int ret = -1;
+
+   if((NULL != n) && (NULL != (*n)))
+   {
+      if((*n)->nullable == -1)
+      {
+         if((NULL == (*n)->left) && (NULL == (*n)->right))
+         {
+            if((*n)->value == (char) EPSILON)
+            {
+               (*n)->nullable = 0;
+               ret = 0;
+            }
+            else
+            {
+               (*n)->nullable = 1;
+               ret = 1;
+            }
+         }
+         else
+         {
+            switch((*n)->value)
+            {
+               case (char)COMMA:
+                  if((*n)->left->value == '0')
+                  {
+				         (*n)->nullable = 0;
+				         ret = 0;
+                     break;
+			         }
+                  (*n)->nullable = 1;
+                  ret = 1;
+                  break;
+               case (char)REPS:
+                  if(nullable(&(*n)->right)==0)
+                  {
+				         (*n)->nullable = 0;
+                     ret = 0;
+                     break;
+			         }
+                  (*n)->nullable = 1;
+                  ret = 1;
+                  break;
+               case (char)CHARSET:
+			         (*n)->nullable = 1;
+			         ret = 1;
+                  break;
+		         case (char)STAR:
+			         (*n)->nullable = 0;
+				      ret = 0;
+                  break;
+		         case (char)CONCAT:
+			         if((nullable(&(*n)->left)==0) && (nullable(&(*n)->right)==0))
+                  {
+				         (*n)->nullable = 0;
+					      ret = 0;
+                     break;
+			         }
+			         else
+                  {
+				         (*n)->nullable = 1;
+   					   ret = 1;
+                     break;
+		   	      }
+		         case (char)MINUS:
+			         (*n)->nullable = 1;
+			         ret = 1;
+                  break;
+	   	      case (char)OR:
+		   	      if(nullable(&(*n)->left)==0 || nullable(&(*n)->right)==0)
+                  {
+				         (*n)->nullable = 0;
+				         ret = 0;
+                     break;
+   			      }
+	   		      else
+                  {
+			   	      (*n)->nullable = 1;
+				         ret = 1;
+                     break;
+   			      }
+	   	      case (char)PLUS:
+		   	      (*n)->nullable = nullable(&(*n)->left);
+			         ret = (*n)->nullable;
+                  break;
+		         case (char)QUEST:
+			         (*n)->nullable = 0;
+   			      ret =  0;
+                  break;
+	         }
+         }
+      }
+      else
+      {
+         ret = (*n)->nullable;
+      }
+   }
+   else
+   {
+      LOG_ERROR("nullable error%s","\n");
+   }
+   return ret;
 }
-/* int_set* */base_set* pos(struct _node ** n, int ff){
-    base_set* h1; /* int_set* */
-    base_set*h2; /* int_set* */
-    base_set*h3; /* int_set* */
-    base_set*h4; /* int_set* */
-    char c,d;
-    h1 = h2 = h3 = h4 = NULL;
-    if(*n){
-	   switch((*n)->value){
-/*		  case '\n':
-			 	print_set(pos(n->left,ff));
-			 	print_set(pos(n->right,ff));
-			 	break;
-*/
+
+/* int_set* */
+base_set* pos(struct _node ** n, int ff)
+{
+    base_set* h1 = NULL; /* int_set* */
+    base_set* h2 = NULL; /* int_set* */
+    char       c = '\0';
+    char       d = '\0';
+
+    if((NULL != n) && (NULL !=(*n)))
+    {
+	   switch((*n)->value)
+      {
 		  case (char)CONCAT:
-			 if(ff == 1){
-			 	if(nullable(&(*n)->left)==0){
-				    if(((*n)->ifirst)==NULL){
+			 if(ff == 1)
+          {
+			 	if(nullable(&(*n)->left) == 0)
+            {
+				    if(((*n)->ifirst)==NULL
+                ){
 					   	h1 = pos(&(*n)->left,ff);
 /*					   printf("firstpos id h1 solo: %d\n",h1->id);*/
 					   	h2 = pos(&(*n)->right,ff);
@@ -103,8 +143,10 @@ int nullable(struct _node ** n){
 				    }
 				    return (*n)->ifirst;
 				}
-				else{
-				    if(((*n)->ifirst)==NULL){
+				else
+            {
+				    if(((*n)->ifirst)==NULL)
+                {
 					   h1 = pos(&(*n)->left,ff);
 /*					   printf("firstpos id h1 solo: %d\n",h1->id);*/
 					   (*n)->ifirst = copy_sets(h1);
@@ -115,8 +157,10 @@ int nullable(struct _node ** n){
 				    return (*n)->ifirst;
 				}
 			 }
-			 else{
-				if(nullable(&(*n)->right)==0){
+			 else
+          {
+				if(nullable(&(*n)->right)==0)
+            {
 				    if(((*n)->ilast)==NULL){
 					   	h1 = pos(&(*n)->left,ff);
 /*					   printf("lastpos id h1 solo: %d\n",h1->id);*/
@@ -134,8 +178,10 @@ int nullable(struct _node ** n){
 				    }
 				    return (*n)->ilast;
 				}
-				else{
-				    if(((*n)->ilast)==NULL){
+				else
+            {
+				    if(((*n)->ilast)==NULL)
+                {
 					   h1 = pos(&(*n)->right,ff);
 /*					   printf("lastpos id h1 solo: %d\n",h1->id);*/
 					   (*n)->ilast = copy_sets(h1);
@@ -261,112 +307,98 @@ int nullable(struct _node ** n){
     return NULL;
 }
 
-/* int_set* */base_set* followpos(/*int*/base_vector** ta,struct _node ** n){
-    base_set*temp, *temp2; /* int_set* */
-    base_set*left; /* int_set* */
-    base_set*right; /* int_set* */
-    temp = temp2 = left = right = NULL;
-    if(*n){
+/* int_set* */
+base_set* followpos(/*int*/base_vector** ta,struct _node ** n)
+{
+   base_set*  temp = NULL;
+   base_set*  left = NULL; /* int_set* */
+   base_set* right = NULL; /* int_set* */
+   base_set*   ret = NULL;
+
+   /* get rid of unused variable warnings */
+   (void)left;
+   (void)right;
+
+   if((NULL != ta) && (NULL != n) && (NULL != (*n)))
+	{
 	   if((*n)->ifollow)
-		  return (*n)->ifollow;
-/*	   printf("taking followpos of %c\n",gcfprint(n->value));*/
-	   left = followpos(ta,&(*n)->left);
-	   right = followpos(ta,&(*n)->right);
-	   switch((*n)->value){
-		  case (char)REPS:
-			 	if((*n)->right->left->value >= '1')
-				    break;
-		  case (char)STAR:
-		  case (char)PLUS:
-		  {
-			  int u;
-			 for(u=0;u<set_used((*n)->ilast);u++){
-				temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
-/*				printf("followpos id temp solo: %d\n",temp->id);*/
-				*(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1)) = merge_sets(temp,(*n)->ifirst);
-/*				printf("followpos id temp2 merged from temp and nodes firstpos set: %d\n",temp2->id);*/
-/*				printf("followpos id ta->iset[n->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->ilast->s[u]-1]->id);*/
-/*				printf("Deleting followpos temp with id: %d\n", temp->id);*/
-				delete_set(temp);
-				temp = NULL;
-/*				printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
-				temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
-/*				display_set(temp,0);*/
-/*				printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
-/*			    printf("current followpos of %c for what node is ", gcfprint(n->value));*/
-/*				printf("%d\n",n->ilast->s[u]);*/
-			 }
-/*			 display_set(n->ifollow,0);*/
-		 }
-			 break;
-			 
-		  case (char)CONCAT:
-		  {
-		  int u;
-		 for(u=0;u<set_used((*n)->left->ilast);u++){
-			temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
-/*			printf("followpos id temp solo: %d\n",temp->id);*/
-			*(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1)) = merge_sets(temp,(*n)->right->ifirst);
-/*			printf("followpos id temp2 merged from temp and nodes right child  firstpos set: %d\n",temp2->id);*/
-/*			printf("followpos id ta->iset[n->left->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->left->ilast->s[u]-1]->id);*/
-/*			printf("Deleting followpos temp with id: %d\n", temp->id);*/
-			delete_set(temp);
-			temp = NULL;
-/*			printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
-			temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
-/*			printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
-/*				    printf("current followpos of %c for what node is ", gcfprint(n->value));*/
-/*					printf("%d\n",n->left->ilast->s[u]);*/
-/*			display_set(temp,0);*/
-		 }
-	 }
-			 break;
-		  case (char) MINUS:
-			 ;
-	/*		 printf("MINUS FOLLOWPOS\n");*/
-	   }
-    }
-    return NULL;
+      {
+		  ret = (*n)->ifollow;
+      }
+      else
+      {
+/*	      printf("taking followpos of %c\n",gcfprint(n->value));*/
+	      left  = followpos(ta,&(*n)->left);
+	      right = followpos(ta,&(*n)->right);
+	      switch((*n)->value)
+         {
+		      case (char)REPS:
+			 	   if((*n)->right->left->value >= '1')
+               {
+                  break;
+               }
+            case (char)STAR:
+            case (char)PLUS:
+            {
+               int u = 0;
+               for(u = 0;u < set_used((*n)->ilast); u++)
+               {
+                  temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
+/*                printf("followpos id temp solo: %d\n",temp->id);*/
+                  *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1)) = merge_sets(temp,(*n)->ifirst);
+/*                printf("followpos id temp2 merged from temp and nodes firstpos set: %d\n",temp2->id);*/
+/*                printf("followpos id ta->iset[n->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->ilast->s[u]-1]->id);*/
+/*                printf("Deleting followpos temp with id: %d\n", temp->id);*/
+                  delete_set(temp);
+                  temp = NULL;
+/*                printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
+                  temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->ilast,u)-1));
+/*                display_set(temp,0);*/
+/*                printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
+/*                printf("current followpos of %c for what node is ", gcfprint(n->value));*/
+/*                printf("%d\n",n->ilast->s[u]);*/
+               }
+/*             display_set(n->ifollow,0);*/
+               break;
+            }
+            case (char)CONCAT:
+            {
+               int u = 0;
+               for(u=0;u<set_used((*n)->left->ilast);u++)
+               {
+                  temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
+/*                printf("followpos id temp solo: %d\n",temp->id);*/
+                  *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1)) = merge_sets(temp,(*n)->right->ifirst);
+/*                printf("followpos id temp2 merged from temp and nodes right child  firstpos set: %d\n",temp2->id);*/
+/*                printf("followpos id ta->iset[n->left->ilast->s[u]-1] copied from temp2: %d\n",ta->iset[n->left->ilast->s[u]-1]->id);*/
+/*                printf("Deleting followpos temp with id: %d\n", temp->id);*/
+                  delete_set(temp);
+                  temp = NULL;
+/*                printf("Deleting followpos temp2 with id: %d\n", temp2->id);*/
+                  temp = *(get_by_index_in_vector((*ta), *(int*)get_value_by_index_set((*n)->left->ilast,u)-1));
+/*                printf("followpos id n->ifollow copied from temp: %d\n",n->ifollow->id);*/
+/*                printf("current followpos of %c for what node is ", gcfprint(n->value));*/
+/*                printf("%d\n",n->left->ilast->s[u]);*/
+/*                display_set(temp,0);*/
+               }
+               break;
+            }
+            case (char) MINUS:
+
+               break;
+	/*          printf("MINUS FOLLOWPOS\n");*/
+         }
+      }
+   }
+
+   return ret;
 }
 
-/*
-void print_set(struct _hash * h){
-    struct _hashnode *temp;
-    int a=0;
-    if(h){
-	   printf("{");
-	   for(int j=0;j<h->size;j++){
-		  temp=h->bucket[j];
-		  while(temp != NULL){
-			 print_hset(temp);
-			 printf(",");
-			 a++;
-			 temp = temp->next;
-		  }
-		  a=0;
-	   }
-	   printf("}\n");
-    }
-}
-
-void print_hset(struct _hashnode * hn){
-    if(hn){
-	   switch(hn->vtype){
-		  case 0:
-			 printf("%d",*(int*)hn->value);
-			 break;
-		  case 2:
-			 printf("%c",*(char*)hn->value);
-			 break;
-		  case 3:
-			 break;
-	   }
-    }
-}
-*/
-char gcfprint(char c){
+char gcfprint(char c)
+{
     char rq;
-    switch(c){
+    switch(c)
+    {
 	   case (char)EMPTY:
 		  rq = '\0';
 		  break;

@@ -35,48 +35,56 @@ Results: a node is created to represent the escape character and it is
 	returned
 
 */
-RegularExpressionTreeNode* parseEscapeChars(Parser* parser){/* char_set** */
-	/* temporary node help create new nodes and add them to a tree */
-    struct _node* temp;
+RegularExpressionTreeNode* parseEscapeChars(Parser* parser)
+{
+   /* char_set** */
+   /* temporary node help create new nodes and add them to a tree */
+   RegularExpressionTreeNode* ret = NULL;
 
-    temp = NULL;
+   if(NULL != parser)
+   {
+      getNextChar(&parser->lexer);
 
-    getNextChar(&parser->lexer);
-
-	/* create the node and return it,
-		switch statement for later use
-	*/
-    switch(parser->lexer.current_char){
-	   case 'n':
-		  temp = create_node('\n');
-		  return temp;
-	   case 't':
-		  temp = create_node('\t');
-		  return temp;
-	   case '\\':
-	   case '\'':
-	   case '"':
-	   case '%':
-	   case '*':
-	   case '+':
-	   case '?':
-	   case '{':
-	   case '}':
-	   case '[':
-	   case ']':
-	   case '(':
-	   case ')':
-	   case '/':
-	   case '.':
-	   case ':':
-	   case '|':
-		  temp = create_node(parser->lexer.current_char);
-		  return temp;
-		  /* If all else fails, then report an error and return NULL */
-	   default:
-		  LOG_ERROR("doesn't support that kind of escape character%s","\n");
-		  LOG_ERROR("%c\n",parser->lexer.current_char);
-		  return NULL;
-    }
-    
+      /* create the node and return it,
+         switch statement for later use
+      */
+      switch(parser->lexer.current_char)
+      {
+         case 'n':
+            ret = create_node('\n');
+            break;
+	      case 't':
+      		ret = create_node('\t');
+            break;
+      	case '\\':
+      	case '\'':
+	      case '"':
+      	case '%':
+      	case '*':
+	      case '+':
+      	case '?':
+	      case '{':
+      	case '}':
+	      case '[':
+         case ']':
+	      case '(':
+         case ')':
+	      case '/':
+         case '.':
+	      case ':':
+         case '|':
+		      ret = create_node(parser->lexer.current_char);
+            break;
+		      /* If all else fails, then report an error and return NULL */
+	      default:
+		      LOG_ERROR("doesn't support that kind of escape character <%c>",parser->lexer.current_char);
+            break;
+      }
+   }
+   else
+   {
+      LOG_ERROR("NULL arguments given");
+   }
+   LOG_0("escaped this character, or tried <%c>", parser->lexer.current_char);
+   return ret;
 }
